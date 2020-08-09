@@ -14,13 +14,12 @@ namespace EDC21HOST
         public int ObstaclePunish = 10;//经过虚拟障碍物惩罚15分;
         public int WrongDirectionPunish = 10;//逆行惩罚10分;
         public Dot Pos;
-        public Camp Who { get; set; }; //A or B get、set直接两个封装好的函数
-        public int Score { get; set; }; //得分
+        public Camp Who { get; set; }//A or B get、set直接两个封装好的函数
+        public int Score { get; set; } //得分
         public int Picknum;//小车成功收集物资个数
         public int Task;//小车任务 0为上半场任务，1为下半场任务
         public int transport;//小车上是否载人 0未载人 1载人
         public int transportnum;//小车成功运送人个数
-        public int UnderStop; //是否正在强制停车
         public int Area;//小车所在的区域 0在迷宫外 1在迷宫内
         public int StopPunishNum;//小车经过泄洪口的次数
         public int ObstaclePunishNum;//小车经过虚拟障碍的次数

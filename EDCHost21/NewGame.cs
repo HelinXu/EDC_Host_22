@@ -19,6 +19,7 @@ namespace EDC21HOST
         public const int MazeBorderPoint1 = 35;//迷宫最短的靠边距离
         public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * MazeCrossNum;//迷宫最长的靠边距离
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
+        public const int MaxPackageNum = 6;
 
         public int APauseNum = 0;//A暂停次数
         public int BPauseNum = 0;//B暂停次数
@@ -27,10 +28,10 @@ namespace EDC21HOST
         public GameState State { get; set; }
         public Car CarA, CarB;
         public Passenger Passenger;
-        public PassengerGenerator Generator { get; set; }
-        public Package PackageA, PackageB, PackageC, PackageD, PackageE, PackageF;
-        public Obstacle RecentObstacle;
-        public int 
+        public PassengerGenerator Generator1 { get; set; }
+        public PackageGenerator Generator2 { get; set; }
+        public Package Package[];
+        public Obstacle Obstacle;
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
         public FileStream FoulTimeFS;
         public static bool InMaze(Dot dot)//确定点是否在迷宫内
@@ -68,14 +69,14 @@ namespace EDC21HOST
         //    //    }
         //    //}
         //}
-        public static Dot OppoDots(Dot prevDot)
+        public static Dot OppoDots(Dot prevDot)//复制点
         {
             Dot newDots = new Dot();
             newDots.x = prevDot.y;
             newDots.y = prevDot.x;
             return newDots;
         }
-        public static double GetDistance(Dot A, Dot B)
+        public static double GetDistance(Dot A, Dot B)//得到两个点之间的距离
         {
             return Math.Sqrt((A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y - B.y));
         }
@@ -83,13 +84,6 @@ namespace EDC21HOST
         {
             GameCount = 1;
             GameCamp = Camp.CampA;
-            MaxRound = 1200;
-            BallsDot = new List<Dot>();
-            BallDot = new Dot(-1, -1);
-            BallAtCollect = new Dot(-1, -1);
-            RequestNewBall = false;
-            NoBall = false;
-            BallCntA = BallCntB = 0;
             CollectCamp = Camp.None;
             CarA = new Car(Camp.CampA);
             CarB = new Car(Camp.CampB);
@@ -129,26 +123,21 @@ namespace EDC21HOST
             CarB.SaveCnt();
         }
 
-        protected void InitialPerson() //初始化人员
+        protected void InitialPackage() //初始化物资                                       //完成
         {
-            for (int i = 0; i < MaxPersonNum; ++i)
-                People[i] = new Person();
-            for (int i = 0; i < MaxPersonNum; ++i)
-                People[i] = new Person(Generator.Next(People), i);
-            CheckPersonNumber();
+            for (int i = 0; i < MaxPackageNum;++i)
+                Package[i] = new package();
+            for (int i = 0; i < MaxPackageNum; ++i)
+                Package[i] = new Package(Generator.Next(People), i);
         }
-        protected void CheckPersonNumber() //根据回合数更改最大人员数量
-        {
-            CurrPersonNumber = MaxPersonNum;
-        }
-        public void NewPerson(Dot currentPersonDot, int num) //刷新这一位置的新人员
+        public void NewPackage(int num) //刷新这一位置的新物资
         {
             Dot temp = new Dot();
             do
             {
                 temp = Generator.Next(People);
             }
-            while (temp == currentPersonDot); //防止与刚接上人员位置相同
+            while (temp == Package[0]||temp==Package[1]||temp==Package[2]||temp==Package[3]||temp==Package[4]||temp==Package[5]); //防止与其他相同位置
             People[num] = new Person(temp, num);
         }
 
