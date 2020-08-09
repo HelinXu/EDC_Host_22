@@ -18,7 +18,7 @@ namespace EDC21HOST
             startpos = startDot;
             finalpos = finalDot;
         }
-        public Passenger() : this(new Dot(0,0), new Dot(0,0) { }
+        public Passenger() : this(new Dot(0,0), new Dot(0,0)) { } //0809xhl修正了缺少的括号
 
         public void ResetInfo(Dot startDot, Dot finalDot)//重新生成位置
         {
