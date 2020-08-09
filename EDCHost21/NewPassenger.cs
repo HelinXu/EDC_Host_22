@@ -32,7 +32,7 @@ namespace EDC21HOST
         private Dot[] PassengerfinalDotArray;
         private int Passengernum;
         private int Passenger_idx;
-        public PersonGenerator(int amount) //生成指定数量的人员
+        public void PassengerGenerator(int amount) //生成指定数量的人员
         {
             Passenger_idx = 0;
             Passengernum = amount;
@@ -52,17 +52,20 @@ namespace EDC21HOST
                     nextX1 = NRand.Next(Game.MazeCrossNum);//仍然需要改进Game.MazeCrossNum是上界
                     nextY1 = NRand.Next(Game.MazeCrossNum);
                     dot1 = CrossNo2Dot(nextX1, nextY1);
-                    PackagestartDotArray[i] = dot1;
+                    PassengerstartDotArray[i] = dot1;
                     nextX2 = NRand.Next(Game.MazeCrossNum);//仍然需要改进Game.MazeCrossNum是上界
                     nextY2 = NRand.Next(Game.MazeCrossNum);
                     dot2 = CrossNo2Dot(nextX2, nextY2);
-                    PackagefinalDotArray[i] = dot2;
+                    PassengerfinalDotArray[i] = dot2;
                     if(nextX1==nextX2 && nextY1==nextY2)
                     {
                         same = 0;
                     }
+                                                             //需要加上人员与障碍是否重合的判断
+
                 } while (same == 0); 
             }
+
         }
         //返回下一个人员的坐标
         public Dot Next()

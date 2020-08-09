@@ -29,7 +29,7 @@ namespace EDC21HOST
         public Car CarA, CarB;
         public Passenger Passenger;
         public PassengerGenerator Generator1 { get; set; }
-        public PackageGenerator Generator2 { get; set; }
+        public PackageGenerator Generator2[];
         public Package Package[];
         public Obstacle Obstacle;
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息

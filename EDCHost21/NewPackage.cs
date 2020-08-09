@@ -21,11 +21,6 @@ namespace EDC21HOST
             return !(a == b);
         }
     }
-
-    public enum Camp
-    {
-        None = 0, CampA, CampB
-    }
     public class Package
     {
         public Dot Pos; //物资生成地点
@@ -37,18 +32,18 @@ namespace EDC21HOST
         }
         public Package() : this(new Dot(0, 0), 0) { }
 
-        public void ResetInfo(Dot startDot, int number)//重新生成位置
+        /*public void ResetInfo(Dot startDot, int number)//重新生成位置
         {
             Pos = startDot;
             Number = number;
-        }
+        }*/
     }
     public class PackageGenerator //存储预备要用的物资信息
     {
         private Dot[] PackageDotArray;
         private int Package_idx;
         private int Packagenum;
-        public PackageGenerator(int amount) //生成指定数量的人员
+        public void PackageGenerator(int amount) //生成指定数量的人员
         {
             Package_idx = 0;
             Packagenum = amount;
@@ -63,10 +58,11 @@ namespace EDC21HOST
                 nextY = NRand.Next(Game.MazeCrossNum);
                 dots = CrossNo2Dot(nextX, nextY);
                 PackageDotArray[i] = dots;
+                                                       //需要加上位置是否重合的判断
             }
         }
         //返回下一个人员的坐标
-        public Dot Next(Package [] currentPackage)
+        /*public Dot Next(Package [] currentPackage)
         {
             Dot temp;
             bool exist;
@@ -75,13 +71,13 @@ namespace EDC21HOST
                 temp = PackageDotArray[Package_idx++];
                 exist = false;
                 for (int i = 0; i < Game.MaxPackageNum; ++i)
-                    if (temp == currentPackage[i].StartPos)
+                    if (temp == currentPackage[i].Pos)
                         exist = true;
             }
             while (exist && Package_idx < Packagenum);
             return temp;
-        }
-        public void ResetIndex() { Package_idx = 0; } //package_idx复位
+        }*/
+        //public void ResetIndex() { Package_idx = 0; } //package_idx复位
         public Dot CrossNo2Dot(int CrossNoX, int CrossNoY)
         {
             Dot temp;
