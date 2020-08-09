@@ -70,8 +70,10 @@ namespace EDC21HOST
         //返回下一个人员的坐标
         public Passenger Next()
         {
-            Passenger temp;
-            Dot startpos = PassengerstartDotArray[Passenger_idx++];
+            Dot startpos = PassengerstartDotArray[Passenger_idx];
+            Dot finalpos = PassengerfinalDotArray[Passenger_idx];
+            Passenger temp = new Passenger(startpos, finalpos);   //xhl不确定C#语法是不是这样的
+            Passenger_idx = Passenger_idx + 1;
             return temp;
         }
         public void ResetIndex() { Passenger_idx = 0; } //package_idx复位

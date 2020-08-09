@@ -20,17 +20,18 @@ namespace EDC21HOST
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
         public const int MaxPackageNum = 6;
 
-        public int APauseNum = 0;//A暂停次数
-        public int BPauseNum = 0;//B暂停次数
         public int GameCount; //上下半场等
-        Camp GameCamp; //当前半场需完成“上半场”任务的一方
-        public GameState State { get; set; }
-        public Car CarA, CarB;
+        public Camp GameCamp; //当前半场需完成“上半场”任务的一方
+        public GameState State { get; set; }//比赛状态
+        public Car CarA, CarB;//定义小车
         public Passenger Passenger;
         public PassengerGenerator Generator1 { get; set; }
         public PackageGenerator[] Generator2;
         public Package[] Package;
+        public Stop Stop;
         public Obstacle Obstacle;
+        public StartTime;
+        public GameTime;
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
         public FileStream FoulTimeFS;
         public static bool InMaze(Dot dot)//确定点是否在迷宫内
@@ -79,339 +80,128 @@ namespace EDC21HOST
         {
             return Math.Sqrt((A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y - B.y));
         }
-        public Game()
+        public Game()//构造一个新的Game类 默认为CampA是先上半场
         {
             GameCount = 1;
             GameCamp = Camp.CampA;
-            CarA = new Car(Camp.CampA);
-            CarB = new Car(Camp.CampB);
+            CarA = new Car(Camp.CampA,0);
+            CarB = new Car(Camp.CampB,1);
             State = GameState.Unstart;
-            Generator1 = new PassengerGenerator(100);
+            Generator1 = new PassengerGenerator(100);//上下半场将都用这一个索引
             Generator2[0] = new PackageGenerator(6);
             Generator2[1] = new PackageGenerator(6);
             Generator2[2] = new PackageGenerator(6);
             Generator2[3] = new PackageGenerator(6);
-            DebugMode = false;
             FoulTimeFS = null;
         }
-
-        public void NextStage()
+        
+        public void NextStage()//从上半场更换到下半场函数
         {
-            ++GameCount;
-            if (GameCount % 2 == 1)
-                GameCamp = Camp.CampA;
-            else
-                GameCamp = Camp.CampB;
-            if (GameCount >= 3)
-                MaxRound = 600;
-            else
-                MaxRound = 1200;
-            Round = 0;
-            State = GameState.Unstart;
-            CarA.LastInCollectRound = -MinGetBallRound;
-            CarB.LastInCollectRound = -MinGetBallRound;
-            Generator.ResetIndex();
-            InitialPerson();
-            DebugMode = false;
-            if (FoulTimeFS != null)
+            State = GameState.Pause;
+            GameCamp = Camp.CampB;//上半场转换
+            Generator1.ResetIndex();//Passenger的索引复位
+            if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
             {
                 byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
                 FoulTimeFS.Write(data, 0, data.Length);
             }
-            CarA.SaveCnt();
-            CarB.SaveCnt();
+            CarA.task = 1;//交换A和B的任务
+            CarB.task = 0;
         }
-
-        protected void InitialPackage() //初始化物资                                       //完成
-        {
-            for (int i = 0; i < MaxPackageNum;++i)
-                Package[i] = new package();
-            for (int i = 0; i < MaxPackageNum; ++i)
-                Package[i] = new Package(Generator.Next(People), i);
-        }
-        public void NewPackage(int num) //刷新这一位置的新物资
-        {
-            Dot temp = new Dot();
-            do
-            {
-                temp = Generator.Next(People);
-            }
-            while (temp == Package[0]||temp==Package[1]||temp==Package[2]||temp==Package[3]||temp==Package[4]||temp==Package[5]); //防止与其他相同位置
-            People[num] = new Person(temp, num);
-        }
-
-        public void Start() //开始比赛
+        public void Start() //开始比赛上下半场都用这个
         {
             State = GameState.Normal;
-            CarA.LastInCollectRound = -MinGetBallRound;
-            CarB.LastInCollectRound = -MinGetBallRound;
+            StartTime = currentTime.Hour * 3600 + currentTime.Minute * 60 + currentTime.second;//记录比赛开始时候的时间
         }
         public void Pause() //暂停比赛
         {
             State = GameState.Pause;
-            CarA.LastInCollectRound = -MinGetBallRound;
-            CarB.LastInCollectRound = -MinGetBallRound;
-            //CarA.HaveBall = false;
-            //CarB.HaveBall = false;
-            CarA.Stop();
-            CarB.Stop();
+            GameTime = GameTime+currentTime.Hour * 3600 + currentTime.Minute * 60 + currentTime.second - StartTime;//记录现在比赛已经进行了多少时间了
         }
-        public void End() //结束比赛
+        public void Continue()//继续比赛
         {
-            State = GameState.End;
-            //结算当前半场分数
-            int currBallCntA = 0;
-            foreach (Dot ball in BallsDot)
-                if (InStorageA(ball)) currBallCntA++;
-            switch (GameCamp)
+            State = GameState.Normal;
+            StartTime= currentTime.Hour * 3600 + currentTime.Minute * 60 + currentTime.second;
+        }
+        public UpdatePackage(int changenum)//到半点时更换Package函数changenum是第几次更换
+        {
+            for(int i=0;i<MaxPackageNum;i++)
             {
-                case Camp.CampA:
-                    //小车成功回家计分
-                    if (InStorageA(CarA.Pos))
-                        AddScore(Camp.CampA, Score.GetBackScore);
-                    if (InStorageB(CarB.Pos))
-                        AddScore(Camp.CampB, Score.GetBackScore);
-                    //小球运输至存放点计分
-                    if (currBallCntA > 0 && CarA.HaveBall)
-                    {
-                        AddScore(Camp.CampA, Score.BallStoreScore);
-                        CarA.BallOwnCnt++;
-                        CarA.HaveBall = false;
-                    }
-                    break;
-                case Camp.CampB:
-                    //小车成功回家计分
-                    if (InStorageB(CarA.Pos))
-                        AddScore(Camp.CampA, Score.GetBackScore);
-                    if (InStorageA(CarB.Pos))
-                        AddScore(Camp.CampB, Score.GetBackScore);
-                    //小球运输至存放点计分
-                    if (currBallCntA > 0 && CarB.HaveBall)
-                    {
-                        AddScore(Camp.CampB, Score.BallStoreScore);
-                        CarB.BallOwnCnt++;
-                        CarB.HaveBall = false;
-                    }
-                    break;
-                default: break;
+                Package[i] = Generator2[changenum].PackageDotArray[i];
             }
         }
-        //复位
-        public void AskPause(Camp c)
+        public void UpdatePassenger()//更新乘客信息
         {
-            Pause();
-            CarA.HaveBall = false;
-            CarB.HaveBall = false;
-            CarA.LoadCnt();
-            CarB.LoadCnt();
-            Round = 0;
-            switch (c)
+            Passenger = Generator.Next();
+        }
+        public void CarAGetPassenger()//小车A接到了乘客
+        {
+            CarA.Picked();
+        }
+        public void CarBGetPassenger()//小车B接到了乘客
+        {
+            CarB.Picked();
+        }
+        public void CarATransPassenger()//小车A成功运送了乘客
+        {
+            CarA.Picked();
+            CarA.TransportNumplus();
+            UpdatePassenger();
+        }
+        public void CarBTransPassenger()//小车A成功运送了乘客
+        {
+            CarB.Picked();
+            CarB.TransportNumplus();
+            UpdatePassenger();
+        }
+        public void CarAGetpackage()//小车A得到了包裹
+        {
+            CarA.PickNumplus();
+        }
+        public void CarBGetpackage()//小车B得到了包裹
+        {
+            CarB.PickNumplus();
+        }
+        public void CarAonObstacle()//小车A到达了障碍上
+        {
+            CarA.ObastaclePunishplus();
+        }
+        public void CarBonObstacle()//小车B到达了障碍上
+        {
+            CarB.ObastaclePunishplus();
+        }
+        public void CarAonStop()
+        {
+            CarA.StopPunishplus();
+        }
+        public void CarBonStop()
+        {
+            CarB.StopPunishplus();
+        }
+        public void CarAWrongDirection()
+        {
+            CarA.WrongDirectionplus();
+        }
+        public void CarBWrongDirection()
+        {
+            CarB.WrongDirectionplus();
+        }
+        public void SetStop(Dot stop)//上半场的小车设定障碍
+        {
+            if(Stop.num==0)
             {
-                case Camp.CampA:
-                    ++APauseNum;
-                    AddScore(Camp.CampA, Score.PauseScore);
-                    break;
-                case Camp.CampB:
-                    ++BPauseNum;
-                    AddScore(Camp.CampB, Score.PauseScore);
-                    break;
+                Stop.dot1 = stop;
+                Stop.num++;
+            }
+            if(Stop.num==1)
+            {
+                Stop.dot2 = stop;
+                Stop.num++;
             }
         }
-
-        //更新小球相关操作的状态、得分
-        public void UpdateBallsState()
-        {
-            NoBall = true;
-            bool noBallInCollect = true;
-            Camp currCollectCamp = Camp.None;
-            //int currBallCntA = 0;
-            //BallAtCollect = new Dot(0, 0);
-            foreach (Dot ball in BallsDot)
-            {
-                if (InCollect(ball))
-                {
-                    BallAtCollect = ball;
-                    noBallInCollect = false;
-                }
-                //else if (InStorageA(ball)) currBallCntA++;
-                //else if (InStorageB(ball)) currBallCntB++;
-
-                if (!InStorageA(ball))
-                {
-                    BallDot = ball;
-                    NoBall = false;
-                }
-            }
-
-            //更新CollectCamp：物资收集点处是A车还是B车
-            switch (GameCamp)
-            {
-                case Camp.CampA: if (InCollect(CarA.Pos)) currCollectCamp = Camp.CampA; break;
-                case Camp.CampB: if (InCollect(CarB.Pos)) currCollectCamp = Camp.CampB; break;
-                default: currCollectCamp = Camp.None;  break;
-            }
-
-            //进入物资收集点计分
-            if (CollectCamp == Camp.None && currCollectCamp != Camp.None)
-            {
-                switch (currCollectCamp)
-                {
-                    case Camp.CampA:
-                        if (Round - CarA.LastInCollectRound > MinGetBallRound)
-                        { //防止重复计分
-                            CarA.LastInCollectRound = Round;
-                            AddScore(currCollectCamp, Score.BallCollectScore); //小车成功到达物资收集点
-                        }
-                        break;
-                    case Camp.CampB:
-                        if (Round - CarB.LastInCollectRound > MinGetBallRound)
-                        {
-                            CarB.LastInCollectRound = Round;
-                            AddScore(currCollectCamp, Score.BallCollectScore); //小车成功到达物资收集点
-                        }
-                        break;
-                    default: break;
-                }
-            }
-
-            RequestNewBall = noBallInCollect && !InCollect(CarA.Pos) && !InCollect(CarB.Pos); //物资收集点处没有车和球时才可请求新球
-            
-            //抓取到小球计分
-            if (RequestNewBall) 
-            {
-                switch (CollectCamp)
-                {
-                    case Camp.CampA:
-                        if (!CarA.HaveBall)
-                        {
-                            AddScore(Camp.CampA, Score.BallGetScore);
-                            CarA.BallGetCnt++;
-                            CarA.HaveBall = true;
-                        }
-                        break;
-                    case Camp.CampB:
-                        if (!CarB.HaveBall)
-                        {
-                            AddScore(Camp.CampB, Score.BallGetScore);
-                            CarB.BallGetCnt++;
-                            CarB.HaveBall = true;
-                        }
-                        break;
-                    default: break; 
-                }
-                CollectCamp = Camp.None;
-            }
-
-            CollectCamp = currCollectCamp;
-
-            ////小球运输至存放点计分
-            //if (currBallCntA == BallCntA + 1)
-            //{
-            //    if (GameCamp == Camp.CampA && CarA.HaveBall)
-            //    {
-            //        AddScore(Camp.CampA, Score.BallStoreScore);
-            //        CarA.BallOwnCnt++;
-            //        CarA.HaveBall = false;
-            //    }
-            //    if (GameCamp == Camp.CampB && CarB.HaveBall)
-            //    {
-            //        AddScore(Camp.CampB, Score.BallStoreScore);
-            //        CarB.BallOwnCnt++;
-            //        CarB.HaveBall = false;
-            //    }
-            //}
-            //BallCntA = currBallCntA;
-        }
-
-        //更新小车走出迷宫得分
-        public void UpdateMazeState()
-        {
-            switch (GameCamp)
-            {
-                case Camp.CampA:
-                    bool currCarAInMaze = InMaze(CarA.Pos);
-                    if (currCarAInMaze && !CarA.InMaze)
-                    {
-                        CarA.MazeEntryPos = CarA.Pos;
-                    }
-                    else if (!currCarAInMaze && CarA.InMaze && !CarA.FinishedMaze)
-                    {
-                        if (GetDistance(CarA.MazeEntryPos, CarA.Pos) > MinMazeEntryDistance)
-                        {
-                            AddScore(Camp.CampA, Score.GoOutOfMaze);
-                            CarA.FinishedMaze = true;
-                        }
-                    }
-
-                    CarA.InMaze = InMaze(CarA.Pos);
-                    break;
-                case Camp.CampB:
-                    bool currCarBInMaze = InMaze(CarB.Pos);
-                    if (currCarBInMaze && !CarB.InMaze)
-                    {
-                        CarB.MazeEntryPos = CarB.Pos;
-                    }
-                    else if (!currCarBInMaze && CarB.InMaze && !CarB.FinishedMaze)
-                    {
-                        if (GetDistance(CarB.MazeEntryPos, CarB.Pos) > MinMazeEntryDistance)
-                        {
-                            AddScore(Camp.CampB, Score.GoOutOfMaze);
-                            CarB.FinishedMaze = true;
-                        }
-                    }
-
-                    CarB.InMaze = InMaze(CarB.Pos);
-                    break;
-                default: break;
-            }
-        }
-
-        //更新人员上车
-        public void UpdatePerson()
-        {
-            for (int i = 0; i != CurrPersonNumber; ++i)
-            {
-                Person p = People[i];
-                if (CarA.UnderStop == false && GetDistance(p.StartPos, CarA.Pos) < MaxCarryDistance)
-                {
-                    AddScore(Camp.CampA, Score.PersonGetScore);
-                    CarA.PersonCnt++;
-                    NewPerson(p.StartPos, i);
-                }
-
-                if (CarB.UnderStop == false && GetDistance(p.StartPos, CarB.Pos) < MaxCarryDistance)
-                {
-                    AddScore(Camp.CampB, Score.PersonGetScore);
-                    CarB.PersonCnt++;
-                    NewPerson(p.StartPos, i);
-                }
-            }
-        }
-
-        public void Update()//每回合执行
-        {
-            if (State == GameState.Normal)
-            {
-                Round++;
-                //GetInfoFromCameraAndUpdate();
-                CheckPersonNumber();
-                UpdateBallsState();
-                UpdateMazeState();
-                UpdatePerson();
-                #region PunishmentPhase
-                //if (!CarDotValid(CarA.Pos)) CarA.Stop();
-                //if (!CarDotValid(CarB.Pos)) CarB.Stop();
-                #endregion
-
-                if ((Round >= MaxRound && DebugMode == false) || (Round >= 1000000 && DebugMode == true)) //结束比赛
-                {
-                    End();
-                }
-            }
-        } 
         public byte[] PackMessage()
         {
-            byte[] message = new byte[32]; //上位机传递的信息
+            byte[] message = new byte[40]; //上位机传递多少信息
             int messageCnt = 0;
             message[messageCnt++] = (byte)(Round >> 8);
             message[messageCnt++] = (byte)Round;
@@ -449,7 +239,7 @@ namespace EDC21HOST
             message[31] = 0x0A;
             return message;
         }
-        ushort Crc16(byte[] data_p, byte length)
+        /*ushort Crc16(byte[] data_p, byte length)
         {
             byte i, j;
             ushort crc = 0xffff;
@@ -468,6 +258,6 @@ namespace EDC21HOST
             }
             // crc = (crc << 8) | (crc >> 8 & 0xff);
             return crc;
-        }
+        }*/
     }
 }
