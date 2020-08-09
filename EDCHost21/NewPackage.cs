@@ -61,6 +61,11 @@ namespace EDC21HOST
                                                        //需要加上位置是否重合的判断
             }
         }
+        //返回下标为i的PackageDotArray中的点。开发者：xhl
+        public Dot GetPackageDot(int i)
+        {
+            return PackageDotArray[i];
+        }
         //返回下一个人员的坐标
         /*public Dot Next(Package [] currentPackage)
         {

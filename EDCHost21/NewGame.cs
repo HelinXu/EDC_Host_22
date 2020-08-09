@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 
+
 namespace EDC21HOST
 {
     public enum GameState { Unstart = 0, Normal = 1, Pause = 2, End = 3 };
@@ -25,15 +26,22 @@ namespace EDC21HOST
         public GameState State { get; set; }//比赛状态
         public Car CarA, CarB;//定义小车
         public Passenger Passenger;
-        public PassengerGenerator Generator1 { get; set; }
-        public PackageGenerator[] Generator2;
-        public Package[] Package;
+        public PassengerGenerator PsgGenerator { get; set; }
+        public PackageGenerator[] PkgGenerator;
+        public Dot[] PackageDot;
         public Stop Stop;
         public Obstacle Obstacle;
-        public StartTime;
-        public GameTime;
+        public int StartTime;
+        public int GameTime;
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
         public FileStream FoulTimeFS;
+
+        //该方法用于返回系统现在的时间。开发者：xhl
+        public System.DateTime GetCurrentTime()
+        {
+            System.DateTime currentTime = new System.DateTime();
+            return currentTime;
+        }
         public static bool InMaze(Dot dot)//确定点是否在迷宫内
         {
             if (dot.x>=MazeBorderPoint1 && dot.x<=MazeBorderPoint2 && dot.y>=MazeBorderPoint1 && dot.y<=MazeBorderPoint2)
@@ -87,11 +95,11 @@ namespace EDC21HOST
             CarA = new Car(Camp.CampA,0);
             CarB = new Car(Camp.CampB,1);
             State = GameState.Unstart;
-            Generator1 = new PassengerGenerator(100);//上下半场将都用这一个索引
-            Generator2[0] = new PackageGenerator(6);
-            Generator2[1] = new PackageGenerator(6);
-            Generator2[2] = new PackageGenerator(6);
-            Generator2[3] = new PackageGenerator(6);
+            PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
+            PkgGenerator[0] = new PackageGenerator(6);
+            PkgGenerator[1] = new PackageGenerator(6);
+            PkgGenerator[2] = new PackageGenerator(6);
+            PkgGenerator[3] = new PackageGenerator(6);
             FoulTimeFS = null;
         }
         
@@ -99,35 +107,36 @@ namespace EDC21HOST
         {
             State = GameState.Pause;
             GameCamp = Camp.CampB;//上半场转换
-            Generator1.ResetIndex();//Passenger的索引复位
+            PsgGenerator.ResetIndex();//Passenger的索引复位
             if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
             {
                 byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
                 FoulTimeFS.Write(data, 0, data.Length);
             }
-            CarA.task = 1;//交换A和B的任务
-            CarB.task = 0;
+            CarA.Task = 1;//交换A和B的任务
+            CarB.Task = 0;
         }
         public void Start() //开始比赛上下半场都用这个
         {
             State = GameState.Normal;
-            StartTime = currentTime.Hour * 3600 + currentTime.Minute * 60 + currentTime.second;//记录比赛开始时候的时间
+
+            StartTime = GetCurrentTime().Hour * 3600 + GetCurrentTime().Minute * 60 + GetCurrentTime().Second;//记录比赛开始时候的时间
         }
         public void Pause() //暂停比赛
         {
             State = GameState.Pause;
-            GameTime = GameTime+currentTime.Hour * 3600 + currentTime.Minute * 60 + currentTime.second - StartTime;//记录现在比赛已经进行了多少时间了
+            GameTime = GameTime + GetCurrentTime().Hour * 3600 + GetCurrentTime().Minute * 60 + GetCurrentTime().Second - StartTime;//记录现在比赛已经进行了多少时间了
         }
         public void Continue()//继续比赛
         {
             State = GameState.Normal;
-            StartTime= currentTime.Hour * 3600 + currentTime.Minute * 60 + currentTime.second;
+            StartTime = GetCurrentTime().Hour * 3600 + GetCurrentTime().Minute * 60 + GetCurrentTime().Second;
         }
-        public UpdatePackage(int changenum)//到半点时更换Package函数changenum是第几次更换
+        public void UpdatePackage(int changenum)//到半点时更换Package函数changenum是第几次更换
         {
             for(int i=0;i<MaxPackageNum;i++)
             {
-                Package[i] = Generator2[changenum].PackageDotArray[i];
+                PackageDot[i] = PkgGenerator[changenum].GetPackageDot(i);   //xhl把Package改成了Dot类型。
             }
         }
         public void UpdatePassenger()//更新乘客信息
