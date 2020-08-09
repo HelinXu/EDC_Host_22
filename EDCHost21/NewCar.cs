@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace EDC21HOST
 {
+    enum Camp
+    {
+        none=0,CampA,CampB
+    };
     public class Car //选手的车
     {
         public int PackageScore = 10;//获取物资可以得到10分;
