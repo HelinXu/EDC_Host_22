@@ -87,9 +87,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Car.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="People.cs" />
+    <Compile Include="NewCar.cs" />
+    <Compile Include="NewGame.cs" />
+    <Compile Include="NewObstacle.cs" />
+    <Compile Include="NewPackage.cs" />
+    <Compile Include="NewPassenger.cs" />
+    <Compile Include="NewStop.cs" />
     <Compile Include="SetWindow.cs">
       <SubType>Form</SubType>
     </Compile>
