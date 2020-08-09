@@ -1,23 +1,14 @@
-﻿using System;
+﻿using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using System.IO;
-
-using OpenCvSharp;
-using System.Threading;
-using OpenCvSharp.Extensions;
 using Point2i = OpenCvSharp.Point;
-using Cuda = OpenCvSharp.Cuda;
-
-using System.Net;
-using System.IO.Ports;
 
 namespace EDC21HOST
 {
@@ -26,18 +17,30 @@ namespace EDC21HOST
         public MyFlags flags = null;
         public VideoCapture capture = null;
         //private Thread threadCamera = null;
+        //设定的显示画面四角坐标
         private Point2f[] ptsShowCorners = null;
+        //当前时间
         private DateTime timeCamNow;
+        //上一个记录的时间
         private DateTime timeCamPrev;
+        //坐标转换器
         public CoordinateConverter cc;
+        //定位器
         private Localiser localiser;
+        //小球坐标
         private Point2f[] ball;
+        //车1坐标
         private Point2i car1;
+        //车2坐标
         private Point2i car2;
+        //游戏逻辑
         private Game game;
+        //视频输出流
         private VideoWriter vw = null;
 
+        //是否已经进行了参数设置
         private bool alreadySet;
+        
         public SerialPort serial1, serial2;
         public string[] validPorts;
 
@@ -62,9 +65,10 @@ namespace EDC21HOST
 
         public Tracker()
         {
+            //UI界面初始化
             InitializeComponent();
-            //UI
 
+            //组件设置与初始化
             label_RedBG.SendToBack();
             label_BlueBG.SendToBack();
             label_RedBG.Controls.Add(label_CarA);
@@ -79,20 +83,31 @@ namespace EDC21HOST
             labelBScore.Location = new System.Drawing.Point(newX, newY);
             label_GameCount.Text = "上半场";
 
-            // Init
+            //flags参数类
             flags = new MyFlags();
             flags.Init();
             flags.Start();
+
+            //创建视频流
             capture = new VideoCapture();
             // threadCamera = new Thread(CameraReading);
             capture.Open(0);
+
+            //相机画面大小设为视频帧大小
             flags.cameraSize.Width = capture.FrameWidth;
             flags.cameraSize.Height = capture.FrameHeight;
+
+            //显示大小设为界面组件大小
             flags.showSize.Width = pbCamera.Width;
             flags.showSize.Height = pbCamera.Height;
             ptsShowCorners = new Point2f[4];
+
+            //以既有的flags参数初始化坐标转换器
             cc = new CoordinateConverter(flags);
+
             localiser = new Localiser();
+
+            //记录时间
             timeCamNow = DateTime.Now;
             timeCamPrev = timeCamNow;
 
@@ -112,29 +127,38 @@ namespace EDC21HOST
             //Game.LoadMap();
             game = new Game();
 
+            //如果视频流开启，开始进行计时器事件
             if (capture.IsOpened())
             {
+                //设置帧大小
                 capture.FrameWidth = flags.cameraSize.Width;
                 capture.FrameHeight = flags.cameraSize.Height;
                 capture.ConvertRgb = true;
+
+                //设置计时器timer100ms的触发间隔：75ms
                 timer100ms.Interval = 75;
+                //计时器事件开始：间隔75ms执行Flush
                 timer100ms.Start();
                 //Cv2.NamedWindow("binary");
             }
 
         }
 
+        //进行界面刷新、图像处理、逻辑处理的周期性函数
         private void Flush()
         {
+            //如果还未进行参数设置
             if (!alreadySet)
             {
                 lock (flags)
                 {
+                    //创建并打开SetWindow窗口，进行参数设置
                     SetWindow st = new SetWindow(ref flags, ref game, this);
                     st.Show();
                 }
                 alreadySet = true;
             }
+            //从视频帧中读取一帧，进行图像处理、绘图和数值更新
             CameraReading();
             lock (flags)
             {
@@ -166,6 +190,7 @@ namespace EDC21HOST
             validPorts = SerialPort.GetPortNames();
         }
 
+        //从视频帧中读取一帧，进行图像处理、绘图和数值更新
         private void CameraReading()
         {
             bool control = false;
@@ -178,11 +203,14 @@ namespace EDC21HOST
                 using (Mat videoFrame = new Mat())
                 using (Mat showFrame = new Mat())
                 {
+                    //从视频流中读取一帧相机画面videoFrame
                     if (capture.Read(videoFrame))
                     {
                         lock (flags)
                         {
+                            //调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
                             cc.PeopleFilter(flags);
+                            //调用定位器，进行图像处理，得到小车和小球的位置中心点集
                             localiser.Locate(videoFrame, flags);
 
                             //绘制边界点
@@ -192,6 +220,7 @@ namespace EDC21HOST
                                 Cv2.Line(videoFrame, (int)(pt.X), (int)(pt.Y - 3), (int)(pt.X), (int)(pt.Y + 3), new Scalar(0x00, 0xff, 0x98));
                             }
                         }
+                        //调用定位器，得到小车和小球的坐标
                         localiser.GetLocations(out ball, out car1, out car2);
 
                         lock (flags)
@@ -199,6 +228,8 @@ namespace EDC21HOST
                             Point2f[] posBallsF = new Point2f[0];
                             if (flags.calibrated)
                             {
+                                //将小球和小车坐标从摄像头画面坐标转化成逻辑坐标
+                                //再将小车坐标存储到flags中
                                 if (ball.Any())
                                     posBallsF = cc.CameraToLogic(ball);
                                 Point2f[] car12 = { car1, car2 };
@@ -208,13 +239,16 @@ namespace EDC21HOST
                             }
                             else
                             {
+                                //直接将小车坐标存储到flags中
                                 posBallsF = ball;
                                 flags.posCarA = car1;
                                 flags.posCarB = car2;
                             }
+                            //将球坐标从float转为int
                             Point2i[] posBallsI = new Point2i[posBallsF.Length];
                             for (int i = 0; i < posBallsF.Length; ++i)
                                 posBallsI[i] = posBallsF[i];
+                            //检验小球坐标是否符合逻辑规则，若符合才将其转入flags中
                             List<Point2i> posBallsList = new List<Point2i>();
                             foreach (Point2i b in posBallsI)
                             {
@@ -223,10 +257,15 @@ namespace EDC21HOST
                             }
                             flags.posBalls = posBallsList.ToArray();
                         }
+
+                        //处理时间参数
                         timeCamNow = DateTime.Now;
                         TimeSpan timeProcess = timeCamNow - timeCamPrev;
                         timeCamPrev = timeCamNow;
+
+                        //将摄像头视频帧缩放成显示帧
                         Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Cubic);
+                        //更新界面组件的画面显示
                         BeginInvoke(new Action<Image>(UpdateCameraPicture), BitmapConverter.ToBitmap(showFrame));
                         //输出视频
                         if (flags.videomode == true)
@@ -303,6 +342,7 @@ namespace EDC21HOST
             }
         }
 
+        //计时器事件：执行Flush
         private void timer100ms_Tick(object sender, EventArgs e)
         {
             Flush();
@@ -622,6 +662,8 @@ namespace EDC21HOST
         public bool calibrated;
         public bool videomode;
         public int clickCount;
+
+        //图像识别参数
         public struct LocConfigs
         {
             public int hue0Lower;
@@ -637,13 +679,18 @@ namespace EDC21HOST
             public int areaLower;
         }
         public LocConfigs configs;
+
+        //三个画面的大小
         public OpenCvSharp.Size showSize;
         public OpenCvSharp.Size cameraSize;
         public OpenCvSharp.Size logicSize;
+
+        //当前小球和小车的坐标
         public Point2i[] posBalls;
         public Point2i posCarA;
         public Point2i posCarB;
 
+        //人员起始坐标
         public Point2i[] posPersonStart;
         public int currPersonNum;
         public GameState gameState;
@@ -676,18 +723,26 @@ namespace EDC21HOST
         }
     }
 
+    //坐标转换器：将三种坐标（摄像头坐标、显示坐标、逻辑坐标）上的点坐标进行相互转换
+    //摄像头坐标：摄像头直接捕捉到的视频帧对应的坐标
+    //显示坐标：界面上的组件大小所决定的显示画面帧对应的坐标
+    //逻辑坐标：规则文档中描述的场地大小对应的坐标
     public class CoordinateConverter : IDisposable
     {
+        //投影变换中的变换矩阵
         private Mat cam2logic;
         private Mat logic2cam;
         private Mat show2cam;
         private Mat cam2show;
         private Mat show2logic;
         private Mat logic2show;
+
+        //逻辑画面、摄像头画面、显示画面的四个角坐标（顺序依次为左上、右上、左下、右下）
         private Point2f[] logicCorners;
         private Point2f[] camCorners;
         private Point2f[] showCorners;
 
+        //释放托管资源
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -720,6 +775,7 @@ namespace EDC21HOST
             cam2show = new Mat();
             logic2cam = new Mat();
 
+            //逻辑画面四角坐标设置
             logicCorners[0].X = 0;
             logicCorners[0].Y = 0;
             logicCorners[1].X = myFlags.logicSize.Width;
@@ -729,6 +785,7 @@ namespace EDC21HOST
             logicCorners[3].X = myFlags.logicSize.Width;
             logicCorners[3].Y = myFlags.logicSize.Height;
 
+            //显示画面四角坐标设置
             showCorners[0].X = 0;
             showCorners[0].Y = 0;
             showCorners[1].X = myFlags.showSize.Width;
@@ -738,6 +795,7 @@ namespace EDC21HOST
             showCorners[3].X = myFlags.showSize.Width;
             showCorners[3].Y = myFlags.showSize.Height;
 
+            //摄像头画面四角坐标设置
             camCorners[0].X = 0;
             camCorners[0].Y = 0;
             camCorners[1].X = myFlags.cameraSize.Width;
@@ -747,6 +805,7 @@ namespace EDC21HOST
             camCorners[3].X = myFlags.cameraSize.Width;
             camCorners[3].Y = myFlags.cameraSize.Height;
 
+            //通过投影变换函数计算变换矩阵
             show2cam = Cv2.GetPerspectiveTransform(showCorners, camCorners);
             cam2show = Cv2.GetPerspectiveTransform(camCorners, showCorners);
         }
@@ -757,14 +816,17 @@ namespace EDC21HOST
             if (corners.Length != 4) return;
             else showCorners = corners;
 
+            //计算几个变换矩阵
             logic2show = Cv2.GetPerspectiveTransform(logicCorners, showCorners);
             show2logic = Cv2.GetPerspectiveTransform(showCorners, logicCorners);
+            //将显示画面投影变换成摄像头画面，同时更新摄像头画面的四个角标
             camCorners = Cv2.PerspectiveTransform(showCorners, show2cam);
             cam2logic = Cv2.GetPerspectiveTransform(camCorners, logicCorners);
             logic2cam = Cv2.GetPerspectiveTransform(logicCorners, camCorners);
             myFlags.calibrated = true;
         }
 
+        //以下为变换函数：输入某一个画面对应的坐标，输出另一个画面对应的坐标
         public Point2f[] ShowToCamera(Point2f[] ptsShow)
         {
             return Cv2.PerspectiveTransform(ptsShow, show2cam);
@@ -795,6 +857,7 @@ namespace EDC21HOST
             return Cv2.PerspectiveTransform(ptsShow, show2logic);
         }
 
+        //将flags中人员的起始位置从逻辑坐标转换为摄像头坐标
         public void PeopleFilter(MyFlags flags)
         {
             if (!flags.calibrated) return;
@@ -807,8 +870,10 @@ namespace EDC21HOST
         }
     }
 
+    //定位器：进行图像处理，确定位置并且绘图
     public class Localiser
     {
+        //依次为小球、车1、车2位置的中心点集
         private List<Point2i> centres0;
         private List<Point2i> centres1;
         private List<Point2i> centres2;
@@ -821,6 +886,8 @@ namespace EDC21HOST
 
         }
 
+        //根据计算得到的中心点集，返回定位到的小车、小球坐标
+        //其中，小球坐标返回点数组，小车坐标返回中心点集中的第0个元素
         public void GetLocations(out Point2f[] pts0, out Point2i pt1, out Point2i pt2)
         {
             List<Point2f> ptsList0 = new List<Point2f>();
@@ -847,6 +914,7 @@ namespace EDC21HOST
             else pt2 = new Point2i(-1, -1);
         }
 
+        //定位核心代码
         public void Locate(Mat mat, MyFlags localiseFlags)
         {
             if (mat == null || mat.Empty()) return;
@@ -858,21 +926,32 @@ namespace EDC21HOST
             //using (Mat merged = new Mat())
             using (Mat black = new Mat(mat.Size(), MatType.CV_8UC1))
             {
+                //颜色空间转化：从RGB转化为HSV
+                //hue色调，sat饱和度，value亮度
                 Cv2.CvtColor(mat, hsv, ColorConversionCodes.RGB2HSV);
                 MyFlags.LocConfigs configs = localiseFlags.configs;
+
+                //二值化：将位于设定区间内的像素点灰度值设置为255，否则为0
+                //实现了目标颜色和其他颜色的区分
+                //Lower表示范围的最小值，Upper表示范围的最大值
+
+                //针对小球颜色的二值化
                 Cv2.InRange(hsv,
                     new Scalar(configs.hue0Lower, configs.saturation0Lower, configs.valueLower),
                     new Scalar(configs.hue0Upper, 255, 255),
                     ball);
+                //针对小车1颜色的二值化
                 Cv2.InRange(hsv,
                     new Scalar(configs.hue1Lower, configs.saturation1Lower, configs.valueLower),
                     new Scalar(configs.hue1Upper, 255, 255),
                     car1);
+                //针对小车2颜色的二值化
                 Cv2.InRange(hsv,
                     new Scalar(configs.hue2Lower, configs.saturation2Lower, configs.valueLower),
                     new Scalar(configs.hue2Upper, 255, 255),
                     car2);
 
+                //将二值化图像打印到窗口（蒙版画面，从setwindow中调出）上，以便后续调试
                 if (localiseFlags.showMask)
                 {
                     Cv2.ImShow("Ball", ball);
@@ -886,10 +965,15 @@ namespace EDC21HOST
 
                 Point2i[][] contours0, contours1, contours2;
 
+                //图像轮廓识别：根据二值化图象，识别值为255的色块轮廓
+                //参数解释：图像矩阵，扫描外围轮廓，只保留轮廓的拐点
+                //其返回值为轮廓上的拐点
                 contours0 = Cv2.FindContoursAsArray(ball, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                 contours1 = Cv2.FindContoursAsArray(car1, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                 contours2 = Cv2.FindContoursAsArray(car2, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
 
+                //根据拐点的图像矩来计算拐点的中心点坐标
+                //小球
                 foreach (Point2i[] c0 in contours0)
                 {
                     Point2i centre = new Point2i();
@@ -900,6 +984,7 @@ namespace EDC21HOST
                     if (area <= configs.areaLower / 9) continue;
                     centres0.Add(centre);
                 }
+                //小车1
                 foreach (Point2i[] c1 in contours1)
                 {
                     Point2i centre = new Point2i();
@@ -910,6 +995,7 @@ namespace EDC21HOST
                     if (area <= configs.areaLower) continue;
                     centres1.Add(centre);
                 }
+                //小车2
                 foreach (Point2i[] c2 in contours2)
                 {
                     Point2i centre = new Point2f();
@@ -922,6 +1008,7 @@ namespace EDC21HOST
                 }
 
                 //foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 3, new Scalar(0x1b, 0xa7, 0xff), -1);
+                //分别在小车1和小车2的位置上绘制圆圈
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
                 foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
                 if (localiseFlags.gameState != GameState.Unstart)
@@ -930,6 +1017,7 @@ namespace EDC21HOST
                     {
                         int x10 = localiseFlags.posPersonStart[i].X - 8;
                         int y10 = localiseFlags.posPersonStart[i].Y - 8;
+                        //在人员起始位置上绘制矩形
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
                     }
                 }

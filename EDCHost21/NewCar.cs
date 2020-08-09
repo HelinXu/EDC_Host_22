@@ -30,7 +30,7 @@ namespace EDC21HOST
         }
         public void  ObastaclePunishplus()
         {
-            ObastaclePunishNum++;
+            ObstaclePunishNum++; //前一个版本疑似typo（xhl）
         }
         public void WrongDirectionplus()
         {
@@ -48,7 +48,8 @@ namespace EDC21HOST
             UnderStop = 0;
             Area = 0;
             StopPunishNum = 0;
-            ObastaclePunishNum = 0;
+            //ObastaclePunishNum = 0;
+            ObstaclePunishNum = 0; //前一个版本疑似typo
             WrongDirectionNum = 0;
         }
     }
