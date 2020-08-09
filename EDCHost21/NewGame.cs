@@ -13,7 +13,6 @@ namespace EDC21HOST
     {
         public bool DebugMode; //调试模式，最大回合数 = 1,000,000
         public const int MaxSize = 280;
-        public const int MaxPackageNum = 2;
         public const int MazeCrossNum = 6;
         public const int MazeCrossDist = 30;//间隔的长度
         public const int MazeBorderPoint1 = 35;//迷宫最短的靠边距离
@@ -24,13 +23,13 @@ namespace EDC21HOST
         public int APauseNum = 0;//A暂停次数
         public int BPauseNum = 0;//B暂停次数
         public int GameCount; //上下半场等
-        public Camp GameCamp; //当前半场需完成“上半场”任务的一方
+        Camp GameCamp; //当前半场需完成“上半场”任务的一方
         public GameState State { get; set; }
         public Car CarA, CarB;
         public Passenger Passenger;
         public PassengerGenerator Generator1 { get; set; }
-        public PackageGenerator Generator2[];
-        public Package Package[];
+        public PackageGenerator[] Generator2;
+        public Package[] Package;
         public Obstacle Obstacle;
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
         public FileStream FoulTimeFS;
