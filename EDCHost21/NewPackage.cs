@@ -43,7 +43,7 @@ namespace EDC21HOST
         private Dot[] PackageDotArray;
         private int Package_idx;
         private int Packagenum;
-        public void PackageGenerator(int amount) //生成指定数量的人员
+        public PackageGenerator(int amount) //生成指定数量的人员
         {
             Package_idx = 0;
             Packagenum = amount;

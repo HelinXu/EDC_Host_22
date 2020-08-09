@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EDC21HOST
 {
-    enum Camp
+    public enum Camp
     {
         none=0,CampA,CampB
     };
@@ -49,7 +49,6 @@ namespace EDC21HOST
             Task = task;
             transport = 0;
             transportnum = 0;
-            UnderStop = 0;
             Area = 0;
             StopPunishNum = 0;
             //ObastaclePunishNum = 0;

@@ -32,7 +32,7 @@ namespace EDC21HOST
         private Dot[] PassengerfinalDotArray;
         private int Passengernum;
         private int Passenger_idx;
-        public void PassengerGenerator(int amount) //生成指定数量的人员
+        public PassengerGenerator(int amount) //生成指定数量的人员
         {
             Passenger_idx = 0;
             Passengernum = amount;
@@ -68,10 +68,10 @@ namespace EDC21HOST
 
         }
         //返回下一个人员的坐标
-        public Dot Next()
+        public Passenger Next()
         {
-            Dot temp;
-            temp = PackageDotArray[Passenger_idx++];
+            Passenger temp;
+            Dot startpos = PassengerstartDotArray[Passenger_idx++];
             return temp;
         }
         public void ResetIndex() { Passenger_idx = 0; } //package_idx复位
