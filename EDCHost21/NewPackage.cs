@@ -24,11 +24,11 @@ namespace EDC21HOST
     public class Package
     {
         public Dot Pos; //物资生成地点
-        public int Number { get; set; } //编号
-        public Package(Dot startDot, int number)
+        public int WhetherPicked { get; set; } //是否已经被获取0为未被获取1为已经被获取
+        public Package(Dot startDot)
         {
             Pos = startDot;
-            Number = number;
+            WhetherPicked=0;
         }
         public Package() : this(new Dot(0, 0), 0) { }
 

@@ -28,7 +28,7 @@ namespace EDC21HOST
         public Passenger Passenger;
         public PassengerGenerator PsgGenerator { get; set; }
         public PackageGenerator[] PkgGenerator;
-        public Dot[] PackageDot;
+        public Package PackageDot;
         public Stop Stop;
         public Obstacle Obstacle;
         public int StartTime;
@@ -136,7 +136,8 @@ namespace EDC21HOST
         {
             for(int i=0;i<MaxPackageNum;i++)
             {
-                PackageDot[i] = PkgGenerator[changenum].GetPackageDot(i);   //xhl把Package改成了Dot类型。
+                PackageDot[i].Pos = PkgGenerator[changenum].GetPackageDot(i);   //xhl把Package改成了Dot类型。
+                PackageDot[i].Whetherpicked = 0;                                //改回了Package类型，Package类型新加了一个int来判断包裹是否已经被取走
             }
         }
         public void UpdatePassenger()//更新乘客信息
@@ -145,49 +146,122 @@ namespace EDC21HOST
         }
         public void CarAGetPassenger()//小车A接到了乘客
         {
-            CarA.Picked();
+            if(GetDistance(CarA.pos,Passenger.startpos)<=MaxCarryDistance&&CarA.transport==0)
+            {
+                CarA.Picked();
+            }
+            
         }
         public void CarBGetPassenger()//小车B接到了乘客
         {
-            CarB.Picked();
+            if (GetDistance(CarB.pos, Passenger.startpos) <= MaxCarryDistance && CarA.transport==0)
+            {
+                CarB.Picked();
+            }
         }
         public void CarATransPassenger()//小车A成功运送了乘客
         {
-            CarA.Picked();
-            CarA.TransportNumplus();
+            
+            if(GetDistance(CarA.pos,Passenger.finalpos<=MaxCarryDistance && CarA.transport==1))
+            {
+                CarA.Picked();
+                CarA.TransportNumplus();
+            }
             UpdatePassenger();
         }
         public void CarBTransPassenger()//小车A成功运送了乘客
         {
-            CarB.Picked();
-            CarB.TransportNumplus();
+            if (GetDistance(CarB.pos, Passenger.finalpos <= MaxCarryDistance && CarB.transport == 1))
+            {
+                CarB.Picked();
+                CarB.TransportNumplus();
+            }
             UpdatePassenger();
         }
         public void CarAGetpackage()//小车A得到了包裹
         {
-            CarA.PickNumplus();
+            
+            for(int i;i<MaxPackageNum;i++)
+            {
+                if(GetDistance(CarA.pos,PackageDot[i])<=MaxCarryDistance && PackageDot[i].Whetherpicked==0)
+                {
+                    CarA.PickNumplus();
+                    PackageDot[i].Whetherpicked = 1;
+                }
+ 
+            }
+               
         }
         public void CarBGetpackage()//小车B得到了包裹
         {
-            CarB.PickNumplus();
+            for (int i; i < MaxPackageNum; i++)
+            {
+                if (GetDistance(CarB.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].Whetherpicked == 0)
+                {
+                    CarB.PickNumplus();
+                    PackageDot[i].Whetherpicked = 1;
+                }
+
+            }
         }
-        public void CarAonObstacle()//小车A到达了障碍上
+        /*public void CarAonObstacle()//小车A到达了障碍上              
         {
-            CarA.ObastaclePunishplus();
+            
+            if(GetDistance(CarA))                                              //待修改
+                CarA.ObastaclePunishplus();
         }
-        public void CarBonObstacle()//小车B到达了障碍上
+        public void CarBonObstacle()//小车B到达了障碍上               
         {
             CarB.ObastaclePunishplus();
-        }
-        public void CarAonStop()
+        }*/
+        public void CarAonStop()//A车到大障碍上
         {
-            CarA.StopPunishplus();
+            if (Stop.num == 0)
+            { }
+            else if(Stop.num==1)
+            {
+                if(GetDistance(CarA.pos,Stop.dot1)<=MaxCarryDistance)
+                {
+                    CarA.StopPunishplus();
+                }
+            }
+            else if(Stop.num==2)
+            {
+                if (GetDistance(CarA.pos, Stop.dot1) <= MaxCarryDistance)
+                {
+                    CarA.StopPunishplus();
+                }
+                if (GetDistance(CarA.pos, Stop.dot2) <= MaxCarryDistance)
+                {
+                    CarA.StopPunishplus();
+                }
+            }
+            
         }
         public void CarBonStop()
         {
-            CarB.StopPunishplus();
+            if (Stop.num == 0)
+            { }
+            else if (Stop.num == 1)
+            {
+                if (GetDistance(CarB.pos, Stop.dot1) <= MaxCarryDistance)
+                {
+                    CarB.StopPunishplus();
+                }
+            }
+            else if (Stop.num == 2)
+            {
+                if (GetDistance(CarB.pos, Stop.dot1) <= MaxCarryDistance)
+                {
+                    CarB.StopPunishplus();
+                }
+                if (GetDistance(CarB.pos, Stop.dot2) <= MaxCarryDistance)
+                {
+                    CarB.StopPunishplus();
+                }
+            }
         }
-        public void CarAWrongDirection()
+        /*public void CarAWrongDirection()
         {
             CarA.WrongDirectionplus();
         }
@@ -195,7 +269,7 @@ namespace EDC21HOST
         {
             CarB.WrongDirectionplus();
         }
-        public void SetStop(Dot stop)//上半场的小车设定障碍
+        public void SetStop(Dot stop)//上半场的小车设定障碍        //这里也需要加判断！！！！！！！！！！！！！！！！！！！！
         {
             if(Stop.num==0)
             {
@@ -207,7 +281,7 @@ namespace EDC21HOST
                 Stop.dot2 = stop;
                 Stop.num++;
             }
-        }
+        }*/
         public byte[] PackMessage()
         {
             byte[] message = new byte[40]; //上位机传递多少信息
