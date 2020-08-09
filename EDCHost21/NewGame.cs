@@ -83,14 +83,14 @@ namespace EDC21HOST
         {
             GameCount = 1;
             GameCamp = Camp.CampA;
-            CollectCamp = Camp.None;
             CarA = new Car(Camp.CampA);
             CarB = new Car(Camp.CampB);
-            People = new Person[MaxPersonNum];
-            Round = 0;
             State = GameState.Unstart;
-            Generator = new PersonGenerator(100);
-            InitialPerson();
+            Generator1 = new PassengerGenerator(100);
+            Generator2[0] = new PackageGenerator(6);
+            Generator2[1] = new PackageGenerator(6);
+            Generator2[2] = new PackageGenerator(6);
+            Generator2[3] = new PackageGenerator(6);
             DebugMode = false;
             FoulTimeFS = null;
         }
