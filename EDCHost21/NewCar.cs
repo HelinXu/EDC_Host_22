@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EDC21HOST
 {
-    enum Camp
+    public enum Camp
     {
         none=0,CampA,CampB
     };
@@ -31,14 +31,38 @@ namespace EDC21HOST
         public void StopPunishplus() //犯规
         {
             StopPunishNum++;
+            UpdateScore();
         }
         public void  ObastaclePunishplus()
         {
             ObstaclePunishNum++; //前一个版本疑似typo（xhl）
+            UpdateScore();
         }
         public void WrongDirectionplus()
         {
             WrongDirectionNum++;
+            UpdateScore();
+        }
+        public void TransportNumplus()
+        {
+            transportnum++;
+            UpdateScore();
+        }
+        public void PickNumplus()
+        {
+            Picknum++;
+            UpdateScore();
+        }
+        public void Picked()
+        {
+            if(transport==0)
+            {
+                transport = 1;
+            }
+            else
+            {
+                transport = 0;
+            }
         }
         public Car(Camp c,int task)
         {
@@ -49,12 +73,15 @@ namespace EDC21HOST
             Task = task;
             transport = 0;
             transportnum = 0;
-            UnderStop = 0;
             Area = 0;
             StopPunishNum = 0;
             //ObastaclePunishNum = 0;
             ObstaclePunishNum = 0; //前一个版本疑似typo
             WrongDirectionNum = 0;
+        }
+        public void UpdateScore()
+        {
+            Score = Picknum * PackageScore + transportnum * ResureScore - StopPunishNum * StopPunish - ObstaclePunish * ObstaclePunishNum - WrongDirectionNum * WrongDirectionPunish;
         }
     }
 }

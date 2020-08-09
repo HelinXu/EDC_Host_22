@@ -68,10 +68,12 @@ namespace EDC21HOST
 
         }
         //返回下一个人员的坐标
-        public Dot Next()
+        public Passenger Next()
         {
-            Dot temp;
-            temp = PackageDotArray[Passenger_idx++];
+            Passenger temp;
+            temp.startpos = PassengerstartDotArray[Passenger_idx];
+            temp.finalpos = PassengerfinalDotArray[Passenger_idx];
+            Passenger_idx = Passenger_idx + 1;
             return temp;
         }
         public void ResetIndex() { Passenger_idx = 0; } //package_idx复位
