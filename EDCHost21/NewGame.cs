@@ -21,7 +21,8 @@ namespace EDC21HOST
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
         public const int MaxPackageNum = 6;
 
-        public int GameCount; //上下半场等
+        public int GameCount; //上下半场 1是上半场 2是下半场
+        public int GameStage; //上下阶段 1是上阶段 2是下阶段
         public Camp GameCamp; //当前半场需完成“上半场”任务的一方
         public GameState State { get; set; }//比赛状态
         public Car CarA, CarB;//定义小车
@@ -33,6 +34,8 @@ namespace EDC21HOST
         public Obstacle Obstacle;
         public int StartTime;
         public int GameTime;
+        public int PackageCount;//用于记录现在的Package是第几波
+        public int LastWrongDirectionTime;
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
         public FileStream FoulTimeFS;
 
@@ -88,9 +91,10 @@ namespace EDC21HOST
         {
             return Math.Sqrt((A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y - B.y));
         }
-        public Game()//构造一个新的Game类 默认为CampA是先上半场
+        public Game()//构造一个新的Game类 默认为CampA是先上半场上一阶段进行
         {
             GameCount = 1;
+            GameStage = 1;
             GameCamp = Camp.CampA;
             CarA = new Car(Camp.CampA,0);
             CarB = new Car(Camp.CampB,1);
@@ -101,49 +105,101 @@ namespace EDC21HOST
             PkgGenerator[2] = new PackageGenerator(6);
             PkgGenerator[3] = new PackageGenerator(6);
             FoulTimeFS = null;
+            PackageCount = 0;
+            LastWrongDirectionTime = -10;
         }
-        
-        public void NextStage()//从上半场更换到下半场函数
-        {
-            State = GameState.Pause;
-            GameCamp = Camp.CampB;//上半场转换
-            PsgGenerator.ResetIndex();//Passenger的索引复位
-            if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
-            {
-                byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
-                FoulTimeFS.Write(data, 0, data.Length);
-            }
-            CarA.Task = 1;//交换A和B的任务
-            CarB.Task = 0;
-        }
+        //点击开始键时调用Start函数 上半场上一阶段、上半场下一阶段、下半场上一阶段、下半场下一阶段开始时需要这一函数都需要调用这一函数来开始
         public void Start() //开始比赛上下半场都用这个
         {
             State = GameState.Normal;
-
+            GameTime = 0;
             StartTime = GetCurrentTime().Hour * 3600 + GetCurrentTime().Minute * 60 + GetCurrentTime().Second;//记录比赛开始时候的时间
-        }
+        } 
+        //点击暂停比赛键时调用Pause函数
         public void Pause() //暂停比赛
         {
             State = GameState.Pause;
             GameTime = GameTime + GetCurrentTime().Hour * 3600 + GetCurrentTime().Minute * 60 + GetCurrentTime().Second - StartTime;//记录现在比赛已经进行了多少时间了
         }
-        public void Continue()//继续比赛
+        //半场交换函数自动调用依照时间控制
+        public void NextCount()//从上半场更换到下半场函数
+        {
+            if(GameCount==1&&GameStage==2&&GameTime==120)
+            {
+                State = GameState.Pause;
+                GameCamp = Camp.CampB;//上半场转换
+                PsgGenerator.ResetIndex();//Passenger的索引复位
+                if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
+                {
+                    byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
+                     FoulTimeFS.Write(data, 0, data.Length);
+                }
+                CarA.Task = 1;//交换A和B的任务
+                CarB.Task = 0;
+            }
+            
+        }
+        //半阶段交换函数自动调用依照时间控制
+        public void NextStage()
+        {
+            if(GameStage==1&&GameTime==60)
+            {
+                State = GameState.Pause;
+                UpdatePassenger();
+            }
+        }
+        //在暂停后需要摁下继续按钮来继续比赛
+        public void Continue()
         {
             State = GameState.Normal;
             StartTime = GetCurrentTime().Hour * 3600 + GetCurrentTime().Minute * 60 + GetCurrentTime().Second;
         }
-        public void UpdatePackage(int changenum)//到半点时更换Package函数changenum是第几次更换
+        //重置摁键对应的函数
+        public void Reset()
         {
-            for(int i=0;i<MaxPackageNum;i++)
+            Game = new Game();
+        }
+        //犯规键对应的函数
+        public void Foul()
+        {
+            if (GameCount == 1 && GameStage == 1)
             {
-                PackageDot[i].Pos = PkgGenerator[changenum].GetPackageDot(i);   //xhl把Package改成了Dot类型。
-                PackageDot[i].Whetherpicked = 0;                                //改回了Package类型，Package类型新加了一个int来判断包裹是否已经被取走
+                CarA.FoulNum++;
+            }
+            if (GameCount == 1 && GameStage == 2)
+            {
+                CarB.FoulNum++;
+            }
+            if (GameCount == 2 && GameStage == 1)
+            {
+                CarB.FoulNum++;
+            }
+            if (GameCount == 2 && GameStage == 2)
+            {
+                CarA.FoulNum++;
             }
         }
+        //每到半点自动更新Package信息函数
+        public void UpdatePackage()//到半点时更换Package函数
+        {
+            int changenum = GameTime / 30 + 1;
+            if(GameStage==2&&Packagenum<changenum)
+            {
+                for(int i=0;i<MaxPackageNum;i++)
+                {
+                    PackageDot[i].Pos = PkgGenerator[changenum].GetPackageDot(i);   //xhl把Package改成了Dot类型。
+                    PackageDot[i].Whetherpicked = 0;                                //改回了Package类型，Package类型新加了一个int来判断包裹是否已经被取走
+                }
+                PackageCount++;
+            }
+            
+        }
+        //下面为自动更新乘客信息函数
         public void UpdatePassenger()//更新乘客信息
         {
             Passenger = Generator.Next();
         }
+        //下面四个为接口
         public void CarAGetPassenger()//小车A接到了乘客
         {
             if(GetDistance(CarA.pos,Passenger.startpos)<=MaxCarryDistance&&CarA.transport==0)
@@ -178,6 +234,7 @@ namespace EDC21HOST
             }
             UpdatePassenger();
         }
+        //下面是两个关于包裹的接口
         public void CarAGetpackage()//小车A得到了包裹
         {
             
@@ -188,7 +245,6 @@ namespace EDC21HOST
                     CarA.PickNumplus();
                     PackageDot[i].Whetherpicked = 1;
                 }
- 
             }
                
         }
@@ -261,15 +317,55 @@ namespace EDC21HOST
                 }
             }
         }
-        /*public void CarAWrongDirection()
+        //逆行自动判断
+        public void CarAWrongDirection()
         {
-            CarA.WrongDirectionplus();
+            if (CarA.LastPos.X < 30 && CarA.Pos.X < 30 && CarA.LastPos.Y > 30 && CarA.LastPos.Y < 220 && CarA.Pos.Y > 30 && CarA.Pos.Y < 220 && CarA.Pos.Y > CarA.LastPos.Y && GameTime - LastWrongDirectionTime > 5)
+            {
+                CarA.FoulNumplus();
+                LastWrongDirectionTime = GameTime;
+            }
+            if (CarA.LastPos.X > 220 && CarA.Pos.X < 220 && CarA.LastPos.Y > 30 && CarA.LastPos.Y < 220 && CarA.Pos.Y > 30 && CarA.Pos.Y < 220 && CarA.Pos.Y < CarA.LastPos.Y && GameTime - LastWrongDirectionTime > 5)
+            {
+                CarA.FoulNumplus();
+                LastWrongDirectionTime = GameTime;
+            }
+            if (CarA.LastPos.Y < 30 && CarA.Pos.Y < 30 && CarA.LastPos.X > 30 && CarA.LastPos.X < 220 && CarA.Pos.X > 30 && CarA.Pos.X < 220 && CarA.Pos.X < CarA.LastPos.X && GameTime - LastWrongDirectionTime > 5)
+            {
+                CarA.FoulNumplus();
+                LastWrongDirectionTime = GameTime;
+            }
+            if (CarA.LastPos.Y > 220 && CarA.Pos.Y > 220 && CarA.LastPos.X > 30 && CarA.LastPos.X < 220 && CarA.Pos.X > 30 && CarA.Pos.X < 220 && CarA.Pos.X > CarA.LastPos.X && GameTime - LastWrongDirectionTime > 5)
+            {
+                CarA.FoulNumplus();
+                LastWrongDirectionTime = GameTime;
+            }
         }
+    }
         public void CarBWrongDirection()
         {
-            CarB.WrongDirectionplus();
+        if (CarB.LastPos.X < 30 && CarB.Pos.X < 30 && CarB.LastPos.Y > 30 && CarB.LastPos.Y < 220 && CarB.Pos.Y > 30 && CarB.Pos.Y < 220 && CarB.Pos.Y > CarB.LastPos.Y && GameTime - LastWrongDirectionTime > 5)
+        {
+            CarB.FoulNumplus()
+            LastWrongDirectionTime = GameTime;
         }
-        public void SetStop(Dot stop)//上半场的小车设定障碍        //这里也需要加判断！！！！！！！！！！！！！！！！！！！！
+        if (CarB.LastPos.X > 220 && CarB.Pos.X < 220 && CarB.LastPos.Y > 30 && CarB.LastPos.Y < 220 && CarB.Pos.Y > 30 && CarB.Pos.Y < 220 && CarB.Pos.Y < CarB.LastPos.Y && GameTime - LastWrongDirectionTime > 5)
+        {
+            CarB.FoulNumplus()
+            LastWrongDirectionTime = GameTime;
+        }
+        if (CarB.LastPos.Y < 30 && CarB.Pos.Y < 30 && CarB.LastPos.X > 30 && CarB.LastPos.X < 220 && CarB.Pos.X > 30 && CarB.Pos.X < 220 && CarB.Pos.X < CarB.LastPos.X && GameTime - LastWrongDirectionTime > 5)
+        {
+            CarB.FoulNumplus()
+            LastWrongDirectionTime = GameTime;
+        }
+        if (CarB.LastPos.Y > 220 && CarB.Pos.Y > 220 && CarB.LastPos.X > 30 && CarB.LastPos.X < 220 && CarB.Pos.X > 30 && CarB.Pos.X < 220 && CarB.Pos.X > CarB.LastPos.X && GameTime - LastWrongDirectionTime > 5)
+        {
+            CarB.FoulNumplus()
+            LastWrongDirectionTime = GameTime;
+        }
+    }
+        /*public void SetStop(Dot stop)//上半场的小车设定障碍        //这里也需要加判断！！！！！！！！！！！！！！！！！！！！
         {
             if(Stop.num==0)
             {

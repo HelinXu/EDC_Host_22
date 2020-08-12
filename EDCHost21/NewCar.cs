@@ -17,7 +17,9 @@ namespace EDC21HOST
         public int StopPunish = 15;//经过泄洪口惩罚15分;
         public int ObstaclePunish = 10;//经过虚拟障碍物惩罚15分;
         public int WrongDirectionPunish = 10;//逆行惩罚10分;
+        public int FoulPunish = 50;
         public Dot Pos;
+        public Dot LastPos;
         public Camp Who { get; set; }//A or B get、set直接两个封装好的函数
         public int Score { get; set; } //得分
         public int Picknum;//小车成功收集物资个数
@@ -28,6 +30,7 @@ namespace EDC21HOST
         public int StopPunishNum;//小车经过泄洪口的次数
         public int ObstaclePunishNum;//小车经过虚拟障碍的次数
         public int WrongDirectionNum;//小车逆行次数
+        public int FoulNum;//犯规摁键次数
         public void StopPunishplus() //犯规
         {
             StopPunishNum++;
@@ -51,6 +54,11 @@ namespace EDC21HOST
         public void PickNumplus()
         {
             Picknum++;
+            UpdateScore();
+        }
+        public void FoulNumplus()
+        {
+            FoulNum++;
             UpdateScore();
         }
         public void Picked()
@@ -81,7 +89,7 @@ namespace EDC21HOST
         }
         public void UpdateScore()
         {
-            Score = Picknum * PackageScore + transportnum * RescueScore - StopPunishNum * StopPunish - ObstaclePunish * ObstaclePunishNum - WrongDirectionNum * WrongDirectionPunish;
+            Score = Picknum * PackageScore + transportnum * RescueScore - StopPunishNum * StopPunish - ObstaclePunish * ObstaclePunishNum - WrongDirectionNum * WrongDirectionPunish - FoulNum * FoulPunish;
         }
     }
 }
