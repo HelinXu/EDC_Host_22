@@ -47,7 +47,7 @@ namespace EDCHOST21
         }
         public static bool InMaze(Dot dot)//确定点是否在迷宫内
         {
-            if (dot.x>=MazeBorderPoint1 && dot.x<=MazeBorderPoint2 && dot.y>=MazeBorderPoint1 && dot.y<=MazeBorderPoint2)
+            if (dot.x >= MazeBorderPoint1 && dot.x <= MazeBorderPoint2 && dot.y >= MazeBorderPoint1 && dot.y <= MazeBorderPoint2)
                 return true;
             else return false;
         }
@@ -80,13 +80,15 @@ namespace EDCHOST21
         //    //    }
         //    //}
         //}
+
+        /*0814xhl觉得这个没用，而且也应该写在Dot里。
         public static Dot OppoDots(Dot prevDot)//复制点
         {
             Dot newDots = new Dot();
             newDots.x = prevDot.y;
             newDots.y = prevDot.x;
             return newDots;
-        }
+        }*/
         public static double GetDistance(Dot A, Dot B)//得到两个点之间的距离
         {
             return Math.Sqrt((A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y - B.y));
@@ -96,8 +98,8 @@ namespace EDCHOST21
             GameCount = 1;
             GameStage = 1;
             GameCamp = Camp.CampA;
-            CarA = new Car(Camp.CampA,0);
-            CarB = new Car(Camp.CampB,1);
+            CarA = new Car(Camp.CampA, 0);
+            CarB = new Car(Camp.CampB, 1);
             State = GameState.Unstart;
             PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
             PkgGenerator[0] = new PackageGenerator(6);
@@ -114,7 +116,7 @@ namespace EDCHOST21
             State = GameState.Normal;
             GameTime = 0;
             StartTime = GetCurrentTime().Hour * 3600 + GetCurrentTime().Minute * 60 + GetCurrentTime().Second;//记录比赛开始时候的时间
-        } 
+        }
         //点击暂停比赛键时调用Pause函数
         public void Pause() //暂停比赛
         {
@@ -124,7 +126,7 @@ namespace EDCHOST21
         //半场交换函数自动调用依照时间控制
         public void NextCount()//从上半场更换到下半场函数
         {
-            if(GameCount==1&&GameStage==2&&GameTime==120)
+            if (GameCount == 1 && GameStage == 2 && GameTime == 120)
             {
                 State = GameState.Pause;
                 GameCamp = Camp.CampB;//上半场转换
@@ -132,17 +134,17 @@ namespace EDCHOST21
                 if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
                 {
                     byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
-                     FoulTimeFS.Write(data, 0, data.Length);
+                    FoulTimeFS.Write(data, 0, data.Length);
                 }
                 CarA.Task = 1;//交换A和B的任务
                 CarB.Task = 0;
             }
-            
+
         }
         //半阶段交换函数自动调用依照时间控制
         public void NextStage()
         {
-            if(GameStage==1&&GameTime==60)
+            if (GameStage == 1 && GameTime == 60)
             {
                 State = GameState.Pause;
                 UpdatePassenger();
@@ -157,7 +159,7 @@ namespace EDCHOST21
         //重置摁键对应的函数
         public void Reset()
         {
-            Game = new Game();
+            //Game = new Game();
         }
         //犯规键对应的函数
         public void Foul()
@@ -182,8 +184,9 @@ namespace EDCHOST21
         //每到半点自动更新Package信息函数
         public void UpdatePackage()//到半点时更换Package函数
         {
+            /*有错
             int changenum = GameTime / 30 + 1;
-            if(GameStage==2&&Packagenum<changenum)
+            if(GameStage == 2 && Packagenum < changenum)
             {
                 for(int i=0;i<MAX_PKG_NUM;i++)
                 {
@@ -192,33 +195,34 @@ namespace EDCHOST21
                 }
                 PackageCount++;
             }
-            
+            */
         }
         //下面为自动更新乘客信息函数
         public void UpdatePassenger()//更新乘客信息
         {
-            Passenger = Generator.Next();
+            //Passenger = Generator.Next();
         }
+        /*
         //下面四个为接口
         public void CarAGetPassenger()//小车A接到了乘客
         {
-            if(GetDistance(CarA.pos,Passenger.Start_Dot)<=MaxCarryDistance&&CarA.transport==0)
+            if (GetDistance(CarA.pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport == 0)
             {
                 CarA.Picked();
             }
-            
+
         }
         public void CarBGetPassenger()//小车B接到了乘客
         {
-            if (GetDistance(CarB.pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport==0)
+            if (GetDistance(CarB.pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport == 0)
             {
                 CarB.Picked();
             }
         }
         public void CarATransPassenger()//小车A成功运送了乘客
         {
-            
-            if(GetDistance(CarA.pos,Passenger.End_Dot<=MaxCarryDistance && CarA.transport==1))
+
+            if (GetDistance(CarA.pos, Passenger.End_Dot <= MaxCarryDistance && CarA.transport == 1))
             {
                 CarA.Picked();
                 CarA.TransportNumplus();
@@ -237,16 +241,16 @@ namespace EDCHOST21
         //下面是两个关于包裹的接口
         public void CarAGetpackage()//小车A得到了包裹
         {
-            
-            for(int i;i<MAX_PKG_NUM;i++)
+
+            for (int i; i < MAX_PKG_NUM; i++)
             {
-                if(GetDistance(CarA.pos,PackageDot[i])<=MaxCarryDistance && PackageDot[i].Whetherpicked==0)
+                if (GetDistance(CarA.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].Whetherpicked == 0)
                 {
                     CarA.PickNumplus();
                     PackageDot[i].Whetherpicked = 1;
                 }
             }
-               
+
         }
         public void CarBGetpackage()//小车B得到了包裹
         {
@@ -260,7 +264,7 @@ namespace EDCHOST21
 
             }
         }
-        /*public void CarAonObstacle()//小车A到达了障碍上              
+        public void CarAonObstacle()//小车A到达了障碍上              
         {
             
             if(GetDistance(CarA))                                              //待修改
@@ -269,19 +273,19 @@ namespace EDCHOST21
         public void CarBonObstacle()//小车B到达了障碍上               
         {
             CarB.ObastaclePunishplus();
-        }*/
+        }
         public void CarAonStop()//A车到大障碍上
         {
             if (Stop.num == 0)
             { }
-            else if(Stop.num==1)
+            else if (Stop.num == 1)
             {
-                if(GetDistance(CarA.pos,Stop.dot1)<=MaxCarryDistance)
+                if (GetDistance(CarA.pos, Stop.dot1) <= MaxCarryDistance)
                 {
                     CarA.StopPunishplus();
                 }
             }
-            else if(Stop.num==2)
+            else if (Stop.num == 2)
             {
                 if (GetDistance(CarA.pos, Stop.dot1) <= MaxCarryDistance)
                 {
@@ -292,7 +296,7 @@ namespace EDCHOST21
                     CarA.StopPunishplus();
                 }
             }
-            
+
         }
         public void CarBonStop()
         {
@@ -342,8 +346,8 @@ namespace EDCHOST21
             }
         }
     }
-        public void CarBWrongDirection()
-        {
+    public void CarBWrongDirection()
+    {
         if (CarB.LastPos.X < 30 && CarB.Pos.X < 30 && CarB.LastPos.Y > 30 && CarB.LastPos.Y < 220 && CarB.Pos.Y > 30 && CarB.Pos.Y < 220 && CarB.Pos.Y > CarB.LastPos.Y && GameTime - LastWrongDirectionTime > 5)
         {
             CarB.FoulNumplus()
@@ -365,78 +369,78 @@ namespace EDCHOST21
             LastWrongDirectionTime = GameTime;
         }
     }
-        /*public void SetStop(Dot stop)//上半场的小车设定障碍        //这里也需要加判断！！！！！！！！！！！！！！！！！！！！
+    public void SetStop(Dot stop)//上半场的小车设定障碍        //这里也需要加判断！！！！！！！！！！！！！！！！！！！！
+    {
+        if(Stop.num==0)
         {
-            if(Stop.num==0)
-            {
-                Stop.dot1 = stop;
-                Stop.num++;
-            }
-            if(Stop.num==1)
-            {
-                Stop.dot2 = stop;
-                Stop.num++;
-            }
-        }*/
-        public byte[] PackMessage()
-        {
-            byte[] message = new byte[40]; //上位机传递多少信息
-            int messageCnt = 0;
-            message[messageCnt++] = (byte)(Round >> 8);
-            message[messageCnt++] = (byte)Round;
-            message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)(InMaze(CarA.Pos) ? 1 : 0) << 5) | ((byte)(InMaze(CarB.Pos) ? 1 : 0) << 4)
-                | (CarA.Pos.x >> 5 & 0x08) | (CarA.Pos.y >> 6 & 0x04) | (CarB.Pos.x >> 7 & 0x02) | (CarB.Pos.y >> 8 & 0x01));
-            message[messageCnt++] = (byte)((People[0].StartPos.x >> 1 & 0x80) | (People[0].StartPos.y >> 2 & 0x40)
-                | (People[1].StartPos.x >> 3 & 0x20) | (People[1].StartPos.y >> 4 & 0x10)
-                | (BallDot.x >> 5 & 0x08) | (BallDot.y >> 6 & 0x04)
-                | ((byte)(NoBall ? 0 : 1) << 1) | ((byte)(GameCamp == Camp.CampA ? 1 : 0)));
-            message[messageCnt++] = !InMaze(CarA.Pos) ? (byte)CarA.Pos.x : (byte)0;
-            message[messageCnt++] = !InMaze(CarA.Pos) ? (byte)CarA.Pos.y : (byte)0;
-            message[messageCnt++] = !InMaze(CarB.Pos) ? (byte)CarB.Pos.x : (byte)0;
-            message[messageCnt++] = !InMaze(CarB.Pos) ? (byte)CarB.Pos.y : (byte)0;
-            for (int i = 0; i < MaxPersonNum; ++i)
-            {
-                message[messageCnt++] = (byte)People[i].StartPos.x;
-                message[messageCnt++] = (byte)People[i].StartPos.y;
-            }
-            message[messageCnt++] = (byte)BallDot.x;
-            message[messageCnt++] = (byte)BallDot.y;
-            message[messageCnt++] = (byte)(CarA.Score >> 8);
-            message[messageCnt++] = (byte)CarA.Score;
-            message[messageCnt++] = (byte)(CarB.Score >> 8);
-            message[messageCnt++] = (byte)CarB.Score;
-            message[messageCnt++] = (byte)CarA.PersonCnt;
-            message[messageCnt++] = (byte)CarB.PersonCnt;
-            message[messageCnt++] = (byte)CarA.BallGetCnt;
-            message[messageCnt++] = (byte)CarB.BallGetCnt;
-            message[messageCnt++] = (byte)CarA.BallOwnCnt;
-            message[messageCnt++] = (byte)CarB.BallOwnCnt;
-            ushort crc = Crc16(message, 28);
-            message[28] = (byte)(crc >> 8);
-            message[29] = (byte)crc;
-            message[30] = 0x0D;
-            message[31] = 0x0A;
-            return message;
+            Stop.dot1 = stop;
+            Stop.num++;
         }
-        /*ushort Crc16(byte[] data_p, byte length)
+        if(Stop.num==1)
         {
-            byte i, j;
-            ushort crc = 0xffff;
-            const ushort CRC_POLY = 0xa001; //0x8005反序
-
-            for (i = 0; i < length; ++i)
-            {
-                crc ^= (ushort)(0xff & data_p[i]);
-                for (j = 0; j < 8; j++)
-                {
-                    if ((crc & 0x0001) != 0)
-                        crc = (ushort)((crc >> 1) ^ CRC_POLY);
-                    else
-                        crc >>= 1;
-                }
-            }
-            // crc = (crc << 8) | (crc >> 8 & 0xff);
-            return crc;
-        }*/
+            Stop.dot2 = stop;
+            Stop.num++;
+        }
     }
+    public byte[] PackMessage()
+    {
+        byte[] message = new byte[40]; //上位机传递多少信息
+        int messageCnt = 0;
+        message[messageCnt++] = (byte)(Round >> 8);
+        message[messageCnt++] = (byte)Round;
+        message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)(InMaze(CarA.Pos) ? 1 : 0) << 5) | ((byte)(InMaze(CarB.Pos) ? 1 : 0) << 4)
+            | (CarA.Pos.x >> 5 & 0x08) | (CarA.Pos.y >> 6 & 0x04) | (CarB.Pos.x >> 7 & 0x02) | (CarB.Pos.y >> 8 & 0x01));
+        message[messageCnt++] = (byte)((People[0].StartPos.x >> 1 & 0x80) | (People[0].StartPos.y >> 2 & 0x40)
+            | (People[1].StartPos.x >> 3 & 0x20) | (People[1].StartPos.y >> 4 & 0x10)
+            | (BallDot.x >> 5 & 0x08) | (BallDot.y >> 6 & 0x04)
+            | ((byte)(NoBall ? 0 : 1) << 1) | ((byte)(GameCamp == Camp.CampA ? 1 : 0)));
+        message[messageCnt++] = !InMaze(CarA.Pos) ? (byte)CarA.Pos.x : (byte)0;
+        message[messageCnt++] = !InMaze(CarA.Pos) ? (byte)CarA.Pos.y : (byte)0;
+        message[messageCnt++] = !InMaze(CarB.Pos) ? (byte)CarB.Pos.x : (byte)0;
+        message[messageCnt++] = !InMaze(CarB.Pos) ? (byte)CarB.Pos.y : (byte)0;
+        for (int i = 0; i < MaxPersonNum; ++i)
+        {
+            message[messageCnt++] = (byte)People[i].StartPos.x;
+            message[messageCnt++] = (byte)People[i].StartPos.y;
+        }
+        message[messageCnt++] = (byte)BallDot.x;
+        message[messageCnt++] = (byte)BallDot.y;
+        message[messageCnt++] = (byte)(CarA.Score >> 8);
+        message[messageCnt++] = (byte)CarA.Score;
+        message[messageCnt++] = (byte)(CarB.Score >> 8);
+        message[messageCnt++] = (byte)CarB.Score;
+        message[messageCnt++] = (byte)CarA.PersonCnt;
+        message[messageCnt++] = (byte)CarB.PersonCnt;
+        message[messageCnt++] = (byte)CarA.BallGetCnt;
+        message[messageCnt++] = (byte)CarB.BallGetCnt;
+        message[messageCnt++] = (byte)CarA.BallOwnCnt;
+        message[messageCnt++] = (byte)CarB.BallOwnCnt;
+        ushort crc = Crc16(message, 28);
+        message[28] = (byte)(crc >> 8);
+        message[29] = (byte)crc;
+        message[30] = 0x0D;
+        message[31] = 0x0A;
+        return message;
+    }*/
+    /*ushort Crc16(byte[] data_p, byte length)
+    {
+        byte i, j;
+        ushort crc = 0xffff;
+        const ushort CRC_POLY = 0xa001; //0x8005反序
+
+        for (i = 0; i < length; ++i)
+        {
+            crc ^= (ushort)(0xff & data_p[i]);
+            for (j = 0; j < 8; j++)
+            {
+                if ((crc & 0x0001) != 0)
+                    crc = (ushort)((crc >> 1) ^ CRC_POLY);
+                else
+                    crc >>= 1;
+            }
+        }
+        // crc = (crc << 8) | (crc >> 8 & 0xff);
+        return crc;
+    }*/
+}
 }

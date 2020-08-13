@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 
 namespace EDCHOST21
 {
-
+    //说明（xhl）：1，目前的规则下，生成passenger应该是读取地图即可生成。同时还要保证上下半场是不变的。
+    //2，最终Game需要读取的是PkgList（其中应该包含24个Passenger），所以Game啥的可以先写起来。（外界要用的是GetPkgDot）
+    //3，具体如何生成，可以等地图写出来再说。
+    //这个类还需要大改动！
     public class PassengerGenerator //存储预备要用的物资信息
     {
         private Dot[] PassengerstartDotArray;
@@ -61,11 +64,12 @@ namespace EDCHOST21
             return temp;
         }
         public void ResetIndex() { Passenger_idx = 0; } //package_idx复位
-        public Dot CrossNo2Dot(int CrossNoX, int CrossNoY)
+        //从格点转化为int，传入坐标，返回Dot
+        public static Dot CrossNo2Dot(int CrossNoX, int CrossNoY)
         {
-            Dot temp;
-            temp.x = Game.MazeBorderPoint1 + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoX;
-            temp.y = Game.MazeBorderPoint1 + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoY;
+            int x = Game.MazeBorderPoint1 + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoX;
+            int y = Game.MazeBorderPoint1 + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoY;
+            Dot temp = new Dot(x, y);
             return temp;
         }
     }
