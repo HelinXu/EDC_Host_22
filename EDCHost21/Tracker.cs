@@ -10,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using Point2i = OpenCvSharp.Point;
 
-namespace EDC21HOST
+namespace EDCHOST21
 {
     public partial class Tracker : Form
     {

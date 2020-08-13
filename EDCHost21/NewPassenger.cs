@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 
 
-namespace EDC21HOST
+namespace EDCHOST21
 {
     public class Passenger//救援人员位置信息
     {

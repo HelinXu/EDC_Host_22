@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace EDC21HOST
+namespace EDCHOST21
 {
     public struct Dot //点
     {

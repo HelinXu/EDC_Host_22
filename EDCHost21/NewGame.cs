@@ -7,7 +7,7 @@ using System.IO;
 using System.Drawing;
 
 
-namespace EDC21HOST
+namespace EDCHOST21
 {
     public enum GameState { Unstart = 0, Normal = 1, Pause = 2, End = 3 };
     public class Game
@@ -16,8 +16,8 @@ namespace EDC21HOST
         public const int MaxSize = 280;
         public const int MazeCrossNum = 6;
         public const int MazeCrossDist = 30;//间隔的长度
-        public const int MazeBorderPoint1 = 35;//迷宫最短的靠边距离
-        public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * MazeCrossNum;//迷宫最长的靠边距离
+        public const int MazeBorderPoint1 = 35;//迷宫最短的靠边距离  xhl?
+        public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * MazeCrossNum;//迷宫最长的靠边距离 xhl?
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
         public const int MaxPackageNum = 6;
 
