@@ -9,23 +9,7 @@ using System.Threading.Tasks;
 
 namespace EDCHOST21
 {
-    public class Passenger//救援人员位置信息
-    {
-        public Dot startpos;
-        public Dot finalpos;
-        public Passenger(Dot startDot, Dot finalDot)
-        {
-            startpos = startDot;
-            finalpos = finalDot;
-        }
-        public Passenger() : this(new Dot(0,0), new Dot(0,0)) { } //0809xhl修正了缺少的括号
 
-        public void ResetInfo(Dot startDot, Dot finalDot)//重新生成位置
-        {
-            startpos = startDot;
-            finalpos = finalDot;
-        }
-    }
     public class PassengerGenerator //存储预备要用的物资信息
     {
         private Dot[] PassengerstartDotArray;
@@ -49,12 +33,12 @@ namespace EDCHOST21
                 do
                 {
                     same = 1;
-                    nextX1 = NRand.Next(Game.MazeCrossNum);//仍然需要改进Game.MazeCrossNum是上界
-                    nextY1 = NRand.Next(Game.MazeCrossNum);
+                    nextX1 = NRand.Next(Game.MAZE_CROSS_NUM);//仍然需要改进Game.MazeCrossNum是上界
+                    nextY1 = NRand.Next(Game.MAZE_CROSS_NUM);
                     dot1 = CrossNo2Dot(nextX1, nextY1);
                     PassengerstartDotArray[i] = dot1;
-                    nextX2 = NRand.Next(Game.MazeCrossNum);//仍然需要改进Game.MazeCrossNum是上界
-                    nextY2 = NRand.Next(Game.MazeCrossNum);
+                    nextX2 = NRand.Next(Game.MAZE_CROSS_NUM);//仍然需要改进Game.MazeCrossNum是上界
+                    nextY2 = NRand.Next(Game.MAZE_CROSS_NUM);
                     dot2 = CrossNo2Dot(nextX2, nextY2);
                     PassengerfinalDotArray[i] = dot2;
                     if(nextX1==nextX2 && nextY1==nextY2)
@@ -80,8 +64,8 @@ namespace EDCHOST21
         public Dot CrossNo2Dot(int CrossNoX, int CrossNoY)
         {
             Dot temp;
-            temp.x = Game.MazeBorderPoint1 + Game.MazeCrossDist / 2 + Game.MazeCrossDist * CrossNoX;
-            temp.y = Game.MazeBorderPoint1 + Game.MazeCrossDist / 2 + Game.MazeCrossDist * CrossNoY;
+            temp.x = Game.MazeBorderPoint1 + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoX;
+            temp.y = Game.MazeBorderPoint1 + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoY;
             return temp;
         }
     }

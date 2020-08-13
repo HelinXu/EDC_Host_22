@@ -13,13 +13,13 @@ namespace EDCHOST21
     public class Game
     {
         public bool DebugMode; //调试模式，最大回合数 = 1,000,000
-        public const int MaxSize = 280;
-        public const int MazeCrossNum = 6;
-        public const int MazeCrossDist = 30;//间隔的长度
+        public const int MAX_SIZE = 280;
+        public const int MAZE_CROSS_NUM = 6;
+        public const int MAZE_CROSS_DIST = 30;//间隔的长度
         public const int MazeBorderPoint1 = 35;//迷宫最短的靠边距离  xhl?
-        public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * MazeCrossNum;//迷宫最长的靠边距离 xhl?
+        public const int MazeBorderPoint2 = MazeBorderPoint1 + MAZE_CROSS_DIST * MAZE_CROSS_NUM;//迷宫最长的靠边距离 xhl?
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
-        public const int MaxPackageNum = 6;
+        public const int MAX_PKG_NUM = 6; //场上每次刷新package物资的个数
 
         public int GameCount; //上下半场 1是上半场 2是下半场
         public int GameStage; //上下阶段 1是上阶段 2是下阶段
@@ -30,7 +30,7 @@ namespace EDCHOST21
         public PassengerGenerator PsgGenerator { get; set; }
         public PackageGenerator[] PkgGenerator;
         public Package PackageDot;
-        public Stop Stop;
+        public Flood Stop;
         public Obstacle Obstacle;
         public int StartTime;
         public int GameTime;
@@ -185,9 +185,9 @@ namespace EDCHOST21
             int changenum = GameTime / 30 + 1;
             if(GameStage==2&&Packagenum<changenum)
             {
-                for(int i=0;i<MaxPackageNum;i++)
+                for(int i=0;i<MAX_PKG_NUM;i++)
                 {
-                    PackageDot[i].Pos = PkgGenerator[changenum].GetPackageDot(i);   //xhl把Package改成了Dot类型。
+                    PackageDot[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i);   //xhl把Package改成了Dot类型。
                     PackageDot[i].Whetherpicked = 0;                                //改回了Package类型，Package类型新加了一个int来判断包裹是否已经被取走
                 }
                 PackageCount++;
@@ -202,7 +202,7 @@ namespace EDCHOST21
         //下面四个为接口
         public void CarAGetPassenger()//小车A接到了乘客
         {
-            if(GetDistance(CarA.pos,Passenger.startpos)<=MaxCarryDistance&&CarA.transport==0)
+            if(GetDistance(CarA.pos,Passenger.Start_Dot)<=MaxCarryDistance&&CarA.transport==0)
             {
                 CarA.Picked();
             }
@@ -210,7 +210,7 @@ namespace EDCHOST21
         }
         public void CarBGetPassenger()//小车B接到了乘客
         {
-            if (GetDistance(CarB.pos, Passenger.startpos) <= MaxCarryDistance && CarA.transport==0)
+            if (GetDistance(CarB.pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport==0)
             {
                 CarB.Picked();
             }
@@ -218,7 +218,7 @@ namespace EDCHOST21
         public void CarATransPassenger()//小车A成功运送了乘客
         {
             
-            if(GetDistance(CarA.pos,Passenger.finalpos<=MaxCarryDistance && CarA.transport==1))
+            if(GetDistance(CarA.pos,Passenger.End_Dot<=MaxCarryDistance && CarA.transport==1))
             {
                 CarA.Picked();
                 CarA.TransportNumplus();
@@ -227,7 +227,7 @@ namespace EDCHOST21
         }
         public void CarBTransPassenger()//小车A成功运送了乘客
         {
-            if (GetDistance(CarB.pos, Passenger.finalpos <= MaxCarryDistance && CarB.transport == 1))
+            if (GetDistance(CarB.pos, Passenger.End_Dot <= MaxCarryDistance && CarB.transport == 1))
             {
                 CarB.Picked();
                 CarB.TransportNumplus();
@@ -238,7 +238,7 @@ namespace EDCHOST21
         public void CarAGetpackage()//小车A得到了包裹
         {
             
-            for(int i;i<MaxPackageNum;i++)
+            for(int i;i<MAX_PKG_NUM;i++)
             {
                 if(GetDistance(CarA.pos,PackageDot[i])<=MaxCarryDistance && PackageDot[i].Whetherpicked==0)
                 {
@@ -250,7 +250,7 @@ namespace EDCHOST21
         }
         public void CarBGetpackage()//小车B得到了包裹
         {
-            for (int i; i < MaxPackageNum; i++)
+            for (int i; i < MAX_PKG_NUM; i++)
             {
                 if (GetDistance(CarB.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].Whetherpicked == 0)
                 {

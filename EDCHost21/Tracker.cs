@@ -707,7 +707,7 @@ namespace EDCHOST21
             posCarB = new Point2i();
             showSize = new OpenCvSharp.Size(960, 720);
             cameraSize = new OpenCvSharp.Size(1280, 960);
-            logicSize = new OpenCvSharp.Size(Game.MaxSize, Game.MaxSize);
+            logicSize = new OpenCvSharp.Size(Game.MAX_SIZE, Game.MAX_SIZE);
             clickCount = 0;
             posPersonStart = new Point2i[Game.MaxPersonNum];
         }
