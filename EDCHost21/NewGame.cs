@@ -16,8 +16,9 @@ namespace EDC21HOST
         public const int MaxSize = 280;
         public const int MazeCrossNum = 6;
         public const int MazeCrossDist = 30;//间隔的长度
-        public const int MazeBorderPoint1 = 35;//迷宫最短的靠边距离
-        public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * MazeCrossNum;//迷宫最长的靠边距离
+        public const int MazeBorderPoint1 = 20;//迷宫最短的靠边距离
+        //迷宫最长的靠边距离
+        public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * (MazeCrossNum - 1);
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
         public const int MaxPackageNum = 6;
 
@@ -44,7 +45,8 @@ namespace EDC21HOST
         }
         public static bool InMaze(Dot dot)//确定点是否在迷宫内
         {
-            if (dot.x>=MazeBorderPoint1 && dot.x<=MazeBorderPoint2 && dot.y>=MazeBorderPoint1 && dot.y<=MazeBorderPoint2)
+            if (dot.x >= MazeBorderPoint1 && dot.x <= MazeBorderPoint2 
+                && dot.y >= MazeBorderPoint1 && dot.y <= MazeBorderPoint2)
                 return true;
             else return false;
         }
@@ -92,8 +94,8 @@ namespace EDC21HOST
         {
             GameCount = 1;
             GameCamp = Camp.CampA;
-            CarA = new Car(Camp.CampA,0);
-            CarB = new Car(Camp.CampB,1);
+            CarA = new Car(Camp.CampA, 0);
+            CarB = new Car(Camp.CampB, 1);
             State = GameState.Unstart;
             PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
             PkgGenerator[0] = new PackageGenerator(6);
@@ -141,7 +143,7 @@ namespace EDC21HOST
         }
         public void UpdatePassenger()//更新乘客信息
         {
-            Passenger = Generator.Next();
+            Passenger = PsgGenerator.Next();
         }
         public void CarAGetPassenger()//小车A接到了乘客
         {
