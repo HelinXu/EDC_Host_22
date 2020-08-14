@@ -1,4 +1,4 @@
-﻿namespace EDC21HOST
+﻿namespace EDCHOST21
 {
     partial class SetWindow
     {

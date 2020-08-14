@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EDCHOST21
+{
+    //0813xhl把struct改成了class
+    public class Dot //点
+    {
+        public int x;
+        public int y;
+        //构造函数
+        public Dot(int _x, int _y) { x = _x; y = _y; }
+
+        //运算符重载
+        public static bool operator ==(Dot a, Dot b)
+        {
+            return (a.x == b.x) && (a.y == b.y);
+        }
+        
+        public static bool operator !=(Dot a, Dot b)
+        {
+            return !(a == b);
+        }
+    }
+}

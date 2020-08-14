@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace EDC21HOST
+namespace EDCHOST21
 {
     static class Program
     {

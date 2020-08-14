@@ -4,20 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EDC21HOST
+namespace EDCHOST21
 {
+    //队名
     public enum Camp
     {
-        none=0,CampA,CampB
+        none = 0, CampA, CampB
     };
     public class Car //选手的车
     {
-        public int PackageScore = 10;//获取物资可以得到10分;
-        public int RescueScore = 30;//营救人员可以得到30分;
-        public int StopPunish = 15;//经过泄洪口惩罚15分;
-        public int ObstaclePunish = 10;//经过虚拟障碍物惩罚15分;
-        public int WrongDirectionPunish = 10;//逆行惩罚10分;
+        public const int PKG_CREDIT = 10;//获取物资可以得到10分;
+        public const int RESCUE_CREDIT = 30;//营救人员可以得到30分;
+        public const int FLOOD_PENALTY = 15;//经过泄洪口惩罚15分;
+        public const int OBST_PENALTY = 10;//经过虚拟障碍物惩罚15分;
+        public const int WRONG_DIR_PENALTY = 10;//逆行惩罚10分;
+        public const int FOUL_PENALTY = 50; //犯规扣分50分;
+
+
         public Dot Pos;
+        public Dot LastPos;
         public Camp Who { get; set; }//A or B get、set直接两个封装好的函数
         public int Score { get; set; } //得分
         public int Picknum;//小车成功收集物资个数
@@ -28,6 +33,7 @@ namespace EDC21HOST
         public int StopPunishNum;//小车经过泄洪口的次数
         public int ObstaclePunishNum;//小车经过虚拟障碍的次数
         public int WrongDirectionNum;//小车逆行次数
+        public int FoulNum;//犯规摁键次数
         public void StopPunishplus() //犯规
         {
             StopPunishNum++;
@@ -51,6 +57,11 @@ namespace EDC21HOST
         public void PickNumplus()
         {
             Picknum++;
+            UpdateScore();
+        }
+        public void FoulNumplus()
+        {
+            FoulNum++;
             UpdateScore();
         }
         public void Picked()
@@ -81,7 +92,7 @@ namespace EDC21HOST
         }
         public void UpdateScore()
         {
-            Score = Picknum * PackageScore + transportnum * RescueScore - StopPunishNum * StopPunish - ObstaclePunish * ObstaclePunishNum - WrongDirectionNum * WrongDirectionPunish;
+            Score = Picknum * PKG_CREDIT + transportnum * RESCUE_CREDIT - StopPunishNum * FLOOD_PENALTY - OBST_PENALTY * ObstaclePunishNum - WrongDirectionNum * WRONG_DIR_PENALTY - FoulNum * FOUL_PENALTY;
         }
     }
 }

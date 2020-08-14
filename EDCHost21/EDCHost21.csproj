@@ -87,12 +87,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dot.cs" />
+    <Compile Include="General.cs" />
     <Compile Include="NewCar.cs" />
     <Compile Include="NewGame.cs" />
     <Compile Include="NewObstacle.cs" />
-    <Compile Include="NewPackage.cs" />
-    <Compile Include="NewPassenger.cs" />
-    <Compile Include="NewStop.cs" />
+    <Compile Include="PassengerGenerator.cs" />
+    <Compile Include="Flood.cs" />
+    <Compile Include="Package.cs" />
+    <Compile Include="PackageGenerator.cs" />
+    <Compile Include="Passenger.cs" />
     <Compile Include="SetWindow.cs">
       <SubType>Form</SubType>
     </Compile>
