@@ -30,7 +30,7 @@ namespace EDCHOST21
         public PassengerGenerator PsgGenerator { get; set; }
         public PackageGenerator[] PkgGenerator;
         public Package PackageDot;
-        public Flood Stop;
+        public Flood Flood;
         public Obstacle Obstacle;
         public int StartTime;
         public int GameTime;
@@ -106,6 +106,7 @@ namespace EDCHOST21
             PkgGenerator[1] = new PackageGenerator(6);
             PkgGenerator[2] = new PackageGenerator(6);
             PkgGenerator[3] = new PackageGenerator(6);
+            Flood = new Flood(0);
             FoulTimeFS = null;
             PackageCount = 0;
             LastWrongDirectionTime = -10;
@@ -184,25 +185,22 @@ namespace EDCHOST21
         //每到半点自动更新Package信息函数
         public void UpdatePackage()//到半点时更换Package函数
         {
-            /*有错
             int changenum = GameTime / 30 + 1;
-            if(GameStage == 2 && Packagenum < changenum)
+            if(GameStage == 2 && PackageCount < changenum)
             {
                 for(int i=0;i<MAX_PKG_NUM;i++)
                 {
-                    PackageDot[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i);   //xhl把Package改成了Dot类型。
-                    PackageDot[i].Whetherpicked = 0;                                //改回了Package类型，Package类型新加了一个int来判断包裹是否已经被取走
+                    PackageDot[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i); 
+                    PackageDot[i].Whetherpicked = 0;                              
                 }
                 PackageCount++;
             }
-            */
         }
         //下面为自动更新乘客信息函数
         public void UpdatePassenger()//更新乘客信息
         {
-            //Passenger = Generator.Next();
+            Passenger = PsgGenerator.Next();
         }
-        /*
         //下面四个为接口
         public void CarAGetPassenger()//小车A接到了乘客
         {
@@ -222,7 +220,7 @@ namespace EDCHOST21
         public void CarATransPassenger()//小车A成功运送了乘客
         {
 
-            if (GetDistance(CarA.pos, Passenger.End_Dot <= MaxCarryDistance && CarA.transport == 1))
+            if (GetDistance(CarA.pos, Passenger.End_Dot) <= MaxCarryDistance && CarA.transport == 1)
             {
                 CarA.Picked();
                 CarA.TransportNumplus();
@@ -231,7 +229,7 @@ namespace EDCHOST21
         }
         public void CarBTransPassenger()//小车A成功运送了乘客
         {
-            if (GetDistance(CarB.pos, Passenger.End_Dot <= MaxCarryDistance && CarB.transport == 1))
+            if (GetDistance(CarB.pos, Passenger.End_Dot) <= MaxCarryDistance && CarB.transport == 1)
             {
                 CarB.Picked();
                 CarB.TransportNumplus();
@@ -244,10 +242,10 @@ namespace EDCHOST21
 
             for (int i; i < MAX_PKG_NUM; i++)
             {
-                if (GetDistance(CarA.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].Whetherpicked == 0)
+                if (GetDistance(CarA.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].IsPicked == false)
                 {
                     CarA.PickNumplus();
-                    PackageDot[i].Whetherpicked = 1;
+                    PackageDot[i].IsPicked = true;
                 }
             }
 
@@ -256,15 +254,15 @@ namespace EDCHOST21
         {
             for (int i; i < MAX_PKG_NUM; i++)
             {
-                if (GetDistance(CarB.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].Whetherpicked == 0)
+                if (GetDistance(CarB.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].IsPicked == false)
                 {
                     CarB.PickNumplus();
-                    PackageDot[i].Whetherpicked = 1;
+                    PackageDot[i].IsPicked = true;
                 }
 
             }
         }
-        public void CarAonObstacle()//小车A到达了障碍上              
+        /*public void CarAonObstacle()//小车A到达了障碍上              
         {
             
             if(GetDistance(CarA))                                              //待修改
@@ -274,7 +272,7 @@ namespace EDCHOST21
         {
             CarB.ObastaclePunishplus();
         }
-        public void CarAonStop()//A车到大障碍上
+        public void CarAonFlood()//A车到大障碍上
         {
             if (Stop.num == 0)
             { }
@@ -298,7 +296,7 @@ namespace EDCHOST21
             }
 
         }
-        public void CarBonStop()
+        public void CarBonFlood()
         {
             if (Stop.num == 0)
             { }
