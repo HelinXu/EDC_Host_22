@@ -14,9 +14,9 @@ namespace EDCHOST21
     {
         public bool DebugMode; //调试模式，最大回合数 = 1,000,000
         public const int MAX_SIZE = 280;
-        public const int MAZE_CROSS_NUM = 6;
-        public const int MAZE_CROSS_DIST = 30;//间隔的长度
-        public const int MazeBorderPoint1 = 35;//迷宫最短的靠边距离  xhl?
+        public const int MAZE_CROSS_NUM = 6; //迷宫由几条线交叉而成
+        public const int MAZE_CROSS_DIST = 30; //间隔的长度
+        public const int MazeBorderPoint1 = 35; //迷宫最短的靠边距离  xhl?
         public const int MazeBorderPoint2 = MazeBorderPoint1 + MAZE_CROSS_DIST * MAZE_CROSS_NUM;//迷宫最长的靠边距离 xhl?
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
         public const int MAX_PKG_NUM = 6; //场上每次刷新package物资的个数
