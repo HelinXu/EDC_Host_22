@@ -78,7 +78,7 @@ namespace EDCHOST21
         public Car(Camp c,int task)
         {
             Who = c;
-            Pos = new Dot();
+            Pos = new Dot(0,0);
             Score = 0;
             Picknum = 0;
             Task = task;
