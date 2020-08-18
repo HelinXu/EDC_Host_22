@@ -10,6 +10,7 @@ using System.Drawing;
 namespace EDCHOST21
 {
     public enum GameState { Unstart = 0, Normal = 1, Pause = 2, End = 3 };
+
     public class Game
     {
         public bool DebugMode; //调试模式，最大回合数 = 1,000,000

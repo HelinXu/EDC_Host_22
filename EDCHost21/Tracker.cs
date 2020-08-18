@@ -657,13 +657,17 @@ namespace EDCHOST21
 
     public class MyFlags
     {
-        public bool showMask; //调试颜色识别
-        public bool running;
-        public bool calibrated;
+        public bool showMask;    //调试颜色识别
+        public bool running;     //比赛是否正在进行
+        public bool calibrated;  //地图是否被校准
         public bool videomode;
         public int clickCount;
 
+        //人员状况：被困、在小车上还未到指定点、到达运送目标点
+        public enum PersonState { TRAPPED, INCAR, RESCUED};
+
         //图像识别参数
+        //HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
         public struct LocConfigs
         {
             public int hue0Lower;
@@ -685,31 +689,46 @@ namespace EDCHOST21
         public OpenCvSharp.Size cameraSize;
         public OpenCvSharp.Size logicSize;
 
-        //当前小球和小车的坐标
-        public Point2i[] posBalls;
+        //当前小车的坐标
         public Point2i posCarA;
         public Point2i posCarB;
 
-        //人员起始坐标
-        public Point2i[] posPersonStart;
-        public int currPersonNum;
+        //防汛物资的坐标
+        public Point2i[] posPackages;
+        
+        //人员起始坐标和待运输的位置坐标
+        public Point2i posPersonStart;
+        public Point2i posPersonEnd;
+
+        //目前场上被困人员的状况（同一时间场上最多1个被困人员）
+        public PersonState personState;
+
+        //比赛状态：未开始、正常进行、暂停、结束
         public GameState gameState;
 
         public void Init()
         {
+            //初始化比赛状况相关数据
             showMask = false;
             running = false;
             calibrated = false;
             videomode = false;
             configs = new LocConfigs();
-            posBalls = new Point2i[0];
+            posPackages = new Point2i[0];
             posCarA = new Point2i();
             posCarB = new Point2i();
+
+            //以下数据待定，根据实际设备确定
             showSize = new OpenCvSharp.Size(960, 720);
             cameraSize = new OpenCvSharp.Size(1280, 960);
             logicSize = new OpenCvSharp.Size(Game.MAX_SIZE, Game.MAX_SIZE);
+
+            //点击次数（暂不懂什么意思）
             clickCount = 0;
-            posPersonStart = new Point2i[Game.MaxPersonNum];
+
+            //初始化人员位置
+            posPersonStart = new Point2i();
+            posPersonEnd = new Point2i();
         }
 
         public void Start()
@@ -765,9 +784,13 @@ namespace EDCHOST21
 
         public CoordinateConverter(MyFlags myFlags)
         {
+            //相机拍摄的地图
             camCorners = new Point2f[4];
+            //内存中存储的逻辑的地图
             logicCorners = new Point2f[4];
+            //在屏幕上显示的地图
             showCorners = new Point2f[4];
+
             cam2logic = new Mat();
             show2cam = new Mat();
             logic2show = new Mat();
@@ -820,13 +843,16 @@ namespace EDCHOST21
             logic2show = Cv2.GetPerspectiveTransform(logicCorners, showCorners);
             show2logic = Cv2.GetPerspectiveTransform(showCorners, logicCorners);
             //将显示画面投影变换成摄像头画面，同时更新摄像头画面的四个角标
+            //（没看懂为什么）
             camCorners = Cv2.PerspectiveTransform(showCorners, show2cam);
             cam2logic = Cv2.GetPerspectiveTransform(camCorners, logicCorners);
             logic2cam = Cv2.GetPerspectiveTransform(logicCorners, camCorners);
+            //标记为已校正
             myFlags.calibrated = true;
         }
 
-        //以下为变换函数：输入某一个画面对应的坐标，输出另一个画面对应的坐标
+        //以下为变换函数：输入某一个画面对应的坐标序列，
+        //通过透视（投影）矩阵的作用，输出另一个画面对应的坐标序列。
         public Point2f[] ShowToCamera(Point2f[] ptsShow)
         {
             return Cv2.PerspectiveTransform(ptsShow, show2cam);
@@ -860,13 +886,13 @@ namespace EDCHOST21
         //将flags中人员的起始位置从逻辑坐标转换为摄像头坐标
         public void PeopleFilter(MyFlags flags)
         {
+            //如果图像还未被校正，直接返回
             if (!flags.calibrated) return;
-
-            for (int i = 0; i < flags.currPersonNum; ++i)
-            {
-                Point2f[] res = LogicToCamera(new Point2f[] { flags.posPersonStart[i] });
-                flags.posPersonStart[i] = res[0];
-            }
+            //因为被困人员同一时间在场上只有1个，其实只要计算1个坐标变换
+            //但是还是将这1个坐标构造成了坐标点列方便调用已有函数
+            Point2f[] res = LogicToCamera(new Point2f[] { flags.posPersonStart });
+            //此句存疑（yd）
+            flags.posPersonStart = res[0];
         }
     }
 

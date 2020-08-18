@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Collections;
 
 namespace EDCHOST21
 {
@@ -20,14 +20,20 @@ namespace EDCHOST21
 
     public class Obstacle
     {
-        private int BarNum;
-        private Wall[] Bars;
+        private int WallNum;
+        private ArrayList WallList;
 
-        public void AddBar(Wall[] NewBar)
+        public Obstacle(int iNum, Wall[] iList)
         {
-            int Nums = NewBar.Length;
-            Bars = new Wall[Nums];
-            Bars = NewBar;
+            for (int i = 0; i < iNum; i++)
+            {
+
+            }
+        }
+
+        public void AddWall(Wall NewWall)
+        {
         }
     }
+
 }
