@@ -50,14 +50,14 @@ namespace EDCHOST21
 
         public Dot CarALocation()
         {
-            Dot D = new Dot();
+            Dot D = new Dot(0, 0);
             D.x = car1.X;
             D.y = car1.Y;
             return D;
         }
         public Dot CarBLocation()
         {
-            Dot D = new Dot();
+            Dot D = new Dot(0, 0);
             D.x = car2.X;
             D.y = car2.Y;
             return D;
@@ -136,9 +136,9 @@ namespace EDCHOST21
                 capture.ConvertRgb = true;
 
                 //设置计时器timer100ms的触发间隔：75ms
-                timer100ms.Interval = 75;
+                timer.Interval = 75;
                 //计时器事件开始：间隔75ms执行Flush
-                timer100ms.Start();
+                timer.Start();
                 //Cv2.NamedWindow("binary");
             }
 
@@ -290,7 +290,7 @@ namespace EDCHOST21
             {
                 flags.End();
             }
-            timer100ms.Stop();
+            timer.Stop();
             //threadCamera.Join();
             capture.Release();
             if (serial1 != null && serial1.IsOpen)
@@ -448,7 +448,7 @@ namespace EDCHOST21
         {
             if (game.APauseNum < 3)
             {
-                game.AskPause(Camp.CampA);
+                game.AskPause(Camp.CMP_A);
                 buttonPause.Enabled = false;
                 buttonEnd.Enabled = false;
                 buttonStart.Enabled = true;
@@ -461,7 +461,7 @@ namespace EDCHOST21
         {
             if (game.BPauseNum < 3)
             {
-                game.AskPause(Camp.CampB);
+                game.AskPause(Camp.CMP_B);
                 buttonPause.Enabled = false;
                 buttonEnd.Enabled = false;
                 buttonStart.Enabled = true;
@@ -530,7 +530,7 @@ namespace EDCHOST21
         private void button_AFoul1_Click(object sender, EventArgs e)
         {
             game.AFoul1++;
-            game.AddScore(Camp.CampA, Score.Foul1);
+            game.AddScore(Camp.CMP_A, Score.Foul1);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"A -10 {game.Round}\r\n");
@@ -541,7 +541,7 @@ namespace EDCHOST21
         private void button_AFoul2_Click(object sender, EventArgs e)
         {
             game.AFoul2++;
-            game.AddScore(Camp.CampA, Score.Foul2);
+            game.AddScore(Camp.CMP_A, Score.Foul2);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"A -50 {game.Round}\r\n");
@@ -552,7 +552,7 @@ namespace EDCHOST21
         private void button_BFoul1_Click(object sender, EventArgs e)
         {
             game.BFoul1++;
-            game.AddScore(Camp.CampB, Score.Foul1);
+            game.AddScore(Camp.CMP_B, Score.Foul1);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"B -10 {game.Round}\r\n");
@@ -563,7 +563,7 @@ namespace EDCHOST21
         private void button_BFoul2_Click(object sender, EventArgs e)
         {
             game.BFoul2++;
-            game.AddScore(Camp.CampB, Score.Foul2);
+            game.AddScore(Camp.CMP_B, Score.Foul2);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"B -50 {game.Round}\r\n");
@@ -575,7 +575,7 @@ namespace EDCHOST21
         {
             if (game.State == GameState.Normal)
             {
-                game.AddScore(Camp.CampA, Score.BallGetScore);
+                game.AddScore(Camp.CMP_A, Score.BallGetScore);
                 game.CarA.BallGetCnt++;
                 game.CarA.HaveBall = true;
             }
@@ -583,7 +583,7 @@ namespace EDCHOST21
             {
                 if (game.CarA.HaveBall)
                 {
-                    game.AddScore(Camp.CampA, Score.BallStoreScore);
+                    game.AddScore(Camp.CMP_A, Score.BallStoreScore);
                     game.CarA.BallOwnCnt++;
                     game.CarA.HaveBall = false;
                 }
@@ -594,7 +594,7 @@ namespace EDCHOST21
         {
             if (game.State == GameState.Normal)
             {
-                game.AddScore(Camp.CampB, Score.BallGetScore);
+                game.AddScore(Camp.CMP_B, Score.BallGetScore);
                 game.CarB.BallGetCnt++;
                 game.CarB.HaveBall = true;
             }
@@ -602,7 +602,7 @@ namespace EDCHOST21
             {
                 if (game.CarB.HaveBall)
                 {
-                    game.AddScore(Camp.CampB, Score.BallStoreScore);
+                    game.AddScore(Camp.CMP_B, Score.BallStoreScore);
                     game.CarB.BallOwnCnt++;
                     game.CarB.HaveBall = false;
                 }

@@ -9,7 +9,7 @@ namespace EDCHOST21
     //队名
     public enum Camp
     {
-        none = 0, CampA, CampB
+        NONE = 0, CMP_A, CMP_B
     };
     public class Car //选手的车
     {
