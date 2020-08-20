@@ -10,13 +10,14 @@ using System.Drawing;
 namespace EDCHOST21
 {
     public enum GameState { Unstart = 0, Normal = 1, Pause = 2, End = 3 };
+
     public class Game
     {
         public bool DebugMode; //调试模式，最大回合数 = 1,000,000
         public const int MAX_SIZE = 280;
-        public const int MAZE_CROSS_NUM = 6;
-        public const int MAZE_CROSS_DIST = 30;//间隔的长度
-        public const int MazeBorderPoint1 = 35;//迷宫最短的靠边距离  xhl?
+        public const int MAZE_CROSS_NUM = 6; //迷宫由几条线交叉而成
+        public const int MAZE_CROSS_DIST = 30; //间隔的长度
+        public const int MazeBorderPoint1 = 35; //迷宫最短的靠边距离  xhl?
         public const int MazeBorderPoint2 = MazeBorderPoint1 + MAZE_CROSS_DIST * MAZE_CROSS_NUM;//迷宫最长的靠边距离 xhl?
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
         public const int MAX_PKG_NUM = 6; //场上每次刷新package物资的个数
@@ -115,18 +116,18 @@ namespace EDCHOST21
         {
             State = GameState.Normal;
             GameTime = 0;
-            StartTime = GetCurrentTime().Hour * 36000 + GetCurrentTime().Minute * 600 + GetCurrentTime().Second*10;//记录比赛开始时候的时间
+            StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000;//记录比赛开始时候的时间
         }
         //点击暂停比赛键时调用Pause函数
         public void Pause() //暂停比赛
         {
             State = GameState.Pause;
-            GameTime = GameTime + GetCurrentTime().Hour * 36000 + GetCurrentTime().Minute * 600 + GetCurrentTime().Second*10 - StartTime;//记录现在比赛已经进行了多少时间了
+            GameTime = GameTime + GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000 - StartTime;//记录现在比赛已经进行了多少时间了
         }
         //半场交换函数自动调用依照时间控制
         public void NextCount()//从上半场更换到下半场函数
         {
-            if (GameCount == 1 && GameStage == 2 && GameTime == 1200)
+            if (GameCount == 1 && GameStage == 2 && GameTime == 120000)
             {
                 State = GameState.Pause;
                 GameCamp = Camp.CMP_B;//上半场转换
@@ -144,7 +145,7 @@ namespace EDCHOST21
         //半阶段交换函数自动调用依照时间控制
         public void NextStage()
         {
-            if (GameStage == 1 && GameTime == 600)
+            if (GameStage == 1 && GameTime == 60000)
             {
                 State = GameState.Pause;
                 UpdatePassenger();
@@ -154,7 +155,7 @@ namespace EDCHOST21
         public void Continue()
         {
             State = GameState.Normal;
-            StartTime = GetCurrentTime().Hour * 36000 + GetCurrentTime().Minute * 600 + GetCurrentTime().Second*10;
+            StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000;
         }
         //重置摁键对应的函数
         public void Reset()
@@ -190,7 +191,7 @@ namespace EDCHOST21
                 for(int i=0;i<MAX_PKG_NUM;i++)
                 {
                     PackageDot[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i); 
-                    PackageDot[i].Whetherpicked = 0;                              
+                    PackageDot[i].IsPicked = false;                              
                 }
                 PackageCount++;
             }
@@ -203,7 +204,7 @@ namespace EDCHOST21
         //下面四个为接口
         public void CarAGetPassenger()//小车A接到了乘客
         {
-            if (GetDistance(CarA.pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport == 0)
+            if (GetDistance(CarA.Pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport == 0)
             {
                 CarA.Picked();
             }
@@ -211,7 +212,7 @@ namespace EDCHOST21
         }
         public void CarBGetPassenger()//小车B接到了乘客
         {
-            if (GetDistance(CarB.pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport == 0)
+            if (GetDistance(CarB.Pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport == 0)
             {
                 CarB.Picked();
             }
@@ -219,7 +220,7 @@ namespace EDCHOST21
         public void CarATransPassenger()//小车A成功运送了乘客
         {
 
-            if (GetDistance(CarA.pos, Passenger.End_Dot) <= MaxCarryDistance && CarA.transport == 1)
+            if (GetDistance(CarA.Pos, Passenger.End_Dot) <= MaxCarryDistance && CarA.transport == 1)
             {
                 CarA.Picked();
                 CarA.TransportNumplus();
@@ -228,7 +229,7 @@ namespace EDCHOST21
         }
         public void CarBTransPassenger()//小车A成功运送了乘客
         {
-            if (GetDistance(CarB.pos, Passenger.End_Dot) <= MaxCarryDistance && CarB.transport == 1)
+            if (GetDistance(CarB.Pos, Passenger.End_Dot) <= MaxCarryDistance && CarB.transport == 1)
             {
                 CarB.Picked();
                 CarB.TransportNumplus();
@@ -239,9 +240,9 @@ namespace EDCHOST21
         public void CarAGetpackage()//小车A得到了包裹
         {
 
-            for (int i; i < MAX_PKG_NUM; i++)
+            for (int i=0; i < MAX_PKG_NUM; i++)
             {
-                if (GetDistance(CarA.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].IsPicked == false)
+                if (GetDistance(CarA.Pos, PackageDot[i].Pos) <= MaxCarryDistance && PackageDot[i].IsPicked == false)
                 {
                     CarA.PickNumplus();
                     PackageDot[i].IsPicked = true;
@@ -251,9 +252,9 @@ namespace EDCHOST21
         }
         public void CarBGetpackage()//小车B得到了包裹
         {
-            for (int i; i < MAX_PKG_NUM; i++)
+            for (int i=0; i < MAX_PKG_NUM; i++)
             {
-                if (GetDistance(CarB.pos, PackageDot[i]) <= MaxCarryDistance && PackageDot[i].IsPicked == false)
+                if (GetDistance(CarB.Pos, PackageDot[i].Pos) <= MaxCarryDistance && PackageDot[i].IsPicked == false)
                 {
                     CarB.PickNumplus();
                     PackageDot[i].IsPicked = true;
@@ -280,7 +281,7 @@ namespace EDCHOST21
                 { }
                 else if (Flood.num == 1)
                 {
-                    if (GetDistance(CarA.pos, Flood.dot1) <= MaxCarryDistance)
+                    if (GetDistance(CarA.Pos, Flood.dot1) <= MaxCarryDistance)
                     {
 
                         CarA.StopPunishplus();
@@ -289,11 +290,11 @@ namespace EDCHOST21
                 else if (Flood.num == 2)
                 {
 
-                    if (GetDistance(CarA.pos, Flood.dot1) <= MaxCarryDistance)
+                    if (GetDistance(CarA.Pos, Flood.dot1) <= MaxCarryDistance)
                     {
                         CarA.StopPunishplus();
                     }
-                    if (GetDistance(CarA.pos, Flood.dot2) <= MaxCarryDistance)
+                    if (GetDistance(CarA.Pos, Flood.dot2) <= MaxCarryDistance)
                     {
                         CarA.StopPunishplus();
                     }
@@ -303,13 +304,13 @@ namespace EDCHOST21
         }
         public void CarBonFlood()
         {
-            if (Carb.Task == 1)//在下半场的时候才应该判断小车是否经过Flood
+            if (CarB.Task == 1)//在下半场的时候才应该判断小车是否经过Flood
             {
                 if (Flood.num == 0)
                 { }
                 else if (Flood.num == 1)
                 {
-                    if (GetDistance(CarB.pos, Flood.dot1) <= MaxCarryDistance)
+                    if (GetDistance(CarB.Pos, Flood.dot1) <= MaxCarryDistance)
                     {
 
                         CarB.StopPunishplus();
@@ -318,11 +319,11 @@ namespace EDCHOST21
                 else if (Flood.num == 2)
                 {
 
-                    if (GetDistance(CarB.pos, Flood.dot1) <= MaxCarryDistance)
+                    if (GetDistance(CarB.Pos, Flood.dot1) <= MaxCarryDistance)
                     {
                         CarB.StopPunishplus();
                     }
-                    if (GetDistance(CarB.pos, Flood.dot2) <= MaxCarryDistance)
+                    if (GetDistance(CarB.Pos, Flood.dot2) <= MaxCarryDistance)
                     {
                         CarB.StopPunishplus();
                     }
@@ -330,54 +331,53 @@ namespace EDCHOST21
 
             }
         }
-        /*//逆行自动判断//目前为思路两次逆行之间间隔时间判断为5s，这5s之间的逆行忽略不计
+        //逆行自动判断//目前为思路两次逆行之间间隔时间判断为5s，这5s之间的逆行忽略不计
         public void CarAWrongDirection()
         {
-            if (CarA.LastPos.X < 30 && CarA.Pos.X < 30 && CarA.LastPos.Y > 30 && CarA.LastPos.Y < 220 && CarA.Pos.Y > 30 && CarA.Pos.Y < 220 && CarA.Pos.Y > CarA.LastPos.Y && GameTime - LastWrongDirectionTime > 50)
+            if (CarA.LastPos.x < 30 && CarA.Pos.x < 30 && CarA.LastPos.y > 30 && CarA.LastPos.y < 220 && CarA.Pos.y > 30 && CarA.Pos.y < 220 && CarA.Pos.y > CarA.LastPos.y && GameTime - LastWrongDirectionTime > 50)
             {
                 CarA.FoulNumplus();
                 LastWrongDirectionTime = GameTime;
             }
-            if (CarA.LastPos.X > 220 && CarA.Pos.X < 220 && CarA.LastPos.Y > 30 && CarA.LastPos.Y < 220 && CarA.Pos.Y > 30 && CarA.Pos.Y < 220 && CarA.Pos.Y < CarA.LastPos.Y && GameTime - LastWrongDirectionTime > 50)
+            if (CarA.LastPos.x > 220 && CarA.Pos.x < 220 && CarA.LastPos.y > 30 && CarA.LastPos.y < 220 && CarA.Pos.y > 30 && CarA.Pos.y < 220 && CarA.Pos.y < CarA.LastPos.y && GameTime - LastWrongDirectionTime > 50)
             {
                 CarA.FoulNumplus();
                 LastWrongDirectionTime = GameTime;
             }
-            if (CarA.LastPos.Y < 30 && CarA.Pos.Y < 30 && CarA.LastPos.X > 30 && CarA.LastPos.X < 220 && CarA.Pos.X > 30 && CarA.Pos.X < 220 && CarA.Pos.X < CarA.LastPos.X && GameTime - LastWrongDirectionTime > 50)
+            if (CarA.LastPos.y < 30 && CarA.Pos.y < 30 && CarA.LastPos.x > 30 && CarA.LastPos.x < 220 && CarA.Pos.x > 30 && CarA.Pos.x < 220 && CarA.Pos.x < CarA.LastPos.x && GameTime - LastWrongDirectionTime > 50)
             {
                 CarA.FoulNumplus();
                 LastWrongDirectionTime = GameTime;
             }
-            if (CarA.LastPos.Y > 220 && CarA.Pos.Y > 220 && CarA.LastPos.X > 30 && CarA.LastPos.X < 220 && CarA.Pos.X > 30 && CarA.Pos.X < 220 && CarA.Pos.X > CarA.LastPos.X && GameTime - LastWrongDirectionTime > 50)
+            if (CarA.LastPos.y > 220 && CarA.Pos.y > 220 && CarA.LastPos.x > 30 && CarA.LastPos.x < 220 && CarA.Pos.x > 30 && CarA.Pos.x < 220 && CarA.Pos.x > CarA.LastPos.x && GameTime - LastWrongDirectionTime > 50)
             {
                 CarA.FoulNumplus();
                 LastWrongDirectionTime = GameTime;
             }
         }
-    }
-    public void CarBWrongDirection()
-    {
-        if (CarB.LastPos.X < 30 && CarB.Pos.X < 30 && CarB.LastPos.Y > 30 && CarB.LastPos.Y < 220 && CarB.Pos.Y > 30 && CarB.Pos.Y < 220 && CarB.Pos.Y > CarB.LastPos.Y && GameTime - LastWrongDirectionTime > 50)
+        public void CarBWrongDirection()
         {
-            CarB.FoulNumplus()
-            LastWrongDirectionTime = GameTime;
+            if (CarB.LastPos.x < 30 && CarB.Pos.x < 30 && CarB.LastPos.y > 30 && CarB.LastPos.y < 220 && CarB.Pos.y > 30 && CarB.Pos.y < 220 && CarB.Pos.y > CarB.LastPos.y && GameTime - LastWrongDirectionTime > 50)
+            {
+                CarB.FoulNumplus();
+                LastWrongDirectionTime = GameTime;
+            }
+            if (CarB.LastPos.x > 220 && CarB.Pos.x < 220 && CarB.LastPos.y > 30 && CarB.LastPos.y < 220 && CarB.Pos.y > 30 && CarB.Pos.y < 220 && CarB.Pos.y < CarB.LastPos.y && GameTime - LastWrongDirectionTime > 50)
+            {
+                CarB.FoulNumplus();
+                LastWrongDirectionTime = GameTime;
+            }
+            if (CarB.LastPos.y < 30 && CarB.Pos.y < 30 && CarB.LastPos.x > 30 && CarB.LastPos.x < 220 && CarB.Pos.x > 30 && CarB.Pos.x < 220 && CarB.Pos.x < CarB.LastPos.x && GameTime - LastWrongDirectionTime > 50)
+            {
+                CarB.FoulNumplus();
+                LastWrongDirectionTime = GameTime;
+            }
+            if (CarB.LastPos.y > 220 && CarB.Pos.y > 220 && CarB.LastPos.x > 30 && CarB.LastPos.x < 220 && CarB.Pos.x > 30 && CarB.Pos.x < 220 && CarB.Pos.x > CarB.LastPos.x && GameTime - LastWrongDirectionTime > 50)
+            {
+                CarB.FoulNumplus();
+                LastWrongDirectionTime = GameTime;
+            }
         }
-        if (CarB.LastPos.X > 220 && CarB.Pos.X < 220 && CarB.LastPos.Y > 30 && CarB.LastPos.Y < 220 && CarB.Pos.Y > 30 && CarB.Pos.Y < 220 && CarB.Pos.Y < CarB.LastPos.Y && GameTime - LastWrongDirectionTime > 50)
-        {
-            CarB.FoulNumplus()
-            LastWrongDirectionTime = GameTime;
-        }
-        if (CarB.LastPos.Y < 30 && CarB.Pos.Y < 30 && CarB.LastPos.X > 30 && CarB.LastPos.X < 220 && CarB.Pos.X > 30 && CarB.Pos.X < 220 && CarB.Pos.X < CarB.LastPos.X && GameTime - LastWrongDirectionTime > 50)
-        {
-            CarB.FoulNumplus()
-            LastWrongDirectionTime = GameTime;
-        }
-        if (CarB.LastPos.Y > 220 && CarB.Pos.Y > 220 && CarB.LastPos.X > 30 && CarB.LastPos.X < 220 && CarB.Pos.X > 30 && CarB.Pos.X < 220 && CarB.Pos.X > CarB.LastPos.X && GameTime - LastWrongDirectionTime > 50)
-        {
-            CarB.FoulNumplus()
-            LastWrongDirectionTime = GameTime;
-        }
-    }*/
         /*public void SetStop(Dot stop)//上半场的小车设定障碍        //这里也需要加判断！！！！！！！！！！！！！！！！！！！！
         {
             if(Stop.num==0)

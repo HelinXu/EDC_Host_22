@@ -12,7 +12,8 @@ namespace EDCHOST21
         public int x;
         public int y;
         //构造函数
-        public Dot(int _x, int _y) { x = _x; y = _y; }
+        //8-14 yd添加了默认构造值
+        public Dot(int _x = 0, int _y = 0) { x = _x; y = _y; }
 
         //运算符重载
         public static bool operator ==(Dot a, Dot b)

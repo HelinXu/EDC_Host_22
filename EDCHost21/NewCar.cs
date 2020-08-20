@@ -90,9 +90,16 @@ namespace EDCHOST21
             ObstaclePunishNum = 0; //前一个版本疑似typo
             WrongDirectionNum = 0;
         }
+
+        //8-14 yd将Score后的代码折成多行，便于阅读
         public void UpdateScore()
         {
-            Score = Picknum * PKG_CREDIT + transportnum * RESCUE_CREDIT - StopPunishNum * FLOOD_PENALTY - OBST_PENALTY * ObstaclePunishNum - WrongDirectionNum * WRONG_DIR_PENALTY - FoulNum * FOUL_PENALTY;
+            Score = Picknum * PKG_CREDIT 
+                + transportnum * RESCUE_CREDIT 
+                - StopPunishNum * FLOOD_PENALTY
+                - OBST_PENALTY * ObstaclePunishNum
+                - WrongDirectionNum * WRONG_DIR_PENALTY
+                - FoulNum * FOUL_PENALTY;
         }
     }
 }
