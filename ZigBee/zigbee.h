@@ -1,4 +1,4 @@
-/********************************
+ /********************************
 zigbee.h
 接受上位机的数据
 接收说明（以USART2为例）
@@ -11,16 +11,15 @@ zigbee.h
     struct PassengerInfo Passenger;//储存人员的信息、位置和送达位置
     struct PackageInfo Package[6];//储存防汛物资的信息
     struct StopInfo Stop[2];//储存泄洪口位置信息
-    struct Position Obstacle;//储存虚拟障碍信息
+    struct ObstacleInfo Obstacle[16];
     通过接口获取数据
 **********************************/
 #ifndef V0_5_H_INCLUDED
 #define V0_5_H_INCLUDED
-#include "stm32f1xx_hal.h"
-
+//#include "stm32f1xx_hal.h"
 #define INVALID_ARG -1
 #define ZIGBEE_MESSAGE_LENTH 40
-
+#include<stdint.h>
 
 struct Position
 {
@@ -54,12 +53,18 @@ struct PackageInfo
 {
     uint8_t No;               //物资编号
     struct Position pos;
-    uint8_t whetherpicked;    //物资是否已被拾取 
+    uint8_t whetherpicked;    //物资是否已被拾取
 };
-struct StopInfo
+struct FloodInfo
 {
-    uint8_t No;
+    uint8_t FloodNo;
     struct Position pos;
+};
+struct ObstacleInfo
+{
+    uint8_t ObstacleNo;
+    struct Position posA;
+    struct Position posB;
 };
 enum GameStateEnum
 {
@@ -80,16 +85,16 @@ struct Position getPassengerstartpos(void);
 uint16_t getPassengerfinalposX(void);           //人员需到达位置
 uint16_t getPassengerfinalposY(void);
 struct Position getPassengerfinalpos(void);
-uint16_t getGamestop(void);               //泄洪口开启信息
-uint16_t getStopposX(int StopNo);			//泄洪口位置X
-uint16_t getStopposY(int StopNo);           //泄洪口位置Y
-struct Position getStoppos(int StopNo);     //泄洪口位置
+uint16_t getGameFlood(void);               //泄洪口开启信息
+uint16_t getFloodposX(int FloodNo);			//泄洪口位置X
+uint16_t getFloodposY(int FloodNo);           //泄洪口位置Y
+struct Position getFloodpos(int FloodNo);     //泄洪口位置
 uint16_t getCarposX(int CarNo);		    //小车x坐标
 uint16_t getCarposY(int CarNo);			//小车y坐标
 struct Position getCarpos(int CarNo);	//小车位置
 uint16_t getPackageposX(int PackNo);		    //物资x坐标
 uint16_t getPackageposY(int PackNo);			//物资y坐标
-uint16_t getPackagewhetherpicked(int PackNo);   //物资是否已被收集 
+uint16_t getPackagewhetherpicked(int PackNo);   //物资是否已被收集
 struct Position getPackagepos(int PackNo);	//物资位置
 uint16_t getCarpicknum(int CarNo);//小车收集数
 uint16_t getCartransportnum(int CarNo);//小车运送人员数
@@ -97,7 +102,10 @@ uint16_t getCartransport(int CarNo);//小车是否正在运送人员
 uint16_t getCarscore(int CarNo);//小车得分
 uint16_t getCartask(int CarNo);//小车任务
 uint16_t getCararea(int CarNo);//小车区域
-uint16_t getObstacleposX(void);		    //虚拟障碍x坐标
-uint16_t getObstacleposY(void);			//虚拟障碍y坐标
-struct Position getObstaclepos(void);	//虚拟障碍位置
+uint16_t getObstacleAposX(int ObstacleNo);		    //虚拟障碍Ax坐标
+uint16_t getObstacleAposY(int ObstacleNo);			//虚拟障碍Ay坐标
+uint16_t getObstacleBposX(int ObstacleNo);          //虚拟障碍Bx坐标
+uint16_t getObstacleBposY(int ObstacleNo);          //虚拟障碍By坐标
+struct Position getObstacleApos(int ObstacleNo);	//虚拟障碍A位置
+struct Position getObstacleBpos(int ObstacleNo);	//虚拟障碍B位置
 #endif // V0_5_H_INCLUDED
