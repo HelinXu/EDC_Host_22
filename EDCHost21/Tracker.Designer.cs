@@ -33,7 +33,7 @@
             this.components = new System.ComponentModel.Container();
             this.pbCamera = new System.Windows.Forms.PictureBox();
             this.btnReset = new System.Windows.Forms.Button();
-            this.timer100ms = new System.Windows.Forms.Timer(this.components);
+            this.timer = new System.Windows.Forms.Timer(this.components);
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonPause = new System.Windows.Forms.Button();
             this.label_CarA = new System.Windows.Forms.Label();
@@ -93,7 +93,7 @@
             // 
             // timer100ms
             // 
-            this.timer100ms.Tick += new System.EventHandler(this.timer100ms_Tick);
+            this.timer.Tick += new System.EventHandler(this.timer100ms_Tick);
             // 
             // buttonStart
             // 
@@ -562,7 +562,7 @@
         #endregion
         private System.Windows.Forms.PictureBox pbCamera;
         private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.Timer timer100ms;
+        private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Button buttonStart;
         private System.Windows.Forms.Button buttonPause;
         private System.Windows.Forms.Label label_CarA;

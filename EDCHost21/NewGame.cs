@@ -98,9 +98,9 @@ namespace EDCHOST21
         {
             GameCount = 1;
             GameStage = 1;
-            GameCamp = Camp.CampA;
-            CarA = new Car(Camp.CampA, 0);
-            CarB = new Car(Camp.CampB, 1);
+            GameCamp = Camp.CMP_A;
+            CarA = new Car(Camp.CMP_A, 0);
+            CarB = new Car(Camp.CMP_B, 1);
             State = GameState.Unstart;
             PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
             PkgGenerator[0] = new PackageGenerator(6);
@@ -130,7 +130,7 @@ namespace EDCHOST21
             if (GameCount == 1 && GameStage == 2 && GameTime == 120000)
             {
                 State = GameState.Pause;
-                GameCamp = Camp.CampB;//上半场转换
+                GameCamp = Camp.CMP_B;//上半场转换
                 PsgGenerator.ResetIndex();//Passenger的索引复位
                 if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
                 {
