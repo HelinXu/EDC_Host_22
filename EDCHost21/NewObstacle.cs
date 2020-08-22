@@ -20,8 +20,8 @@ namespace EDCHOST21
 
     public class Obstacle
     {
-        private int WallNum;
-        private ArrayList WallList;
+        public int WallNum;
+        public Wall[] WallList;
 
         public Obstacle(int iNum, Wall[] iList)
         {

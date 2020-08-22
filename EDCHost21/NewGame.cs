@@ -191,7 +191,7 @@ namespace EDCHOST21
                 for(int i=0;i<MAX_PKG_NUM;i++)
                 {
                     PackageDot[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i); 
-                    PackageDot[i].IsPicked = false;                              
+                    PackageDot[i].IsPicked = 0;                              
                 }
                 PackageCount++;
             }
@@ -242,10 +242,10 @@ namespace EDCHOST21
 
             for (int i=0; i < MAX_PKG_NUM; i++)
             {
-                if (GetDistance(CarA.Pos, PackageDot[i].Pos) <= MaxCarryDistance && PackageDot[i].IsPicked == false)
+                if (GetDistance(CarA.Pos, PackageDot[i].Pos) <= MaxCarryDistance && PackageDot[i].IsPicked == 0)
                 {
                     CarA.PickNumplus();
-                    PackageDot[i].IsPicked = true;
+                    PackageDot[i].IsPicked = 1;
                 }
             }
 
@@ -254,10 +254,10 @@ namespace EDCHOST21
         {
             for (int i=0; i < MAX_PKG_NUM; i++)
             {
-                if (GetDistance(CarB.Pos, PackageDot[i].Pos) <= MaxCarryDistance && PackageDot[i].IsPicked == false)
+                if (GetDistance(CarB.Pos, PackageDot[i].Pos) <= MaxCarryDistance && PackageDot[i].IsPicked == 0)
                 {
                     CarB.PickNumplus();
-                    PackageDot[i].IsPicked = true;
+                    PackageDot[i].IsPicked = 1;
                 }
 
             }
@@ -391,55 +391,116 @@ namespace EDCHOST21
                 Stop.num++;
             }
         }*/
-        /*public byte[] PackMessage()//已更新到最新通信协议
+        public byte[] PackMessage()//已更新到最新通信协议
         {
-            byte[] message = new byte[40]; //上位机传递多少信息
+            byte[] message = new byte[102]; //上位机传递多少信息
             int messageCnt = 0;
             message[messageCnt++] = (byte)(GameTime >> 8);
             message[messageCnt++] = (byte)GameTime;
             message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)CarA.Task << 5) | ((byte)CarB.Task << 4)
                 | ((byte)CarA.transport << 3 & 0x08) | ((byte)CarA.transport << 2 & 0x04) | ((byte)Flood.num  & 0x03) );
-            message[messageCnt++] = (byte)CarA.X;
-            message[messageCnt++] = (byte)CarA.Y;
-            message[messageCnt++] = (byte)CarB.X;
-            message[messageCnt++] = (byte)CarB.Y;
-            message[messageCnt++] = (byte)Flood.dot1.X;
-            message[messageCnt++] = (byte)Flood.dot1.Y;
-            message[messageCnt++] = (byte)Flood.dot2.X;
-            message[messageCnt++] = (byte)Flood.dot2.X;
-            message[messageCnt++] = (byte)Passenger.Start_Dot.X;
-            message[messageCnt++] = (byte)Passenger.Start_Dot.X;
-            message[messageCnt++] = (byte)Passenger.End_Dot.X;
-            message[messageCnt++] = (byte)Passenger.End_Dot.X;
-            message[messageCnt++] = (byte)(（(byte)PackageDot[0].IsPicked<<7） | (（byte)PackageDot[1].IsPicked<<6)|(（byte)PackageDot[2].IsPicked<<5)
-                |(（byte)PackageDot[3].IsPicked<<4)|(（byte)PackageDot[4].IsPicked<<3)|(（byte)PackageDot[5].IsPicked<<2)|((byte)CarA.Area<<1)|((byte)CarB.Area);
-            message[messageCnt++] = !InMaze(CarA.Pos) ? (byte)CarA.Pos.y : (byte)0;
-            message[messageCnt++] = !InMaze(CarB.Pos) ? (byte)CarB.Pos.x : (byte)0;
-            message[messageCnt++] = !InMaze(CarB.Pos) ? (byte)CarB.Pos.y : (byte)0;
-            for (int i = 0; i < MaxPersonNum; ++i)
-            {
-                message[messageCnt++] = (byte)People[i].StartPos.x;
-                message[messageCnt++] = (byte)People[i].StartPos.y;
-            }
-            message[messageCnt++] = (byte)BallDot.x;
-            message[messageCnt++] = (byte)BallDot.y;
-            message[messageCnt++] = (byte)(CarA.Score >> 8);
+            message[messageCnt++] = (byte)CarA.Pos.x;
+            message[messageCnt++] = (byte)CarA.Pos.y;
+            message[messageCnt++] = (byte)CarB.Pos.x;
+            message[messageCnt++] = (byte)CarB.Pos.y;
+            message[messageCnt++] = (byte)Flood.dot1.x;
+            message[messageCnt++] = (byte)Flood.dot1.y;
+            message[messageCnt++] = (byte)Flood.dot2.x;
+            message[messageCnt++] = (byte)Flood.dot2.y;
+            message[messageCnt++] = (byte)Passenger.Start_Dot.x;
+            message[messageCnt++] = (byte)Passenger.Start_Dot.x;
+            message[messageCnt++] = (byte)Passenger.End_Dot.x;
+            message[messageCnt++] = (byte)Passenger.End_Dot.x;
+            message[messageCnt++] = (byte)(((byte)PackageDot[0].IsPicked<<7) | ((byte)PackageDot[1].IsPicked<<6)|((byte)PackageDot[2].IsPicked<<5)
+                |((byte)PackageDot[3].IsPicked<<4)|((byte)PackageDot[4].IsPicked<<3)|((byte)PackageDot[5].IsPicked<<2)|((byte)CarA.Area<<1)|((byte)CarB.Area));
+            message[messageCnt++] = (byte)PackageDot[0].Pos.x;
+            message[messageCnt++] = (byte)PackageDot[0].Pos.y;
+            message[messageCnt++] = (byte)PackageDot[1].Pos.x;
+            message[messageCnt++] = (byte)PackageDot[1].Pos.y;
+            message[messageCnt++] = (byte)PackageDot[2].Pos.x;
+            message[messageCnt++] = (byte)PackageDot[2].Pos.y;
+            message[messageCnt++] = (byte)PackageDot[3].Pos.x;
+            message[messageCnt++] = (byte)PackageDot[3].Pos.y;
+            message[messageCnt++] = (byte)PackageDot[4].Pos.x;
+            message[messageCnt++] = (byte)PackageDot[4].Pos.y;
+            message[messageCnt++] = (byte)PackageDot[5].Pos.x;
+            message[messageCnt++] = (byte)PackageDot[5].Pos.y;
+            message[messageCnt++] = (byte)(CarA.Score>>8);
             message[messageCnt++] = (byte)CarA.Score;
             message[messageCnt++] = (byte)(CarB.Score >> 8);
             message[messageCnt++] = (byte)CarB.Score;
-            message[messageCnt++] = (byte)CarA.PersonCnt;
-            message[messageCnt++] = (byte)CarB.PersonCnt;
-            message[messageCnt++] = (byte)CarA.BallGetCnt;
-            message[messageCnt++] = (byte)CarB.BallGetCnt;
-            message[messageCnt++] = (byte)CarA.BallOwnCnt;
-            message[messageCnt++] = (byte)CarB.BallOwnCnt;
-            ushort crc = Crc16(message, 28);
-            message[28] = (byte)(crc >> 8);
-            message[29] = (byte)crc;
-            message[30] = 0x0D;
-            message[31] = 0x0A;
+            message[messageCnt++] = (byte)CarA.transportnum;
+            message[messageCnt++] = (byte)CarB.transportnum;
+            message[messageCnt++] = (byte)CarA.Picknum;
+            message[messageCnt++] = (byte)CarB.Picknum;
+            message[messageCnt++] = (byte)Obstacle.WallList[0].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[0].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[0].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[0].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[1].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[1].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[1].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[1].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[2].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[2].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[2].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[2].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[3].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[3].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[3].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[3].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[4].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[4].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[4].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[4].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[5].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[5].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[5].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[5].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[6].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[6].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[6].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[6].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[7].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[7].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[7].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[7].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[8].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[8].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[8].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[8].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[9].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[9].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[9].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[9].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[10].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[10].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[10].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[10].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[11].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[11].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[11].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[11].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[12].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[12].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[12].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[12].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[13].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[13].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[13].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[13].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[14].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[14].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[14].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[14].w2.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[15].w1.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[15].w1.y;
+            message[messageCnt++] = (byte)Obstacle.WallList[15].w2.x;
+            message[messageCnt++] = (byte)Obstacle.WallList[15].w2.y;
+            message[messageCnt++] = 0x0D;
+            message[messageCnt++] = 0x0A;
             return message;
-        }*/
+        }
         /*ushort Crc16(byte[] data_p, byte length)
         {
             byte i, j;

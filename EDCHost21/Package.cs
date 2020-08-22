@@ -11,11 +11,11 @@ namespace EDCHOST21
     public class Package
     {
         public Dot Pos; //物资生成地点
-        public bool IsPicked { get; set; } //是否已经被获取.
+        public int IsPicked { get; set; } //是否已经被获取.//cyy改成int了，因为bool转换不到byte型，0为没有拾取，1为已拾取
         public Package(Dot aPos)
         {
             Pos = aPos;
-            IsPicked = false;
+            IsPicked = 0;
         }
         //本条不知是否有用
         //public Package() : this(new Dot(0, 0), 0) { }
