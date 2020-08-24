@@ -9,7 +9,7 @@ using System.Drawing;
 
 namespace EDCHOST21
 {
-    public enum GameState { Unstart = 0, Normal = 1, Pause = 2, End = 3 };
+    public enum GameState { UNTART = 0, NORMAL = 1, PAUSE = 2, END = 3 };
 
     public class Game
     {
@@ -17,8 +17,8 @@ namespace EDCHOST21
         public const int MAX_SIZE = 280;
         public const int MAZE_CROSS_NUM = 6; //迷宫由几条线交叉而成
         public const int MAZE_CROSS_DIST = 30; //间隔的长度
-        public const int MazeBorderPoint1 = 35; //迷宫最短的靠边距离  xhl?
-        public const int MazeBorderPoint2 = MazeBorderPoint1 + MAZE_CROSS_DIST * MAZE_CROSS_NUM;//迷宫最长的靠边距离 xhl?
+        public const int MAZE_SHORT_BORDER = 35; //迷宫最短的靠边距离  xhl?
+        public const int MAZE_LONG_BORDER = MAZE_SHORT_BORDER + MAZE_CROSS_DIST * MAZE_CROSS_NUM;//迷宫最长的靠边距离 xhl?
         public const int MaxCarryDistance = 10; //判定是否到达的最大距离
         public const int MAX_PKG_NUM = 6; //场上每次刷新package物资的个数
 
@@ -30,9 +30,9 @@ namespace EDCHOST21
         public Passenger Passenger;
         public PassengerGenerator PsgGenerator { get; set; }
         public PackageGenerator[] PkgGenerator;
-        public Package[] PackageDot;
+        public Package[] PkgList;
         public Flood Flood;
-        public Obstacle Obstacle;
+        public Labyrinth Obstacle;
         public int StartTime;//时间均改为以毫秒为单位
         public int GameTime;//时间均改为以毫秒为单位
         public int PackageCount;//用于记录现在的Package是第几波
@@ -48,7 +48,7 @@ namespace EDCHOST21
         }
         public static bool IsInMaze(Dot dot)//确定点是否在迷宫内
         {
-            if (dot.x >= MazeBorderPoint1 && dot.x <= MazeBorderPoint2 && dot.y >= MazeBorderPoint1 && dot.y <= MazeBorderPoint2)
+            if (dot.x >= MAZE_SHORT_BORDER && dot.x <= MAZE_LONG_BORDER && dot.y >= MAZE_SHORT_BORDER && dot.y <= MAZE_LONG_BORDER)
                 return true;
             else return false;
         }
@@ -101,7 +101,7 @@ namespace EDCHOST21
             GameCamp = Camp.CMP_A;
             CarA = new Car(Camp.CMP_A, 0);
             CarB = new Car(Camp.CMP_B, 1);
-            State = GameState.Unstart;
+            State = GameState.UNTART;
             PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
             PkgGenerator[0] = new PackageGenerator(6);
             PkgGenerator[1] = new PackageGenerator(6);
@@ -114,14 +114,14 @@ namespace EDCHOST21
         //点击开始键时调用Start函数 上半场上一阶段、上半场下一阶段、下半场上一阶段、下半场下一阶段开始时需要这一函数都需要调用这一函数来开始
         public void Start() //开始比赛上下半场都用这个
         {
-            State = GameState.Normal;
+            State = GameState.NORMAL;
             GameTime = 0;
             StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000;//记录比赛开始时候的时间
         }
         //点击暂停比赛键时调用Pause函数
         public void Pause() //暂停比赛
         {
-            State = GameState.Pause;
+            State = GameState.PAUSE;
             GameTime = GameTime + GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000 - StartTime;//记录现在比赛已经进行了多少时间了
         }
         //半场交换函数自动调用依照时间控制
@@ -129,7 +129,7 @@ namespace EDCHOST21
         {
             if (GameCount == 1 && GameStage == 2 && GameTime == 120000)
             {
-                State = GameState.Pause;
+                State = GameState.PAUSE;
                 GameCamp = Camp.CMP_B;//上半场转换
                 PsgGenerator.ResetIndex();//Passenger的索引复位
                 if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
@@ -147,14 +147,14 @@ namespace EDCHOST21
         {
             if (GameStage == 1 && GameTime == 60000)
             {
-                State = GameState.Pause;
+                State = GameState.PAUSE;
                 UpdatePassenger();
             }
         }
         //在暂停后需要摁下继续按钮来继续比赛
         public void Continue()
         {
-            State = GameState.Normal;
+            State = GameState.NORMAL;
             StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000;
         }
         //重置摁键对应的函数
@@ -190,8 +190,8 @@ namespace EDCHOST21
             {
                 for(int i=0;i<MAX_PKG_NUM;i++)
                 {
-                    PackageDot[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i); 
-                    PackageDot[i].IsPicked = 0;                              
+                    PkgList[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i); 
+                    PkgList[i].IsPicked = 0;                              
                 }
                 PackageCount++;
             }
@@ -242,10 +242,10 @@ namespace EDCHOST21
 
             for (int i=0; i < MAX_PKG_NUM; i++)
             {
-                if (GetDistance(CarA.Pos, PackageDot[i].Pos) <= MaxCarryDistance && PackageDot[i].IsPicked == 0)
+                if (GetDistance(CarA.Pos, PkgList[i].Pos) <= MaxCarryDistance && PkgList[i].IsPicked == 0)
                 {
                     CarA.PickNumplus();
-                    PackageDot[i].IsPicked = 1;
+                    PkgList[i].IsPicked = 1;
                 }
             }
 
@@ -254,10 +254,10 @@ namespace EDCHOST21
         {
             for (int i=0; i < MAX_PKG_NUM; i++)
             {
-                if (GetDistance(CarB.Pos, PackageDot[i].Pos) <= MaxCarryDistance && PackageDot[i].IsPicked == 0)
+                if (GetDistance(CarB.Pos, PkgList[i].Pos) <= MaxCarryDistance && PkgList[i].IsPicked == 0)
                 {
                     CarB.PickNumplus();
-                    PackageDot[i].IsPicked = 1;
+                    PkgList[i].IsPicked = 1;
                 }
 
             }
@@ -489,20 +489,20 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)Passenger.Start_Dot.x;
             message[messageCnt++] = (byte)Passenger.End_Dot.x;
             message[messageCnt++] = (byte)Passenger.End_Dot.x;
-            message[messageCnt++] = (byte)(((byte)PackageDot[0].IsPicked<<7) | ((byte)PackageDot[1].IsPicked<<6)|((byte)PackageDot[2].IsPicked<<5)
-                |((byte)PackageDot[3].IsPicked<<4)|((byte)PackageDot[4].IsPicked<<3)|((byte)PackageDot[5].IsPicked<<2)|((byte)CarA.Area<<1)|((byte)CarB.Area));
-            message[messageCnt++] = (byte)PackageDot[0].Pos.x;
-            message[messageCnt++] = (byte)PackageDot[0].Pos.y;
-            message[messageCnt++] = (byte)PackageDot[1].Pos.x;
-            message[messageCnt++] = (byte)PackageDot[1].Pos.y;
-            message[messageCnt++] = (byte)PackageDot[2].Pos.x;
-            message[messageCnt++] = (byte)PackageDot[2].Pos.y;
-            message[messageCnt++] = (byte)PackageDot[3].Pos.x;
-            message[messageCnt++] = (byte)PackageDot[3].Pos.y;
-            message[messageCnt++] = (byte)PackageDot[4].Pos.x;
-            message[messageCnt++] = (byte)PackageDot[4].Pos.y;
-            message[messageCnt++] = (byte)PackageDot[5].Pos.x;
-            message[messageCnt++] = (byte)PackageDot[5].Pos.y;
+            message[messageCnt++] = (byte)(((byte)PkgList[0].IsPicked<<7) | ((byte)PkgList[1].IsPicked<<6)|((byte)PkgList[2].IsPicked<<5)
+                |((byte)PkgList[3].IsPicked<<4)|((byte)PkgList[4].IsPicked<<3)|((byte)PkgList[5].IsPicked<<2)|((byte)CarA.Area<<1)|((byte)CarB.Area));
+            message[messageCnt++] = (byte)PkgList[0].Pos.x;
+            message[messageCnt++] = (byte)PkgList[0].Pos.y;
+            message[messageCnt++] = (byte)PkgList[1].Pos.x;
+            message[messageCnt++] = (byte)PkgList[1].Pos.y;
+            message[messageCnt++] = (byte)PkgList[2].Pos.x;
+            message[messageCnt++] = (byte)PkgList[2].Pos.y;
+            message[messageCnt++] = (byte)PkgList[3].Pos.x;
+            message[messageCnt++] = (byte)PkgList[3].Pos.y;
+            message[messageCnt++] = (byte)PkgList[4].Pos.x;
+            message[messageCnt++] = (byte)PkgList[4].Pos.y;
+            message[messageCnt++] = (byte)PkgList[5].Pos.x;
+            message[messageCnt++] = (byte)PkgList[5].Pos.y;
             message[messageCnt++] = (byte)(CarA.Score>>8);
             message[messageCnt++] = (byte)CarA.Score;
             message[messageCnt++] = (byte)(CarB.Score >> 8);

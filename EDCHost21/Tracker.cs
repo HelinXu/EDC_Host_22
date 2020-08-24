@@ -573,13 +573,13 @@ namespace EDCHOST21
 
         private void label_AMessage_Click(object sender, EventArgs e)
         {
-            if (game.State == GameState.Normal)
+            if (game.State == GameState.NORMAL)
             {
                 game.AddScore(Camp.CMP_A, Score.BallGetScore);
                 game.CarA.BallGetCnt++;
                 game.CarA.HaveBall = true;
             }
-            else if (game.State == GameState.End)
+            else if (game.State == GameState.END)
             {
                 if (game.CarA.HaveBall)
                 {
@@ -592,13 +592,13 @@ namespace EDCHOST21
 
         private void label_BMessage_Click(object sender, EventArgs e)
         {
-            if (game.State == GameState.Normal)
+            if (game.State == GameState.NORMAL)
             {
                 game.AddScore(Camp.CMP_B, Score.BallGetScore);
                 game.CarB.BallGetCnt++;
                 game.CarB.HaveBall = true;
             }
-            else if (game.State == GameState.End)
+            else if (game.State == GameState.END)
             {
                 if (game.CarB.HaveBall)
                 {
@@ -1069,7 +1069,7 @@ namespace EDCHOST21
                 //分别在小车1和小车2的位置上绘制圆圈
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
                 foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
-                if (localiseFlags.gameState != GameState.Unstart)
+                if (localiseFlags.gameState != GameState.UNTART)
                 {
                     //在人员起始位置上绘制矩形
                     int x10 = localiseFlags.posPersonStart.X - 8;
