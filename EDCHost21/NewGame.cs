@@ -46,7 +46,7 @@ namespace EDCHOST21
             System.DateTime currentTime = new System.DateTime();
             return currentTime;
         }
-        public static bool InMaze(Dot dot)//确定点是否在迷宫内
+        public static bool IsInMaze(Dot dot)//确定点是否在迷宫内
         {
             if (dot.x >= MazeBorderPoint1 && dot.x <= MazeBorderPoint2 && dot.y >= MazeBorderPoint1 && dot.y <= MazeBorderPoint2)
                 return true;
