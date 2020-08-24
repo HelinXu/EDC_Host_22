@@ -23,83 +23,84 @@ namespace EDCHOST21
 
         public Dot Pos;
         public Dot LastPos;
-        public Camp Who { get; set; }//A or B get、set直接两个封装好的函数
+        public Camp Cmp { get; set; }//A or B get、set直接两个封装好的函数
         public int Score { get; set; } //得分
-        public int Picknum;//小车成功收集物资个数
-        public int Task;//小车任务 0为上半场任务，1为下半场任务
-        public int transport;//小车上是否载人 0未载人 1载人
-        public int transportnum;//小车成功运送人个数
-        public int Area;//小车所在的区域 0在迷宫外 1在迷宫内
-        public int StopPunishNum;//小车经过泄洪口的次数
-        public int ObstaclePunishNum;//小车经过虚拟障碍的次数
-        public int WrongDirectionNum;//小车逆行次数
-        public int FoulNum;//犯规摁键次数
-        public void StopPunishplus() //犯规
+        public int PkgCount;//小车成功收集物资个数
+        public int TaskState;//小车任务 0为上半场任务，1为下半场任务
+        public int IsWithPassenger;//小车上是否载人 0未载人 1载人
+        public int RescueCount;//小车成功运送人个数
+        public int IsInMaze;//小车所在的区域 0在迷宫外 1在迷宫内
+        public int CrossFloodCount;//小车经过泄洪口的次数
+        public int CrossWallCount;//小车经过虚拟障碍的次数
+        public int WrongDirCount;//小车逆行次数
+        public int FoulCount;//犯规摁键次数
+
+        public Car(Camp c, int task)
         {
-            StopPunishNum++;
+            Cmp = c;
+            Pos = new Dot(0, 0);
+            Score = 0;
+            PkgCount = 0;
+            TaskState = task;
+            IsWithPassenger = 0;
+            RescueCount = 0;
+            IsInMaze = 0;
+            CrossFloodCount = 0;
+            CrossWallCount = 0;
+            WrongDirCount = 0;
+            FoulCount = 0;
+        }
+        public void AddFloodPunish() //犯规
+        {
+            CrossFloodCount++;
             UpdateScore();
         }
-        public void ObastaclePunishplus()
+        public void AddWallPunish()
         {
-            ObstaclePunishNum++; //前一个版本疑似typo（xhl）
+            CrossWallCount++; //前一个版本疑似typo（xhl）
             UpdateScore();
         }
         public void WrongDirectionplus()
         {
-            WrongDirectionNum++;
+            WrongDirCount++;
             UpdateScore();
         }
         public void TransportNumplus()
         {
-            transportnum++;
+            RescueCount++;
             UpdateScore();
         }
         public void PickNumplus()
         {
-            Picknum++;
+            PkgCount++;
             UpdateScore();
         }
         public void FoulNumplus()
         {
-            FoulNum++;
+            FoulCount++;
             UpdateScore();
         }
-        public void Picked()
+        public void SwitchPickedState()
         {
-            if (transport == 0)
+            if (IsWithPassenger == 0)
             {
-                transport = 1;
+                IsWithPassenger = 1;
             }
             else
             {
-                transport = 0;
+                IsWithPassenger = 0;
             }
-        }
-        public Car(Camp c, int task)
-        {
-            Who = c;
-            Pos = new Dot(0, 0);
-            Score = 0;
-            Picknum = 0;
-            Task = task;
-            transport = 0;
-            transportnum = 0;
-            Area = 0;
-            StopPunishNum = 0;
-            //ObastaclePunishNum = 0;
-            ObstaclePunishNum = 0; //前一个版本疑似typo
-            WrongDirectionNum = 0;
         }
 
         //8-14 yd将Score后的代码折成多行，便于阅读
         public void UpdateScore()
         {
-            Score = Picknum * PKG_CREDIT
-                + transportnum * RESCUE_CREDIT
-                - StopPunishNum * FLOOD_PENALTY
-                - OBST_PENALTY * ObstaclePunishNum
-                - WrongDirectionNum * WRONG_DIR_PENALTY
-                - FoulNum * FOUL_PENALTY;
+            Score = PkgCount * PKG_CREDIT
+                + RescueCount * RESCUE_CREDIT
+                - CrossFloodCount * FLOOD_PENALTY
+                - OBST_PENALTY * CrossWallCount
+                - WrongDirCount * WRONG_DIR_PENALTY
+                - FoulCount * FOUL_PENALTY;
         }
     }
 }

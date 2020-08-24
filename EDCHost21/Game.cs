@@ -137,8 +137,8 @@ namespace EDCHOST21
                     byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
                     FoulTimeFS.Write(data, 0, data.Length);
                 }
-                CarA.Task = 1;//交换A和B的任务
-                CarB.Task = 0;
+                CarA.TaskState = 1;//交换A和B的任务
+                CarB.TaskState = 0;
             }
 
         }
@@ -167,19 +167,19 @@ namespace EDCHOST21
         {
             if (GameCount == 1 && GameStage == 1)
             {
-                CarA.FoulNum++;
+                CarA.FoulCount++;
             }
             if (GameCount == 1 && GameStage == 2)
             {
-                CarB.FoulNum++;
+                CarB.FoulCount++;
             }
             if (GameCount == 2 && GameStage == 1)
             {
-                CarB.FoulNum++;
+                CarB.FoulCount++;
             }
             if (GameCount == 2 && GameStage == 2)
             {
-                CarA.FoulNum++;
+                CarA.FoulCount++;
             }
         }
         //每到半点自动更新Package信息函数
@@ -204,34 +204,34 @@ namespace EDCHOST21
         //下面四个为接口
         public void CarAGetPassenger()//小车A接到了乘客
         {
-            if (GetDistance(CarA.Pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport == 0)
+            if (GetDistance(CarA.Pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.IsWithPassenger == 0)
             {
-                CarA.Picked();
+                CarA.SwitchPickedState();
             }
 
         }
         public void CarBGetPassenger()//小车B接到了乘客
         {
-            if (GetDistance(CarB.Pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.transport == 0)
+            if (GetDistance(CarB.Pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.IsWithPassenger == 0)
             {
-                CarB.Picked();
+                CarB.SwitchPickedState();
             }
         }
         public void CarATransPassenger()//小车A成功运送了乘客
         {
 
-            if (GetDistance(CarA.Pos, Passenger.End_Dot) <= MaxCarryDistance && CarA.transport == 1)
+            if (GetDistance(CarA.Pos, Passenger.End_Dot) <= MaxCarryDistance && CarA.IsWithPassenger == 1)
             {
-                CarA.Picked();
+                CarA.SwitchPickedState();
                 CarA.TransportNumplus();
             }
             UpdatePassenger();
         }
         public void CarBTransPassenger()//小车A成功运送了乘客
         {
-            if (GetDistance(CarB.Pos, Passenger.End_Dot) <= MaxCarryDistance && CarB.transport == 1)
+            if (GetDistance(CarB.Pos, Passenger.End_Dot) <= MaxCarryDistance && CarB.IsWithPassenger == 1)
             {
-                CarB.Picked();
+                CarB.SwitchPickedState();
                 CarB.TransportNumplus();
             }
             UpdatePassenger();
@@ -272,7 +272,7 @@ namespace EDCHOST21
                     {
                         if (Obstacle.WallList[i].w1.x == CarA.Pos.x && CarA.Pos.y <= Obstacle.WallList[i].w2.y && Obstacle.WallList[i].w1.y <= CarA.Pos.y)
                         {
-                            CarA.ObastaclePunishplus();
+                            CarA.AddWallPunish();
                         }
 
                     }
@@ -280,7 +280,7 @@ namespace EDCHOST21
                     {
                         if (Obstacle.WallList[i].w1.x == CarA.Pos.x && CarA.Pos.y <= Obstacle.WallList[i].w1.y && Obstacle.WallList[i].w2.y <= CarA.Pos.y)
                         {
-                            CarA.ObastaclePunishplus();
+                            CarA.AddWallPunish();
                         }
 
                     }
@@ -291,7 +291,7 @@ namespace EDCHOST21
                     {
                         if (Obstacle.WallList[i].w1.y == CarA.Pos.y && CarA.Pos.x <= Obstacle.WallList[i].w2.x && Obstacle.WallList[i].w1.x <= CarA.Pos.x)
                         {
-                            CarA.ObastaclePunishplus();
+                            CarA.AddWallPunish();
                         }
 
                     }
@@ -299,7 +299,7 @@ namespace EDCHOST21
                     {
                         if (Obstacle.WallList[i].w1.y == CarA.Pos.y && CarA.Pos.x <= Obstacle.WallList[i].w1.x && Obstacle.WallList[i].w2.x <= CarA.Pos.x)
                         {
-                            CarA.ObastaclePunishplus();
+                            CarA.AddWallPunish();
                         }
 
                     }
@@ -316,7 +316,7 @@ namespace EDCHOST21
                     {
                         if (Obstacle.WallList[i].w1.x == CarB.Pos.x && CarB.Pos.y <= Obstacle.WallList[i].w2.y && Obstacle.WallList[i].w1.y <= CarB.Pos.y)
                         {
-                            CarB.ObastaclePunishplus();
+                            CarB.AddWallPunish();
                         }
 
                     }
@@ -324,7 +324,7 @@ namespace EDCHOST21
                     {
                         if (Obstacle.WallList[i].w1.x == CarB.Pos.x && CarB.Pos.y <= Obstacle.WallList[i].w1.y && Obstacle.WallList[i].w2.y <= CarB.Pos.y)
                         {
-                            CarB.ObastaclePunishplus();
+                            CarB.AddWallPunish();
                         }
 
                     }
@@ -335,7 +335,7 @@ namespace EDCHOST21
                     {
                         if (Obstacle.WallList[i].w1.y == CarB.Pos.y && CarB.Pos.x <= Obstacle.WallList[i].w2.x && Obstacle.WallList[i].w1.x <= CarB.Pos.x)
                         {
-                            CarB.ObastaclePunishplus();
+                            CarB.AddWallPunish();
                         }
 
                     }
@@ -343,7 +343,7 @@ namespace EDCHOST21
                     {
                         if (Obstacle.WallList[i].w1.y == CarB.Pos.y && CarB.Pos.x <= Obstacle.WallList[i].w1.x && Obstacle.WallList[i].w2.x <= CarB.Pos.x)
                         {
-                            CarB.ObastaclePunishplus();
+                            CarB.AddWallPunish();
                         }
 
                     }
@@ -353,7 +353,7 @@ namespace EDCHOST21
         public void CarAonFlood()//A车到大障碍上
         {
 
-            if (CarA.Task == 1)//在下半场的时候才应该判断小车是否经过Flood
+            if (CarA.TaskState == 1)//在下半场的时候才应该判断小车是否经过Flood
             {
                 if (Flood.num == 0)
                 { }
@@ -362,7 +362,7 @@ namespace EDCHOST21
                     if (GetDistance(CarA.Pos, Flood.dot1) <= MaxCarryDistance)
                     {
 
-                        CarA.StopPunishplus();
+                        CarA.AddFloodPunish();
                     }
                 }
                 else if (Flood.num == 2)
@@ -370,11 +370,11 @@ namespace EDCHOST21
 
                     if (GetDistance(CarA.Pos, Flood.dot1) <= MaxCarryDistance)
                     {
-                        CarA.StopPunishplus();
+                        CarA.AddFloodPunish();
                     }
                     if (GetDistance(CarA.Pos, Flood.dot2) <= MaxCarryDistance)
                     {
-                        CarA.StopPunishplus();
+                        CarA.AddFloodPunish();
                     }
                 }
 
@@ -382,7 +382,7 @@ namespace EDCHOST21
         }
         public void CarBonFlood()
         {
-            if (CarB.Task == 1)//在下半场的时候才应该判断小车是否经过Flood
+            if (CarB.TaskState == 1)//在下半场的时候才应该判断小车是否经过Flood
             {
                 if (Flood.num == 0)
                 { }
@@ -391,7 +391,7 @@ namespace EDCHOST21
                     if (GetDistance(CarB.Pos, Flood.dot1) <= MaxCarryDistance)
                     {
 
-                        CarB.StopPunishplus();
+                        CarB.AddFloodPunish();
                     }
                 }
                 else if (Flood.num == 2)
@@ -399,11 +399,11 @@ namespace EDCHOST21
 
                     if (GetDistance(CarB.Pos, Flood.dot1) <= MaxCarryDistance)
                     {
-                        CarB.StopPunishplus();
+                        CarB.AddFloodPunish();
                     }
                     if (GetDistance(CarB.Pos, Flood.dot2) <= MaxCarryDistance)
                     {
-                        CarB.StopPunishplus();
+                        CarB.AddFloodPunish();
                     }
                 }
 
@@ -475,8 +475,8 @@ namespace EDCHOST21
             int messageCnt = 0;
             message[messageCnt++] = (byte)(GameTime >> 8);
             message[messageCnt++] = (byte)GameTime;
-            message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)CarA.Task << 5) | ((byte)CarB.Task << 4)
-                | ((byte)CarA.transport << 3 & 0x08) | ((byte)CarA.transport << 2 & 0x04) | ((byte)Flood.num & 0x03));
+            message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)CarA.TaskState << 5) | ((byte)CarB.TaskState << 4)
+                | ((byte)CarA.IsWithPassenger << 3 & 0x08) | ((byte)CarA.IsWithPassenger << 2 & 0x04) | ((byte)Flood.num & 0x03));
             message[messageCnt++] = (byte)CarA.Pos.x;
             message[messageCnt++] = (byte)CarA.Pos.y;
             message[messageCnt++] = (byte)CarB.Pos.x;
@@ -490,7 +490,7 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)Passenger.End_Dot.x;
             message[messageCnt++] = (byte)Passenger.End_Dot.x;
             message[messageCnt++] = (byte)(((byte)PkgList[0].IsPicked << 7) | ((byte)PkgList[1].IsPicked << 6) | ((byte)PkgList[2].IsPicked << 5)
-                | ((byte)PkgList[3].IsPicked << 4) | ((byte)PkgList[4].IsPicked << 3) | ((byte)PkgList[5].IsPicked << 2) | ((byte)CarA.Area << 1) | ((byte)CarB.Area));
+                | ((byte)PkgList[3].IsPicked << 4) | ((byte)PkgList[4].IsPicked << 3) | ((byte)PkgList[5].IsPicked << 2) | ((byte)CarA.IsInMaze << 1) | ((byte)CarB.IsInMaze));
             message[messageCnt++] = (byte)PkgList[0].Pos.x;
             message[messageCnt++] = (byte)PkgList[0].Pos.y;
             message[messageCnt++] = (byte)PkgList[1].Pos.x;
@@ -507,10 +507,10 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)CarA.Score;
             message[messageCnt++] = (byte)(CarB.Score >> 8);
             message[messageCnt++] = (byte)CarB.Score;
-            message[messageCnt++] = (byte)CarA.transportnum;
-            message[messageCnt++] = (byte)CarB.transportnum;
-            message[messageCnt++] = (byte)CarA.Picknum;
-            message[messageCnt++] = (byte)CarB.Picknum;
+            message[messageCnt++] = (byte)CarA.RescueCount;
+            message[messageCnt++] = (byte)CarB.RescueCount;
+            message[messageCnt++] = (byte)CarA.PkgCount;
+            message[messageCnt++] = (byte)CarB.PkgCount;
             message[messageCnt++] = (byte)Obstacle.WallList[0].w1.x;
             message[messageCnt++] = (byte)Obstacle.WallList[0].w1.y;
             message[messageCnt++] = (byte)Obstacle.WallList[0].w2.x;
