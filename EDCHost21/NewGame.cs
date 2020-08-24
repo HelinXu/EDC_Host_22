@@ -262,16 +262,94 @@ namespace EDCHOST21
 
             }
         }
-        /*public void CarAonObstacle()//小车A到达了障碍上              
+        public void CarAonObstacle()//小车A到达了障碍上              
         {
-            
-            if(GetDistance(CarA))                                              //待修改
-                CarA.ObastaclePunishplus();
+            for(int i=0;i<=15;i++)
+            {
+                if(Obstacle.WallList[i].w1.x==Obstacle.WallList[i].w2.x)//障碍的两个点的横坐标相同
+                {
+                    if(Obstacle.WallList[i].w1.y<Obstacle.WallList[i].w2.y)//障碍1在障碍2的下面
+                    {
+                        if(Obstacle.WallList[i].w1.x==CarA.Pos.x&&CarA.Pos.y<=Obstacle.WallList[i].w2.y&&Obstacle.WallList[i].w1.y<=CarA.Pos.y)
+                        {
+                            CarA.ObastaclePunishplus();
+                        }
+                            
+                    }
+                    if (Obstacle.WallList[i].w2.y < Obstacle.WallList[i].w1.y)//障碍2在障碍1的下面
+                    {
+                        if (Obstacle.WallList[i].w1.x == CarA.Pos.x && CarA.Pos.y <= Obstacle.WallList[i].w1.y && Obstacle.WallList[i].w2.y <= CarA.Pos.y)
+                        {
+                            CarA.ObastaclePunishplus();
+                        }
+
+                    }
+                }
+                if (Obstacle.WallList[i].w1.y == Obstacle.WallList[i].w2.y)//障碍的两个点的纵坐标相同
+                {
+                    if (Obstacle.WallList[i].w1.x < Obstacle.WallList[i].w2.x)//障碍1在障碍2的左面
+                    {
+                        if (Obstacle.WallList[i].w1.y == CarA.Pos.y && CarA.Pos.x <= Obstacle.WallList[i].w2.x && Obstacle.WallList[i].w1.x <= CarA.Pos.x)
+                        {
+                            CarA.ObastaclePunishplus();
+                        }
+
+                    }
+                    if (Obstacle.WallList[i].w2.x < Obstacle.WallList[i].w1.x)//障碍2在障碍1的下面
+                    {
+                        if (Obstacle.WallList[i].w1.y == CarA.Pos.y && CarA.Pos.x <= Obstacle.WallList[i].w1.x && Obstacle.WallList[i].w2.x <= CarA.Pos.x)
+                        {
+                            CarA.ObastaclePunishplus();
+                        }
+
+                    }
+                }
+            }
         }
         public void CarBonObstacle()//小车B到达了障碍上               
         {
-            CarB.ObastaclePunishplus();
-        }*/
+            for (int i = 0; i <= 15; i++)
+            {
+                if (Obstacle.WallList[i].w1.x == Obstacle.WallList[i].w2.x)//障碍的两个点的横坐标相同
+                {
+                    if (Obstacle.WallList[i].w1.y < Obstacle.WallList[i].w2.y)//障碍1在障碍2的下面
+                    {
+                        if (Obstacle.WallList[i].w1.x == CarB.Pos.x && CarB.Pos.y <= Obstacle.WallList[i].w2.y && Obstacle.WallList[i].w1.y <= CarB.Pos.y)
+                        {
+                            CarB.ObastaclePunishplus();
+                        }
+
+                    }
+                    if (Obstacle.WallList[i].w2.y < Obstacle.WallList[i].w1.y)//障碍2在障碍1的下面
+                    {
+                        if (Obstacle.WallList[i].w1.x == CarB.Pos.x && CarB.Pos.y <= Obstacle.WallList[i].w1.y && Obstacle.WallList[i].w2.y <= CarB.Pos.y)
+                        {
+                            CarB.ObastaclePunishplus();
+                        }
+
+                    }
+                }
+                if (Obstacle.WallList[i].w1.y == Obstacle.WallList[i].w2.y)//障碍的两个点的纵坐标相同
+                {
+                    if (Obstacle.WallList[i].w1.x < Obstacle.WallList[i].w2.x)//障碍1在障碍2的左面
+                    {
+                        if (Obstacle.WallList[i].w1.y == CarB.Pos.y && CarB.Pos.x <= Obstacle.WallList[i].w2.x && Obstacle.WallList[i].w1.x <= CarB.Pos.x)
+                        {
+                            CarB.ObastaclePunishplus();
+                        }
+
+                    }
+                    if (Obstacle.WallList[i].w2.x < Obstacle.WallList[i].w1.x)//障碍2在障碍1的下面
+                    {
+                        if (Obstacle.WallList[i].w1.y == CarB.Pos.y && CarB.Pos.x <= Obstacle.WallList[i].w1.x && Obstacle.WallList[i].w2.x <= CarB.Pos.x)
+                        {
+                            CarB.ObastaclePunishplus();
+                        }
+
+                    }
+                }
+            }
+        }
         public void CarAonFlood()//A车到大障碍上
         {
             
@@ -501,25 +579,5 @@ namespace EDCHOST21
             message[messageCnt++] = 0x0A;
             return message;
         }
-        /*ushort Crc16(byte[] data_p, byte length)
-        {
-            byte i, j;
-            ushort crc = 0xffff;
-            const ushort CRC_POLY = 0xa001; //0x8005反序
-
-            for (i = 0; i < length; ++i)
-            {
-                crc ^= (ushort)(0xff & data_p[i]);
-                for (j = 0; j < 8; j++)
-                {
-                    if ((crc & 0x0001) != 0)
-                        crc = (ushort)((crc >> 1) ^ CRC_POLY);
-                    else
-                        crc >>= 1;
-                }
-            }
-            // crc = (crc << 8) | (crc >> 8 & 0xff);
-            return crc;
-        }*/
     }
 }
