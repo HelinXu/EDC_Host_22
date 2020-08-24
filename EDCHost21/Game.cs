@@ -116,13 +116,13 @@ namespace EDCHOST21
         {
             State = GameState.NORMAL;
             GameTime = 0;
-            StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000;//记录比赛开始时候的时间
+            StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000;//记录比赛开始时候的时间
         }
         //点击暂停比赛键时调用Pause函数
         public void Pause() //暂停比赛
         {
             State = GameState.PAUSE;
-            GameTime = GameTime + GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000 - StartTime;//记录现在比赛已经进行了多少时间了
+            GameTime = GameTime + GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000 - StartTime;//记录现在比赛已经进行了多少时间了
         }
         //半场交换函数自动调用依照时间控制
         public void NextCount()//从上半场更换到下半场函数
@@ -155,7 +155,7 @@ namespace EDCHOST21
         public void Continue()
         {
             State = GameState.NORMAL;
-            StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second*1000;
+            StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000;
         }
         //重置摁键对应的函数
         public void Reset()
@@ -186,12 +186,12 @@ namespace EDCHOST21
         public void UpdatePackage()//到半点时更换Package函数
         {
             int changenum = GameTime / 300 + 1;
-            if(GameStage == 2 && PackageCount < changenum)
+            if (GameStage == 2 && PackageCount < changenum)
             {
-                for(int i=0;i<MAX_PKG_NUM;i++)
+                for (int i = 0; i < MAX_PKG_NUM; i++)
                 {
-                    PkgList[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i); 
-                    PkgList[i].IsPicked = 0;                              
+                    PkgList[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i);
+                    PkgList[i].IsPicked = 0;
                 }
                 PackageCount++;
             }
@@ -240,7 +240,7 @@ namespace EDCHOST21
         public void CarAGetpackage()//小车A得到了包裹
         {
 
-            for (int i=0; i < MAX_PKG_NUM; i++)
+            for (int i = 0; i < MAX_PKG_NUM; i++)
             {
                 if (GetDistance(CarA.Pos, PkgList[i].Pos) <= MaxCarryDistance && PkgList[i].IsPicked == 0)
                 {
@@ -252,7 +252,7 @@ namespace EDCHOST21
         }
         public void CarBGetpackage()//小车B得到了包裹
         {
-            for (int i=0; i < MAX_PKG_NUM; i++)
+            for (int i = 0; i < MAX_PKG_NUM; i++)
             {
                 if (GetDistance(CarB.Pos, PkgList[i].Pos) <= MaxCarryDistance && PkgList[i].IsPicked == 0)
                 {
@@ -264,17 +264,17 @@ namespace EDCHOST21
         }
         public void CarAonObstacle()//小车A到达了障碍上              
         {
-            for(int i=0;i<=15;i++)
+            for (int i = 0; i <= 15; i++)
             {
-                if(Obstacle.WallList[i].w1.x==Obstacle.WallList[i].w2.x)//障碍的两个点的横坐标相同
+                if (Obstacle.WallList[i].w1.x == Obstacle.WallList[i].w2.x)//障碍的两个点的横坐标相同
                 {
-                    if(Obstacle.WallList[i].w1.y<Obstacle.WallList[i].w2.y)//障碍1在障碍2的下面
+                    if (Obstacle.WallList[i].w1.y < Obstacle.WallList[i].w2.y)//障碍1在障碍2的下面
                     {
-                        if(Obstacle.WallList[i].w1.x==CarA.Pos.x&&CarA.Pos.y<=Obstacle.WallList[i].w2.y&&Obstacle.WallList[i].w1.y<=CarA.Pos.y)
+                        if (Obstacle.WallList[i].w1.x == CarA.Pos.x && CarA.Pos.y <= Obstacle.WallList[i].w2.y && Obstacle.WallList[i].w1.y <= CarA.Pos.y)
                         {
                             CarA.ObastaclePunishplus();
                         }
-                            
+
                     }
                     if (Obstacle.WallList[i].w2.y < Obstacle.WallList[i].w1.y)//障碍2在障碍1的下面
                     {
@@ -352,8 +352,8 @@ namespace EDCHOST21
         }
         public void CarAonFlood()//A车到大障碍上
         {
-            
-            if(CarA.Task==1)//在下半场的时候才应该判断小车是否经过Flood
+
+            if (CarA.Task == 1)//在下半场的时候才应该判断小车是否经过Flood
             {
                 if (Flood.num == 0)
                 { }
@@ -476,7 +476,7 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)(GameTime >> 8);
             message[messageCnt++] = (byte)GameTime;
             message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)CarA.Task << 5) | ((byte)CarB.Task << 4)
-                | ((byte)CarA.transport << 3 & 0x08) | ((byte)CarA.transport << 2 & 0x04) | ((byte)Flood.num  & 0x03) );
+                | ((byte)CarA.transport << 3 & 0x08) | ((byte)CarA.transport << 2 & 0x04) | ((byte)Flood.num & 0x03));
             message[messageCnt++] = (byte)CarA.Pos.x;
             message[messageCnt++] = (byte)CarA.Pos.y;
             message[messageCnt++] = (byte)CarB.Pos.x;
@@ -489,8 +489,8 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)Passenger.Start_Dot.x;
             message[messageCnt++] = (byte)Passenger.End_Dot.x;
             message[messageCnt++] = (byte)Passenger.End_Dot.x;
-            message[messageCnt++] = (byte)(((byte)PkgList[0].IsPicked<<7) | ((byte)PkgList[1].IsPicked<<6)|((byte)PkgList[2].IsPicked<<5)
-                |((byte)PkgList[3].IsPicked<<4)|((byte)PkgList[4].IsPicked<<3)|((byte)PkgList[5].IsPicked<<2)|((byte)CarA.Area<<1)|((byte)CarB.Area));
+            message[messageCnt++] = (byte)(((byte)PkgList[0].IsPicked << 7) | ((byte)PkgList[1].IsPicked << 6) | ((byte)PkgList[2].IsPicked << 5)
+                | ((byte)PkgList[3].IsPicked << 4) | ((byte)PkgList[4].IsPicked << 3) | ((byte)PkgList[5].IsPicked << 2) | ((byte)CarA.Area << 1) | ((byte)CarB.Area));
             message[messageCnt++] = (byte)PkgList[0].Pos.x;
             message[messageCnt++] = (byte)PkgList[0].Pos.y;
             message[messageCnt++] = (byte)PkgList[1].Pos.x;
@@ -503,7 +503,7 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)PkgList[4].Pos.y;
             message[messageCnt++] = (byte)PkgList[5].Pos.x;
             message[messageCnt++] = (byte)PkgList[5].Pos.y;
-            message[messageCnt++] = (byte)(CarA.Score>>8);
+            message[messageCnt++] = (byte)(CarA.Score >> 8);
             message[messageCnt++] = (byte)CarA.Score;
             message[messageCnt++] = (byte)(CarB.Score >> 8);
             message[messageCnt++] = (byte)CarB.Score;

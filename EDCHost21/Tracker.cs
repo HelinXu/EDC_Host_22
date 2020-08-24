@@ -40,7 +40,7 @@ namespace EDCHOST21
 
         //是否已经进行了参数设置
         private bool alreadySet;
-        
+
         public SerialPort serial1, serial2;
         public string[] validPorts;
 
@@ -664,7 +664,7 @@ namespace EDCHOST21
         public int clickCount;
 
         //人员状况：被困、在小车上还未到指定点、到达运送目标点
-        public enum PersonState { TRAPPED, INCAR, RESCUED};
+        public enum PersonState { TRAPPED, INCAR, RESCUED };
 
         //图像识别参数
         //HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
@@ -695,7 +695,7 @@ namespace EDCHOST21
 
         //防汛物资的坐标
         public Point2i[] posPackages;
-        
+
         //人员起始坐标和待运输的位置坐标
         public Point2i posPersonStart;
         public Point2i posPersonEnd;
@@ -1024,7 +1024,7 @@ namespace EDCHOST21
                 contours0 = Cv2.FindContoursAsArray(ball, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                 contours1 = Cv2.FindContoursAsArray(car1, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                 contours2 = Cv2.FindContoursAsArray(car2, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
-                
+
                 //根据拐点的图像矩来计算拐点的中心点坐标
                 //小球
                 foreach (Point2i[] c0 in contours0)

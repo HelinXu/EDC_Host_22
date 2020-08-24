@@ -44,13 +44,13 @@ namespace EDCHOST21
                     nextY2 = NRand.Next(Game.MAZE_CROSS_NUM);
                     dot2 = CrossNo2Dot(nextX2, nextY2);
                     PassengerfinalDotArray[i] = dot2;
-                    if(nextX1==nextX2 && nextY1==nextY2)
+                    if (nextX1 == nextX2 && nextY1 == nextY2)
                     {
                         same = 0;
                     }
-                                                             //需要加上人员与障碍是否重合的判断
+                    //需要加上人员与障碍是否重合的判断
 
-                } while (same == 0); 
+                } while (same == 0);
             }
 
         }

@@ -39,7 +39,7 @@ namespace EDCHOST21
             StopPunishNum++;
             UpdateScore();
         }
-        public void  ObastaclePunishplus()
+        public void ObastaclePunishplus()
         {
             ObstaclePunishNum++; //前一个版本疑似typo（xhl）
             UpdateScore();
@@ -66,7 +66,7 @@ namespace EDCHOST21
         }
         public void Picked()
         {
-            if(transport==0)
+            if (transport == 0)
             {
                 transport = 1;
             }
@@ -75,10 +75,10 @@ namespace EDCHOST21
                 transport = 0;
             }
         }
-        public Car(Camp c,int task)
+        public Car(Camp c, int task)
         {
             Who = c;
-            Pos = new Dot(0,0);
+            Pos = new Dot(0, 0);
             Score = 0;
             Picknum = 0;
             Task = task;
@@ -94,8 +94,8 @@ namespace EDCHOST21
         //8-14 yd将Score后的代码折成多行，便于阅读
         public void UpdateScore()
         {
-            Score = Picknum * PKG_CREDIT 
-                + transportnum * RESCUE_CREDIT 
+            Score = Picknum * PKG_CREDIT
+                + transportnum * RESCUE_CREDIT
                 - StopPunishNum * FLOOD_PENALTY
                 - OBST_PENALTY * ObstaclePunishNum
                 - WrongDirectionNum * WRONG_DIR_PENALTY
