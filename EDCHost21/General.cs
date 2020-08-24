@@ -13,8 +13,8 @@ namespace EDCHOST21
         //从格点转化为int，传入坐标，返回Dot
         public static Dot CrossNo2Dot(int CrossNoX, int CrossNoY)
         {
-            int x = Game.MAZE_SHORT_BORDER + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoX;
-            int y = Game.MAZE_SHORT_BORDER + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoY;
+            int x = Game.MAZE_SHORT_BORDER_CM + Game.MAZE_CROSS_DIST_CM / 2 + Game.MAZE_CROSS_DIST_CM * CrossNoX;
+            int y = Game.MAZE_SHORT_BORDER_CM + Game.MAZE_CROSS_DIST_CM / 2 + Game.MAZE_CROSS_DIST_CM * CrossNoY;
             Dot temp = new Dot(x, y);
             return temp;
         }

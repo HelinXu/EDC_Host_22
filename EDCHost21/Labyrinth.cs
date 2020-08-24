@@ -8,8 +8,8 @@ namespace EDCHOST21
 {
     public class Labyrinth
     {
-        public int WallNum;
-        public Wall[] WallList;
+        public int mWallNum;
+        public Wall[] mpWallList;
 
         public Labyrinth(int iNum, Wall[] iList)
         {

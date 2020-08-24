@@ -165,10 +165,10 @@ namespace EDCHOST21
                 game.BallsDot.Clear();
                 foreach (Point2i posBall in flags.posBalls)
                     game.BallsDot.Add(new Dot(posBall.X, posBall.Y));
-                game.CarA.Pos.x = flags.posCarA.X;
-                game.CarA.Pos.y = flags.posCarA.Y;
-                game.CarB.Pos.x = flags.posCarB.X;
-                game.CarB.Pos.y = flags.posCarB.Y;
+                game.CarA.mPos.x = flags.posCarA.X;
+                game.CarA.mPos.y = flags.posCarA.Y;
+                game.CarB.mPos.x = flags.posCarB.X;
+                game.CarB.mPos.y = flags.posCarB.Y;
             }
             game.Update();
             lock (flags)
@@ -372,10 +372,10 @@ namespace EDCHOST21
         {
             label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
 
-            labelAScore.Text = $"{game.CarA.Score}";
-            labelBScore.Text = $"{game.CarB.Score}";
+            labelAScore.Text = $"{game.CarA.MyScore}";
+            labelBScore.Text = $"{game.CarB.MyScore}";
 
-            label_GameCount.Text = gametext[game.GameCount - 1];
+            label_GameCount.Text = gametext[game.mGameCount - 1];
             label_APauseNum.Text = $"{game.APauseNum}";
             label_BPauseNum.Text = $"{game.BPauseNum}";
             label_AFoul1Num.Text = $"{game.AFoul1}";
@@ -385,7 +385,7 @@ namespace EDCHOST21
 
             label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运回物资数　　{game.CarA.BallOwnCnt}";
             label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　　运回物资数";
-            label_Debug.Text = $"A车坐标： ({game.CarA.Pos.x}, {game.CarA.Pos.y})\nB车坐标： ({game.CarB.Pos.x}, {game.CarB.Pos.y})";
+            label_Debug.Text = $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\nB车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
             //if (game.CarA.HaveBonus)
             //    label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
             //if (game.CarB.HaveBonus)
@@ -721,7 +721,7 @@ namespace EDCHOST21
             //以下数据待定，根据实际设备确定
             showSize = new OpenCvSharp.Size(960, 720);
             cameraSize = new OpenCvSharp.Size(1280, 960);
-            logicSize = new OpenCvSharp.Size(Game.MAX_SIZE, Game.MAX_SIZE);
+            logicSize = new OpenCvSharp.Size(Game.MAX_SIZE_CM, Game.MAX_SIZE_CM);
 
             //点击次数（暂不懂什么意思）
             clickCount = 0;

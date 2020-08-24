@@ -21,86 +21,86 @@ namespace EDCHOST21
         public const int FOUL_PENALTY = 50; //犯规扣分50分;
 
 
-        public Dot Pos;
-        public Dot LastPos;
-        public Camp Cmp { get; set; }//A or B get、set直接两个封装好的函数
-        public int Score { get; set; } //得分
-        public int PkgCount;//小车成功收集物资个数
-        public int TaskState;//小车任务 0为上半场任务，1为下半场任务
-        public int IsWithPassenger;//小车上是否载人 0未载人 1载人
-        public int RescueCount;//小车成功运送人个数
-        public int IsInMaze;//小车所在的区域 0在迷宫外 1在迷宫内
-        public int CrossFloodCount;//小车经过泄洪口的次数
-        public int CrossWallCount;//小车经过虚拟障碍的次数
-        public int WrongDirCount;//小车逆行次数
-        public int FoulCount;//犯规摁键次数
+        public Dot mPos;
+        public Dot mLastPos;
+        public Camp MyCamp { get; set; }//A or B get、set直接两个封装好的函数
+        public int MyScore { get; set; } //得分
+        public int mPkgCount;//小车成功收集物资个数
+        public int mTaskState;//小车任务 0为上半场任务，1为下半场任务
+        public int mIsWithPassenger;//小车上是否载人 0未载人 1载人
+        public int mRescueCount;//小车成功运送人个数
+        public int mIsInMaze;//小车所在的区域 0在迷宫外 1在迷宫内
+        public int mCrossFloodCount;//小车经过泄洪口的次数
+        public int mCrossWallCount;//小车经过虚拟障碍的次数
+        public int mWrongDirCount;//小车逆行次数
+        public int mFoulCount;//犯规摁键次数
 
         public Car(Camp c, int task)
         {
-            Cmp = c;
-            Pos = new Dot(0, 0);
-            Score = 0;
-            PkgCount = 0;
-            TaskState = task;
-            IsWithPassenger = 0;
-            RescueCount = 0;
-            IsInMaze = 0;
-            CrossFloodCount = 0;
-            CrossWallCount = 0;
-            WrongDirCount = 0;
-            FoulCount = 0;
+            MyCamp = c;
+            mPos = new Dot(0, 0);
+            MyScore = 0;
+            mPkgCount = 0;
+            mTaskState = task;
+            mIsWithPassenger = 0;
+            mRescueCount = 0;
+            mIsInMaze = 0;
+            mCrossFloodCount = 0;
+            mCrossWallCount = 0;
+            mWrongDirCount = 0;
+            mFoulCount = 0; //xhl 0824 添加
         }
         public void AddFloodPunish() //犯规
         {
-            CrossFloodCount++;
+            mCrossFloodCount++;
             UpdateScore();
         }
         public void AddWallPunish()
         {
-            CrossWallCount++; //前一个版本疑似typo（xhl）
+            mCrossWallCount++; //前一个版本疑似typo（xhl）
             UpdateScore();
         }
-        public void WrongDirectionplus()
+        public void AddWrongDirection()
         {
-            WrongDirCount++;
+            mWrongDirCount++;
             UpdateScore();
         }
-        public void TransportNumplus()
+        public void AddRescueCount()
         {
-            RescueCount++;
+            mRescueCount++;
             UpdateScore();
         }
-        public void PickNumplus()
+        public void AddPickPkgCount()
         {
-            PkgCount++;
+            mPkgCount++;
             UpdateScore();
         }
-        public void FoulNumplus()
+        public void AddFoulCount()
         {
-            FoulCount++;
+            mFoulCount++;
             UpdateScore();
         }
-        public void SwitchPickedState()
+        public void SwitchPassengerState()
         {
-            if (IsWithPassenger == 0)
+            if (mIsWithPassenger == 0)
             {
-                IsWithPassenger = 1;
+                mIsWithPassenger = 1;
             }
             else
             {
-                IsWithPassenger = 0;
+                mIsWithPassenger = 0;
             }
         }
 
         //8-14 yd将Score后的代码折成多行，便于阅读
         public void UpdateScore()
         {
-            Score = PkgCount * PKG_CREDIT
-                + RescueCount * RESCUE_CREDIT
-                - CrossFloodCount * FLOOD_PENALTY
-                - OBST_PENALTY * CrossWallCount
-                - WrongDirCount * WRONG_DIR_PENALTY
-                - FoulCount * FOUL_PENALTY;
+            MyScore = mPkgCount * PKG_CREDIT
+                + mRescueCount * RESCUE_CREDIT
+                - mCrossFloodCount * FLOOD_PENALTY
+                - OBST_PENALTY * mCrossWallCount
+                - mWrongDirCount * WRONG_DIR_PENALTY
+                - mFoulCount * FOUL_PENALTY;
         }
     }
 }

@@ -14,29 +14,29 @@ namespace EDCHOST21
     public class Game
     {
         public bool DebugMode; //调试模式，最大回合数 = 1,000,000
-        public const int MAX_SIZE = 280;
+        public const int MAX_SIZE_CM = 280;
         public const int MAZE_CROSS_NUM = 6; //迷宫由几条线交叉而成
-        public const int MAZE_CROSS_DIST = 30; //间隔的长度
-        public const int MAZE_SHORT_BORDER = 35; //迷宫最短的靠边距离  xhl?
-        public const int MAZE_LONG_BORDER = MAZE_SHORT_BORDER + MAZE_CROSS_DIST * MAZE_CROSS_NUM;//迷宫最长的靠边距离 xhl?
-        public const int MaxCarryDistance = 10; //判定是否到达的最大距离
-        public const int MAX_PKG_NUM = 6; //场上每次刷新package物资的个数
+        public const int MAZE_CROSS_DIST_CM = 30; //间隔的长度
+        public const int MAZE_SHORT_BORDER_CM = 35; //迷宫最短的靠边距离  xhl?
+        public const int MAZE_LONG_BORDER_CM = MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * MAZE_CROSS_NUM;//迷宫最长的靠边距离 xhl?
+        public const int COINCIDE_ERR_DIST_CM = 10; //判定小车到达某点允许的最大误差距离
+        public const int PKG_NUM_perGROUP = 6; //场上每次刷新package物资的个数
 
-        public int GameCount; //上下半场 1是上半场 2是下半场
-        public int GameStage; //上下阶段 1是上阶段 2是下阶段
-        public Camp GameCamp; //当前半场需完成“上半场”任务的一方
+        public int mGameCount; //上下半场 1是上半场 2是下半场
+        public int mGameStage; //上下阶段 1是上阶段 2是下阶段
+        public Camp UpperCamp; //当前半场需完成“上半场”任务的一方
         public GameState State { get; set; }//比赛状态
         public Car CarA, CarB;//定义小车
         public Passenger Passenger;
-        public PassengerGenerator PsgGenerator { get; set; }
-        public PackageGenerator[] PkgGenerator;
-        public Package[] PkgList;
-        public Flood Flood;
-        public Labyrinth Obstacle;
-        public int StartTime;//时间均改为以毫秒为单位
-        public int GameTime;//时间均改为以毫秒为单位
-        public int PackageCount;//用于记录现在的Package是第几波
-        public int LastWrongDirectionTime;
+        public PassengerGenerator PsgGenerator { get; set; } //?
+        public PackageGenerator[] PkgGenerator; //?
+        public Package[] PkgList; //?
+        public Flood mFlood;
+        public Labyrinth mLabyrinth;
+        public int mStartTime;//时间均改为以毫秒为单位
+        public int mGameTime;//时间均改为以毫秒为单位
+        public int mPackageGroupCount;//用于记录现在的Package是第几波
+        public int mLastWrongDirTime;
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
         public FileStream FoulTimeFS;
 
@@ -46,9 +46,10 @@ namespace EDCHOST21
             System.DateTime currentTime = new System.DateTime();
             return currentTime;
         }
-        public static bool IsInMaze(Dot dot)//确定点是否在迷宫内
+        //这个函数可能放到dot里面更好
+        public static bool JudgeIsInMaze(Dot dot)//确定点是否在迷宫内
         {
-            if (dot.x >= MAZE_SHORT_BORDER && dot.x <= MAZE_LONG_BORDER && dot.y >= MAZE_SHORT_BORDER && dot.y <= MAZE_LONG_BORDER)
+            if (dot.x >= MAZE_SHORT_BORDER_CM && dot.x <= MAZE_LONG_BORDER_CM && dot.y >= MAZE_SHORT_BORDER_CM && dot.y <= MAZE_LONG_BORDER_CM)
                 return true;
             else return false;
         }
@@ -82,23 +83,16 @@ namespace EDCHOST21
         //    //}
         //}
 
-        /*0814xhl觉得这个没用，而且也应该写在Dot里。
-        public static Dot OppoDots(Dot prevDot)//复制点
-        {
-            Dot newDots = new Dot();
-            newDots.x = prevDot.y;
-            newDots.y = prevDot.x;
-            return newDots;
-        }*/
+        //总感觉这个放在这里不妥
         public static double GetDistance(Dot A, Dot B)//得到两个点之间的距离
         {
             return Math.Sqrt((A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y - B.y));
         }
         public Game()//构造一个新的Game类 默认为CampA是先上半场上一阶段进行
         {
-            GameCount = 1;
-            GameStage = 1;
-            GameCamp = Camp.CMP_A;
+            mGameCount = 1;
+            mGameStage = 1;
+            UpperCamp = Camp.CMP_A;
             CarA = new Car(Camp.CMP_A, 0);
             CarB = new Car(Camp.CMP_B, 1);
             State = GameState.UNTART;
@@ -107,45 +101,45 @@ namespace EDCHOST21
             PkgGenerator[1] = new PackageGenerator(6);
             PkgGenerator[2] = new PackageGenerator(6);
             PkgGenerator[3] = new PackageGenerator(6);
-            Flood = new Flood(0);
-            PackageCount = 0;
-            LastWrongDirectionTime = -10;
+            mFlood = new Flood(0);
+            mPackageGroupCount = 0;
+            mLastWrongDirTime = -10;
         }
         //点击开始键时调用Start函数 上半场上一阶段、上半场下一阶段、下半场上一阶段、下半场下一阶段开始时需要这一函数都需要调用这一函数来开始
         public void Start() //开始比赛上下半场都用这个
         {
             State = GameState.NORMAL;
-            GameTime = 0;
-            StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000;//记录比赛开始时候的时间
+            mGameTime = 0;
+            mStartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000;//记录比赛开始时候的时间
         }
         //点击暂停比赛键时调用Pause函数
         public void Pause() //暂停比赛
         {
             State = GameState.PAUSE;
-            GameTime = GameTime + GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000 - StartTime;//记录现在比赛已经进行了多少时间了
+            mGameTime = mGameTime + GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000 - mStartTime;//记录现在比赛已经进行了多少时间了
         }
         //半场交换函数自动调用依照时间控制
         public void NextCount()//从上半场更换到下半场函数
         {
-            if (GameCount == 1 && GameStage == 2 && GameTime == 120000)
+            if (mGameCount == 1 && mGameStage == 2 && mGameTime == 120000)
             {
                 State = GameState.PAUSE;
-                GameCamp = Camp.CMP_B;//上半场转换
+                UpperCamp = Camp.CMP_B;//上半场转换
                 PsgGenerator.ResetIndex();//Passenger的索引复位
                 if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
                 {
                     byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
                     FoulTimeFS.Write(data, 0, data.Length);
                 }
-                CarA.TaskState = 1;//交换A和B的任务
-                CarB.TaskState = 0;
+                CarA.mTaskState = 1;//交换A和B的任务
+                CarB.mTaskState = 0;
             }
 
         }
         //半阶段交换函数自动调用依照时间控制
         public void NextStage()
         {
-            if (GameStage == 1 && GameTime == 60000)
+            if (mGameStage == 1 && mGameTime == 60000)
             {
                 State = GameState.PAUSE;
                 UpdatePassenger();
@@ -155,7 +149,7 @@ namespace EDCHOST21
         public void Continue()
         {
             State = GameState.NORMAL;
-            StartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000;
+            mStartTime = GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000;
         }
         //重置摁键对应的函数
         public void Reset()
@@ -165,35 +159,35 @@ namespace EDCHOST21
         //犯规键对应的函数
         public void Foul()
         {
-            if (GameCount == 1 && GameStage == 1)
+            if (mGameCount == 1 && mGameStage == 1)
             {
-                CarA.FoulCount++;
+                CarA.mFoulCount++;
             }
-            if (GameCount == 1 && GameStage == 2)
+            if (mGameCount == 1 && mGameStage == 2)
             {
-                CarB.FoulCount++;
+                CarB.mFoulCount++;
             }
-            if (GameCount == 2 && GameStage == 1)
+            if (mGameCount == 2 && mGameStage == 1)
             {
-                CarB.FoulCount++;
+                CarB.mFoulCount++;
             }
-            if (GameCount == 2 && GameStage == 2)
+            if (mGameCount == 2 && mGameStage == 2)
             {
-                CarA.FoulCount++;
+                CarA.mFoulCount++;
             }
         }
         //每到半点自动更新Package信息函数
         public void UpdatePackage()//到半点时更换Package函数
         {
-            int changenum = GameTime / 300 + 1;
-            if (GameStage == 2 && PackageCount < changenum)
+            int changenum = mGameTime / 300 + 1;
+            if (mGameStage == 2 && mPackageGroupCount < changenum)
             {
-                for (int i = 0; i < MAX_PKG_NUM; i++)
+                for (int i = 0; i < PKG_NUM_perGROUP; i++)
                 {
-                    PkgList[i].Pos = PkgGenerator[changenum].GetPkg_Dot(i);
+                    PkgList[i].mPos = PkgGenerator[changenum].GetPackage(i).GetDot();
                     PkgList[i].IsPicked = 0;
                 }
-                PackageCount++;
+                mPackageGroupCount++;
             }
         }
         //下面为自动更新乘客信息函数
@@ -204,35 +198,35 @@ namespace EDCHOST21
         //下面四个为接口
         public void CarAGetPassenger()//小车A接到了乘客
         {
-            if (GetDistance(CarA.Pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.IsWithPassenger == 0)
+            if (GetDistance(CarA.mPos, Passenger.Start_Dot) <= COINCIDE_ERR_DIST_CM && CarA.mIsWithPassenger == 0)
             {
-                CarA.SwitchPickedState();
+                CarA.SwitchPassengerState();
             }
 
         }
         public void CarBGetPassenger()//小车B接到了乘客
         {
-            if (GetDistance(CarB.Pos, Passenger.Start_Dot) <= MaxCarryDistance && CarA.IsWithPassenger == 0)
+            if (GetDistance(CarB.mPos, Passenger.Start_Dot) <= COINCIDE_ERR_DIST_CM && CarA.mIsWithPassenger == 0)
             {
-                CarB.SwitchPickedState();
+                CarB.SwitchPassengerState();
             }
         }
         public void CarATransPassenger()//小车A成功运送了乘客
         {
 
-            if (GetDistance(CarA.Pos, Passenger.End_Dot) <= MaxCarryDistance && CarA.IsWithPassenger == 1)
+            if (GetDistance(CarA.mPos, Passenger.End_Dot) <= COINCIDE_ERR_DIST_CM && CarA.mIsWithPassenger == 1)
             {
-                CarA.SwitchPickedState();
-                CarA.TransportNumplus();
+                CarA.SwitchPassengerState();
+                CarA.AddRescueCount();
             }
             UpdatePassenger();
         }
         public void CarBTransPassenger()//小车A成功运送了乘客
         {
-            if (GetDistance(CarB.Pos, Passenger.End_Dot) <= MaxCarryDistance && CarB.IsWithPassenger == 1)
+            if (GetDistance(CarB.mPos, Passenger.End_Dot) <= COINCIDE_ERR_DIST_CM && CarB.mIsWithPassenger == 1)
             {
-                CarB.SwitchPickedState();
-                CarB.TransportNumplus();
+                CarB.SwitchPassengerState();
+                CarB.AddRescueCount();
             }
             UpdatePassenger();
         }
@@ -240,11 +234,11 @@ namespace EDCHOST21
         public void CarAGetpackage()//小车A得到了包裹
         {
 
-            for (int i = 0; i < MAX_PKG_NUM; i++)
+            for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
-                if (GetDistance(CarA.Pos, PkgList[i].Pos) <= MaxCarryDistance && PkgList[i].IsPicked == 0)
+                if (GetDistance(CarA.mPos, PkgList[i].mPos) <= COINCIDE_ERR_DIST_CM && PkgList[i].IsPicked == 0)
                 {
-                    CarA.PickNumplus();
+                    CarA.AddPickPkgCount();
                     PkgList[i].IsPicked = 1;
                 }
             }
@@ -252,11 +246,11 @@ namespace EDCHOST21
         }
         public void CarBGetpackage()//小车B得到了包裹
         {
-            for (int i = 0; i < MAX_PKG_NUM; i++)
+            for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
-                if (GetDistance(CarB.Pos, PkgList[i].Pos) <= MaxCarryDistance && PkgList[i].IsPicked == 0)
+                if (GetDistance(CarB.mPos, PkgList[i].mPos) <= COINCIDE_ERR_DIST_CM && PkgList[i].IsPicked == 0)
                 {
-                    CarB.PickNumplus();
+                    CarB.AddPickPkgCount();
                     PkgList[i].IsPicked = 1;
                 }
 
@@ -266,38 +260,38 @@ namespace EDCHOST21
         {
             for (int i = 0; i <= 15; i++)
             {
-                if (Obstacle.WallList[i].w1.x == Obstacle.WallList[i].w2.x)//障碍的两个点的横坐标相同
+                if (mLabyrinth.mpWallList[i].w1.x == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
                 {
-                    if (Obstacle.WallList[i].w1.y < Obstacle.WallList[i].w2.y)//障碍1在障碍2的下面
+                    if (mLabyrinth.mpWallList[i].w1.y < mLabyrinth.mpWallList[i].w2.y)//障碍1在障碍2的下面
                     {
-                        if (Obstacle.WallList[i].w1.x == CarA.Pos.x && CarA.Pos.y <= Obstacle.WallList[i].w2.y && Obstacle.WallList[i].w1.y <= CarA.Pos.y)
+                        if (mLabyrinth.mpWallList[i].w1.x == CarA.mPos.x && CarA.mPos.y <= mLabyrinth.mpWallList[i].w2.y && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y)
                         {
                             CarA.AddWallPunish();
                         }
 
                     }
-                    if (Obstacle.WallList[i].w2.y < Obstacle.WallList[i].w1.y)//障碍2在障碍1的下面
+                    if (mLabyrinth.mpWallList[i].w2.y < mLabyrinth.mpWallList[i].w1.y)//障碍2在障碍1的下面
                     {
-                        if (Obstacle.WallList[i].w1.x == CarA.Pos.x && CarA.Pos.y <= Obstacle.WallList[i].w1.y && Obstacle.WallList[i].w2.y <= CarA.Pos.y)
+                        if (mLabyrinth.mpWallList[i].w1.x == CarA.mPos.x && CarA.mPos.y <= mLabyrinth.mpWallList[i].w1.y && mLabyrinth.mpWallList[i].w2.y <= CarA.mPos.y)
                         {
                             CarA.AddWallPunish();
                         }
 
                     }
                 }
-                if (Obstacle.WallList[i].w1.y == Obstacle.WallList[i].w2.y)//障碍的两个点的纵坐标相同
+                if (mLabyrinth.mpWallList[i].w1.y == mLabyrinth.mpWallList[i].w2.y)//障碍的两个点的纵坐标相同
                 {
-                    if (Obstacle.WallList[i].w1.x < Obstacle.WallList[i].w2.x)//障碍1在障碍2的左面
+                    if (mLabyrinth.mpWallList[i].w1.x < mLabyrinth.mpWallList[i].w2.x)//障碍1在障碍2的左面
                     {
-                        if (Obstacle.WallList[i].w1.y == CarA.Pos.y && CarA.Pos.x <= Obstacle.WallList[i].w2.x && Obstacle.WallList[i].w1.x <= CarA.Pos.x)
+                        if (mLabyrinth.mpWallList[i].w1.y == CarA.mPos.y && CarA.mPos.x <= mLabyrinth.mpWallList[i].w2.x && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x)
                         {
                             CarA.AddWallPunish();
                         }
 
                     }
-                    if (Obstacle.WallList[i].w2.x < Obstacle.WallList[i].w1.x)//障碍2在障碍1的下面
+                    if (mLabyrinth.mpWallList[i].w2.x < mLabyrinth.mpWallList[i].w1.x)//障碍2在障碍1的下面
                     {
-                        if (Obstacle.WallList[i].w1.y == CarA.Pos.y && CarA.Pos.x <= Obstacle.WallList[i].w1.x && Obstacle.WallList[i].w2.x <= CarA.Pos.x)
+                        if (mLabyrinth.mpWallList[i].w1.y == CarA.mPos.y && CarA.mPos.x <= mLabyrinth.mpWallList[i].w1.x && mLabyrinth.mpWallList[i].w2.x <= CarA.mPos.x)
                         {
                             CarA.AddWallPunish();
                         }
@@ -310,38 +304,38 @@ namespace EDCHOST21
         {
             for (int i = 0; i <= 15; i++)
             {
-                if (Obstacle.WallList[i].w1.x == Obstacle.WallList[i].w2.x)//障碍的两个点的横坐标相同
+                if (mLabyrinth.mpWallList[i].w1.x == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
                 {
-                    if (Obstacle.WallList[i].w1.y < Obstacle.WallList[i].w2.y)//障碍1在障碍2的下面
+                    if (mLabyrinth.mpWallList[i].w1.y < mLabyrinth.mpWallList[i].w2.y)//障碍1在障碍2的下面
                     {
-                        if (Obstacle.WallList[i].w1.x == CarB.Pos.x && CarB.Pos.y <= Obstacle.WallList[i].w2.y && Obstacle.WallList[i].w1.y <= CarB.Pos.y)
+                        if (mLabyrinth.mpWallList[i].w1.x == CarB.mPos.x && CarB.mPos.y <= mLabyrinth.mpWallList[i].w2.y && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y)
                         {
                             CarB.AddWallPunish();
                         }
 
                     }
-                    if (Obstacle.WallList[i].w2.y < Obstacle.WallList[i].w1.y)//障碍2在障碍1的下面
+                    if (mLabyrinth.mpWallList[i].w2.y < mLabyrinth.mpWallList[i].w1.y)//障碍2在障碍1的下面
                     {
-                        if (Obstacle.WallList[i].w1.x == CarB.Pos.x && CarB.Pos.y <= Obstacle.WallList[i].w1.y && Obstacle.WallList[i].w2.y <= CarB.Pos.y)
+                        if (mLabyrinth.mpWallList[i].w1.x == CarB.mPos.x && CarB.mPos.y <= mLabyrinth.mpWallList[i].w1.y && mLabyrinth.mpWallList[i].w2.y <= CarB.mPos.y)
                         {
                             CarB.AddWallPunish();
                         }
 
                     }
                 }
-                if (Obstacle.WallList[i].w1.y == Obstacle.WallList[i].w2.y)//障碍的两个点的纵坐标相同
+                if (mLabyrinth.mpWallList[i].w1.y == mLabyrinth.mpWallList[i].w2.y)//障碍的两个点的纵坐标相同
                 {
-                    if (Obstacle.WallList[i].w1.x < Obstacle.WallList[i].w2.x)//障碍1在障碍2的左面
+                    if (mLabyrinth.mpWallList[i].w1.x < mLabyrinth.mpWallList[i].w2.x)//障碍1在障碍2的左面
                     {
-                        if (Obstacle.WallList[i].w1.y == CarB.Pos.y && CarB.Pos.x <= Obstacle.WallList[i].w2.x && Obstacle.WallList[i].w1.x <= CarB.Pos.x)
+                        if (mLabyrinth.mpWallList[i].w1.y == CarB.mPos.y && CarB.mPos.x <= mLabyrinth.mpWallList[i].w2.x && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x)
                         {
                             CarB.AddWallPunish();
                         }
 
                     }
-                    if (Obstacle.WallList[i].w2.x < Obstacle.WallList[i].w1.x)//障碍2在障碍1的下面
+                    if (mLabyrinth.mpWallList[i].w2.x < mLabyrinth.mpWallList[i].w1.x)//障碍2在障碍1的下面
                     {
-                        if (Obstacle.WallList[i].w1.y == CarB.Pos.y && CarB.Pos.x <= Obstacle.WallList[i].w1.x && Obstacle.WallList[i].w2.x <= CarB.Pos.x)
+                        if (mLabyrinth.mpWallList[i].w1.y == CarB.mPos.y && CarB.mPos.x <= mLabyrinth.mpWallList[i].w1.x && mLabyrinth.mpWallList[i].w2.x <= CarB.mPos.x)
                         {
                             CarB.AddWallPunish();
                         }
@@ -353,26 +347,26 @@ namespace EDCHOST21
         public void CarAonFlood()//A车到大障碍上
         {
 
-            if (CarA.TaskState == 1)//在下半场的时候才应该判断小车是否经过Flood
+            if (CarA.mTaskState == 1)//在下半场的时候才应该判断小车是否经过Flood
             {
-                if (Flood.num == 0)
+                if (mFlood.num == 0)
                 { }
-                else if (Flood.num == 1)
+                else if (mFlood.num == 1)
                 {
-                    if (GetDistance(CarA.Pos, Flood.dot1) <= MaxCarryDistance)
+                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM)
                     {
 
                         CarA.AddFloodPunish();
                     }
                 }
-                else if (Flood.num == 2)
+                else if (mFlood.num == 2)
                 {
 
-                    if (GetDistance(CarA.Pos, Flood.dot1) <= MaxCarryDistance)
+                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM)
                     {
                         CarA.AddFloodPunish();
                     }
-                    if (GetDistance(CarA.Pos, Flood.dot2) <= MaxCarryDistance)
+                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM)
                     {
                         CarA.AddFloodPunish();
                     }
@@ -382,26 +376,26 @@ namespace EDCHOST21
         }
         public void CarBonFlood()
         {
-            if (CarB.TaskState == 1)//在下半场的时候才应该判断小车是否经过Flood
+            if (CarB.mTaskState == 1)//在下半场的时候才应该判断小车是否经过Flood
             {
-                if (Flood.num == 0)
+                if (mFlood.num == 0)
                 { }
-                else if (Flood.num == 1)
+                else if (mFlood.num == 1)
                 {
-                    if (GetDistance(CarB.Pos, Flood.dot1) <= MaxCarryDistance)
+                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM)
                     {
 
                         CarB.AddFloodPunish();
                     }
                 }
-                else if (Flood.num == 2)
+                else if (mFlood.num == 2)
                 {
 
-                    if (GetDistance(CarB.Pos, Flood.dot1) <= MaxCarryDistance)
+                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM)
                     {
                         CarB.AddFloodPunish();
                     }
-                    if (GetDistance(CarB.Pos, Flood.dot2) <= MaxCarryDistance)
+                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM)
                     {
                         CarB.AddFloodPunish();
                     }
@@ -412,48 +406,48 @@ namespace EDCHOST21
         //逆行自动判断//目前为思路两次逆行之间间隔时间判断为5s，这5s之间的逆行忽略不计
         public void CarAWrongDirection()
         {
-            if (CarA.LastPos.x < 30 && CarA.Pos.x < 30 && CarA.LastPos.y > 30 && CarA.LastPos.y < 220 && CarA.Pos.y > 30 && CarA.Pos.y < 220 && CarA.Pos.y > CarA.LastPos.y && GameTime - LastWrongDirectionTime > 50)
+            if (CarA.mLastPos.x < 30 && CarA.mPos.x < 30 && CarA.mLastPos.y > 30 && CarA.mLastPos.y < 220 && CarA.mPos.y > 30 && CarA.mPos.y < 220 && CarA.mPos.y > CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
-                CarA.FoulNumplus();
-                LastWrongDirectionTime = GameTime;
+                CarA.AddFoulCount();
+                mLastWrongDirTime = mGameTime;
             }
-            if (CarA.LastPos.x > 220 && CarA.Pos.x < 220 && CarA.LastPos.y > 30 && CarA.LastPos.y < 220 && CarA.Pos.y > 30 && CarA.Pos.y < 220 && CarA.Pos.y < CarA.LastPos.y && GameTime - LastWrongDirectionTime > 50)
+            if (CarA.mLastPos.x > 220 && CarA.mPos.x < 220 && CarA.mLastPos.y > 30 && CarA.mLastPos.y < 220 && CarA.mPos.y > 30 && CarA.mPos.y < 220 && CarA.mPos.y < CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
-                CarA.FoulNumplus();
-                LastWrongDirectionTime = GameTime;
+                CarA.AddFoulCount();
+                mLastWrongDirTime = mGameTime;
             }
-            if (CarA.LastPos.y < 30 && CarA.Pos.y < 30 && CarA.LastPos.x > 30 && CarA.LastPos.x < 220 && CarA.Pos.x > 30 && CarA.Pos.x < 220 && CarA.Pos.x < CarA.LastPos.x && GameTime - LastWrongDirectionTime > 50)
+            if (CarA.mLastPos.y < 30 && CarA.mPos.y < 30 && CarA.mLastPos.x > 30 && CarA.mLastPos.x < 220 && CarA.mPos.x > 30 && CarA.mPos.x < 220 && CarA.mPos.x < CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
             {
-                CarA.FoulNumplus();
-                LastWrongDirectionTime = GameTime;
+                CarA.AddFoulCount();
+                mLastWrongDirTime = mGameTime;
             }
-            if (CarA.LastPos.y > 220 && CarA.Pos.y > 220 && CarA.LastPos.x > 30 && CarA.LastPos.x < 220 && CarA.Pos.x > 30 && CarA.Pos.x < 220 && CarA.Pos.x > CarA.LastPos.x && GameTime - LastWrongDirectionTime > 50)
+            if (CarA.mLastPos.y > 220 && CarA.mPos.y > 220 && CarA.mLastPos.x > 30 && CarA.mLastPos.x < 220 && CarA.mPos.x > 30 && CarA.mPos.x < 220 && CarA.mPos.x > CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
             {
-                CarA.FoulNumplus();
-                LastWrongDirectionTime = GameTime;
+                CarA.AddFoulCount();
+                mLastWrongDirTime = mGameTime;
             }
         }
         public void CarBWrongDirection()
         {
-            if (CarB.LastPos.x < 30 && CarB.Pos.x < 30 && CarB.LastPos.y > 30 && CarB.LastPos.y < 220 && CarB.Pos.y > 30 && CarB.Pos.y < 220 && CarB.Pos.y > CarB.LastPos.y && GameTime - LastWrongDirectionTime > 50)
+            if (CarB.mLastPos.x < 30 && CarB.mPos.x < 30 && CarB.mLastPos.y > 30 && CarB.mLastPos.y < 220 && CarB.mPos.y > 30 && CarB.mPos.y < 220 && CarB.mPos.y > CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
-                CarB.FoulNumplus();
-                LastWrongDirectionTime = GameTime;
+                CarB.AddFoulCount();
+                mLastWrongDirTime = mGameTime;
             }
-            if (CarB.LastPos.x > 220 && CarB.Pos.x < 220 && CarB.LastPos.y > 30 && CarB.LastPos.y < 220 && CarB.Pos.y > 30 && CarB.Pos.y < 220 && CarB.Pos.y < CarB.LastPos.y && GameTime - LastWrongDirectionTime > 50)
+            if (CarB.mLastPos.x > 220 && CarB.mPos.x < 220 && CarB.mLastPos.y > 30 && CarB.mLastPos.y < 220 && CarB.mPos.y > 30 && CarB.mPos.y < 220 && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
-                CarB.FoulNumplus();
-                LastWrongDirectionTime = GameTime;
+                CarB.AddFoulCount();
+                mLastWrongDirTime = mGameTime;
             }
-            if (CarB.LastPos.y < 30 && CarB.Pos.y < 30 && CarB.LastPos.x > 30 && CarB.LastPos.x < 220 && CarB.Pos.x > 30 && CarB.Pos.x < 220 && CarB.Pos.x < CarB.LastPos.x && GameTime - LastWrongDirectionTime > 50)
+            if (CarB.mLastPos.y < 30 && CarB.mPos.y < 30 && CarB.mLastPos.x > 30 && CarB.mLastPos.x < 220 && CarB.mPos.x > 30 && CarB.mPos.x < 220 && CarB.mPos.x < CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
             {
-                CarB.FoulNumplus();
-                LastWrongDirectionTime = GameTime;
+                CarB.AddFoulCount();
+                mLastWrongDirTime = mGameTime;
             }
-            if (CarB.LastPos.y > 220 && CarB.Pos.y > 220 && CarB.LastPos.x > 30 && CarB.LastPos.x < 220 && CarB.Pos.x > 30 && CarB.Pos.x < 220 && CarB.Pos.x > CarB.LastPos.x && GameTime - LastWrongDirectionTime > 50)
+            if (CarB.mLastPos.y > 220 && CarB.mPos.y > 220 && CarB.mLastPos.x > 30 && CarB.mLastPos.x < 220 && CarB.mPos.x > 30 && CarB.mPos.x < 220 && CarB.mPos.x > CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
             {
-                CarB.FoulNumplus();
-                LastWrongDirectionTime = GameTime;
+                CarB.AddFoulCount();
+                mLastWrongDirTime = mGameTime;
             }
         }
         /*public void SetStop(Dot stop)//上半场的小车设定障碍        //这里也需要加判断！！！！！！！！！！！！！！！！！！！！
@@ -473,108 +467,108 @@ namespace EDCHOST21
         {
             byte[] message = new byte[102]; //上位机传递多少信息
             int messageCnt = 0;
-            message[messageCnt++] = (byte)(GameTime >> 8);
-            message[messageCnt++] = (byte)GameTime;
-            message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)CarA.TaskState << 5) | ((byte)CarB.TaskState << 4)
-                | ((byte)CarA.IsWithPassenger << 3 & 0x08) | ((byte)CarA.IsWithPassenger << 2 & 0x04) | ((byte)Flood.num & 0x03));
-            message[messageCnt++] = (byte)CarA.Pos.x;
-            message[messageCnt++] = (byte)CarA.Pos.y;
-            message[messageCnt++] = (byte)CarB.Pos.x;
-            message[messageCnt++] = (byte)CarB.Pos.y;
-            message[messageCnt++] = (byte)Flood.dot1.x;
-            message[messageCnt++] = (byte)Flood.dot1.y;
-            message[messageCnt++] = (byte)Flood.dot2.x;
-            message[messageCnt++] = (byte)Flood.dot2.y;
+            message[messageCnt++] = (byte)(mGameTime >> 8);
+            message[messageCnt++] = (byte)mGameTime;
+            message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)CarA.mTaskState << 5) | ((byte)CarB.mTaskState << 4)
+                | ((byte)CarA.mIsWithPassenger << 3 & 0x08) | ((byte)CarA.mIsWithPassenger << 2 & 0x04) | ((byte)mFlood.num & 0x03));
+            message[messageCnt++] = (byte)CarA.mPos.x;
+            message[messageCnt++] = (byte)CarA.mPos.y;
+            message[messageCnt++] = (byte)CarB.mPos.x;
+            message[messageCnt++] = (byte)CarB.mPos.y;
+            message[messageCnt++] = (byte)mFlood.dot1.x;
+            message[messageCnt++] = (byte)mFlood.dot1.y;
+            message[messageCnt++] = (byte)mFlood.dot2.x;
+            message[messageCnt++] = (byte)mFlood.dot2.y;
             message[messageCnt++] = (byte)Passenger.Start_Dot.x;
             message[messageCnt++] = (byte)Passenger.Start_Dot.x;
             message[messageCnt++] = (byte)Passenger.End_Dot.x;
             message[messageCnt++] = (byte)Passenger.End_Dot.x;
             message[messageCnt++] = (byte)(((byte)PkgList[0].IsPicked << 7) | ((byte)PkgList[1].IsPicked << 6) | ((byte)PkgList[2].IsPicked << 5)
-                | ((byte)PkgList[3].IsPicked << 4) | ((byte)PkgList[4].IsPicked << 3) | ((byte)PkgList[5].IsPicked << 2) | ((byte)CarA.IsInMaze << 1) | ((byte)CarB.IsInMaze));
-            message[messageCnt++] = (byte)PkgList[0].Pos.x;
-            message[messageCnt++] = (byte)PkgList[0].Pos.y;
-            message[messageCnt++] = (byte)PkgList[1].Pos.x;
-            message[messageCnt++] = (byte)PkgList[1].Pos.y;
-            message[messageCnt++] = (byte)PkgList[2].Pos.x;
-            message[messageCnt++] = (byte)PkgList[2].Pos.y;
-            message[messageCnt++] = (byte)PkgList[3].Pos.x;
-            message[messageCnt++] = (byte)PkgList[3].Pos.y;
-            message[messageCnt++] = (byte)PkgList[4].Pos.x;
-            message[messageCnt++] = (byte)PkgList[4].Pos.y;
-            message[messageCnt++] = (byte)PkgList[5].Pos.x;
-            message[messageCnt++] = (byte)PkgList[5].Pos.y;
-            message[messageCnt++] = (byte)(CarA.Score >> 8);
-            message[messageCnt++] = (byte)CarA.Score;
-            message[messageCnt++] = (byte)(CarB.Score >> 8);
-            message[messageCnt++] = (byte)CarB.Score;
-            message[messageCnt++] = (byte)CarA.RescueCount;
-            message[messageCnt++] = (byte)CarB.RescueCount;
-            message[messageCnt++] = (byte)CarA.PkgCount;
-            message[messageCnt++] = (byte)CarB.PkgCount;
-            message[messageCnt++] = (byte)Obstacle.WallList[0].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[0].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[0].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[0].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[1].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[1].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[1].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[1].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[2].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[2].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[2].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[2].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[3].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[3].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[3].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[3].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[4].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[4].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[4].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[4].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[5].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[5].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[5].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[5].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[6].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[6].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[6].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[6].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[7].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[7].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[7].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[7].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[8].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[8].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[8].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[8].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[9].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[9].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[9].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[9].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[10].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[10].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[10].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[10].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[11].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[11].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[11].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[11].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[12].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[12].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[12].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[12].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[13].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[13].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[13].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[13].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[14].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[14].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[14].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[14].w2.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[15].w1.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[15].w1.y;
-            message[messageCnt++] = (byte)Obstacle.WallList[15].w2.x;
-            message[messageCnt++] = (byte)Obstacle.WallList[15].w2.y;
+                | ((byte)PkgList[3].IsPicked << 4) | ((byte)PkgList[4].IsPicked << 3) | ((byte)PkgList[5].IsPicked << 2) | ((byte)CarA.mIsInMaze << 1) | ((byte)CarB.mIsInMaze));
+            message[messageCnt++] = (byte)PkgList[0].mPos.x;
+            message[messageCnt++] = (byte)PkgList[0].mPos.y;
+            message[messageCnt++] = (byte)PkgList[1].mPos.x;
+            message[messageCnt++] = (byte)PkgList[1].mPos.y;
+            message[messageCnt++] = (byte)PkgList[2].mPos.x;
+            message[messageCnt++] = (byte)PkgList[2].mPos.y;
+            message[messageCnt++] = (byte)PkgList[3].mPos.x;
+            message[messageCnt++] = (byte)PkgList[3].mPos.y;
+            message[messageCnt++] = (byte)PkgList[4].mPos.x;
+            message[messageCnt++] = (byte)PkgList[4].mPos.y;
+            message[messageCnt++] = (byte)PkgList[5].mPos.x;
+            message[messageCnt++] = (byte)PkgList[5].mPos.y;
+            message[messageCnt++] = (byte)(CarA.MyScore >> 8);
+            message[messageCnt++] = (byte)CarA.MyScore;
+            message[messageCnt++] = (byte)(CarB.MyScore >> 8);
+            message[messageCnt++] = (byte)CarB.MyScore;
+            message[messageCnt++] = (byte)CarA.mRescueCount;
+            message[messageCnt++] = (byte)CarB.mRescueCount;
+            message[messageCnt++] = (byte)CarA.mPkgCount;
+            message[messageCnt++] = (byte)CarB.mPkgCount;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[0].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[0].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[0].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[0].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[1].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[1].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[1].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[1].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[2].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[2].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[2].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[2].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[3].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[3].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[3].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[3].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[4].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[4].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[4].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[4].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[5].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[5].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[5].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[5].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[6].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[6].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[6].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[6].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w2.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w1.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w1.y;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w2.x;
+            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w2.y;
             message[messageCnt++] = 0x0D;
             message[messageCnt++] = 0x0A;
             return message;
