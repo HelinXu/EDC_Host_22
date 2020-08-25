@@ -165,18 +165,26 @@ namespace EDCHOST21
 
             lock (flags)
             {
+                /*
                 game.BallsDot.Clear();
                 foreach (Point2i posBall in flags.posBalls)
                     game.BallsDot.Add(new Dot(posBall.X, posBall.Y));
+                */
+                game.Passenger.Start_Dot.x = flags.posPersonStart.X;
+                game.Passenger.Start_Dot.y = flags.posPersonStart.Y;
+                game.Passenger.End_Dot.x = flags.posPersonEnd.X;
+                game.Passenger.End_Dot.y = flags.posPersonEnd.Y;
+
                 game.CarA.mPos.x = flags.posCarA.X;
                 game.CarA.mPos.y = flags.posCarA.Y;
                 game.CarB.mPos.x = flags.posCarB.X;
                 game.CarB.mPos.y = flags.posCarB.Y;
             }
-            game.Update();
+            //game.Update();
 
             lock (flags)
             {
+                /*
                 flags.currPersonNum = game.CurrPersonNumber;
                 for (int i = 0; i != Game.MaxPersonNum; ++i)
                 {
@@ -184,7 +192,14 @@ namespace EDCHOST21
                     flags.posPersonStart[i].Y = game.People[i].StartPos.y;
                     flags.gameState = game.State;
                 }
+                */
+                flags.posPersonStart.X = game.Passenger.Start_Dot.x;
+                flags.posPersonStart.Y = game.Passenger.End_Dot.y;
+
             }
+
+            // 以下是通讯的部分内容，应当有变化
+            /*
             byte[] Message = game.PackMessage();
             label_CountDown.Text = Convert.ToString(game.Round);
             if (serial1 != null && serial1.IsOpen)
@@ -192,6 +207,7 @@ namespace EDCHOST21
             if (serial2 != null && serial2.IsOpen)
                 serial2.Write(Message, 0, 32); ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
+            */
         }
 
         //从视频帧中读取一帧，进行图像处理、绘图和数值更新
@@ -224,18 +240,21 @@ namespace EDCHOST21
                                 Cv2.Line(videoFrame, (int)(pt.X), (int)(pt.Y - 3), (int)(pt.X), (int)(pt.Y + 3), new Scalar(0x00, 0xff, 0x98));
                             }
                         }
-                        //调用定位器，得到小车和小球的坐标
-                        localiser.GetLocations(out ball, out car1, out car2);
+                        //调用定位器，得到小车和乘客的坐标
+                        localiser.GetLocations(out person, out car1, out car2);
 
                         lock (flags)
                         {
-                            Point2f[] posBallsF = new Point2f[0];
+                            //Point2f[] posBallsF = new Point2f[0];
+
                             if (flags.calibrated)
                             {
-                                //将小球和小车坐标从摄像头画面坐标转化成逻辑坐标
+                                //将小车坐标从摄像头画面坐标转化成逻辑坐标
                                 //再将小车坐标存储到flags中
+                                /*
                                 if (ball.Any())
                                     posBallsF = cc.CameraToLogic(ball);
+                                */
                                 Point2f[] car12 = { car1, car2 };
                                 Point2f[] carAB = cc.CameraToLogic(car12);
                                 flags.posCarA = carAB[0];
@@ -244,14 +263,17 @@ namespace EDCHOST21
                             else
                             {
                                 //直接将小车坐标存储到flags中
-                                posBallsF = ball;
+                                // posBallsF = ball;
                                 flags.posCarA = car1;
                                 flags.posCarB = car2;
                             }
+
+                            /*
                             //将球坐标从float转为int
                             Point2i[] posBallsI = new Point2i[posBallsF.Length];
                             for (int i = 0; i < posBallsF.Length; ++i)
                                 posBallsI[i] = posBallsF[i];
+                            
                             //检验小球坐标是否符合逻辑规则，若符合才将其转入flags中
                             List<Point2i> posBallsList = new List<Point2i>();
                             foreach (Point2i b in posBallsI)
@@ -260,18 +282,21 @@ namespace EDCHOST21
                                     posBallsList.Add(b);
                             }
                             flags.posBalls = posBallsList.ToArray();
+                            */
                         }
 
-                        //处理时间参数
+                        // 处理时间参数
                         timeCamNow = DateTime.Now;
                         TimeSpan timeProcess = timeCamNow - timeCamPrev;
                         timeCamPrev = timeCamNow;
 
-                        //将摄像头视频帧缩放成显示帧
+                        // 将摄像头视频帧缩放成显示帧
+                        // Resize函数的最后一个参数是缩放的插值算法
+                        // InterpolationFlags.Cubic 表示双三次插值法，放大图像时效果较好，速度铰慢
                         Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Cubic);
-                        //更新界面组件的画面显示
+                        // 更新界面组件的画面显示
                         BeginInvoke(new Action<Image>(UpdateCameraPicture), BitmapConverter.ToBitmap(showFrame));
-                        //输出视频
+                        // 输出视频
                         if (flags.videomode == true)
                             vw.Write(showFrame);
                     }
@@ -374,6 +399,7 @@ namespace EDCHOST21
 
         private void ShowMessage(byte[] M) //通过Message显示信息到UI上
         {
+            /*
             label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
 
             labelAScore.Text = $"{game.CarA.MyScore}";
@@ -389,6 +415,7 @@ namespace EDCHOST21
 
             label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运回物资数　　{game.CarA.BallOwnCnt}";
             label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　　运回物资数";
+            */
             label_Debug.Text = $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\nB车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
             //if (game.CarA.HaveBonus)
             //    label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
@@ -919,17 +946,18 @@ namespace EDCHOST21
 
         //根据计算得到的中心点集，返回定位到的小车、小球坐标
         //其中，小球坐标返回点数组，小车坐标返回中心点集中的第0个元素
-        public void GetLocations(out Point2f[] pts0, out Point2i pt1, out Point2i pt2)
+        public void GetLocations(out Point2i pts0, out Point2i pt1, out Point2i pt2)
         {
-            List<Point2f> ptsList0 = new List<Point2f>();
+            //List<Point2f> ptsList0 = new List<Point2f>();
             if (centres0.Count != 0)
             {
-                foreach (Point2i c0 in centres0)
-                    ptsList0.Add(c0);
+                //foreach (Point2i c0 in centres0)
+                //    ptsList0.Add(c0);
+                pts0 = centres0[0];
                 centres0.Clear();
             }
             // else ptsList0.Add(new Point2f(-1, -1));
-            pts0 = ptsList0.ToArray();
+            else pts0 = new Point2i(-1, -1);
 
             if (centres1.Count != 0)
             {
