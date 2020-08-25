@@ -9,7 +9,7 @@ UART_HandleTypeDef* zigbee_huart;
 
 
 volatile struct BasicInfo Game;//储存比赛状态、时间、泄洪口信息
-volatile struct CarInfo Car[2];//储存车辆信息
+volatile struct CarInfo Car;//储存车辆信息
 volatile struct PassengerInfo Passenger;//储存人员的信息、位置和送达位置
 volatile struct PackageInfo Package[6];//储存防汛物资的信息
 volatile struct FloodInfo Flood[2];//储存泄洪口位置信息
@@ -118,22 +118,16 @@ struct Position getFloodpos(int FloodNo)
 {
         return Flood[FloodNo].pos;
 }
-uint16_t getCarposX(int CarNo)
+uint16_t getCarposX()
 {
-    if (CarNo != 0 && CarNo != 1)
-		return (uint16_t)INVALID_ARG;
-	else
 		return (uint16_t)Car[CarNo].pos.X;
 
 }
-uint16_t getCarposY(int CarNo)
+uint16_t getCarposY()
 {
-    if (CarNo != 0 && CarNo != 1)
-		return (uint16_t)INVALID_ARG;
-	else
 		return (uint16_t)Car[CarNo].pos.Y;
 }
-struct Position getCarpos(int CarNo)
+struct Position getCarpos()
 {
 		return Car[CarNo].pos;
 }
@@ -162,47 +156,29 @@ struct Position getPackagepos(int PackNo)
 {
 		return Package[PackNo].pos;
 }
-uint16_t getCarpicknum(int CarNo)
+uint16_t getCarpicknum()
 {
-    if (CarNo != 0 && CarNo != 1)
-		return (uint16_t)INVALID_ARG;
-	else
-		return (uint16_t)Car[CarNo].picknum;
+		return (uint16_t)Car.picknum;
 }
-uint16_t getCartransportnum(int CarNo)
+uint16_t getCartransportnum()
 {
-    if (CarNo != 0 && CarNo != 1)
-		return (uint16_t)INVALID_ARG;
-	else
-		return (uint16_t)Car[CarNo].transportnum;
+		return (uint16_t)Car.transportnum;
 }
-uint16_t getCartransport(int CarNo)
+uint16_t getCartransport()
 {
-    if (CarNo != 0 && CarNo != 1)
-		return (uint16_t)INVALID_ARG;
-	else
-		return (uint16_t)Car[CarNo].transport;
+		return (uint16_t)Car.transport;
 }
-uint16_t getCarscore(int CarNo)
+uint16_t getCarscore()
 {
-    if (CarNo != 0 && CarNo != 1)
-		return (uint16_t)INVALID_ARG;
-	else
-		return (uint16_t)Car[CarNo].score;
+		return (uint16_t)Car.score;
 }
-uint16_t getCartask(int CarNo)
+uint16_t getCartask()
 {
-    if (CarNo != 0 && CarNo != 1)
-		return (uint16_t)INVALID_ARG;
-	else
-		return (uint16_t)Car[CarNo].task;
+        return (uint16_t)Car.task;
 }
-uint16_t getCararea(int CarNo)
+uint16_t getCararea()
 {
-    if (CarNo != 0 && CarNo != 1)
-		return (uint16_t)INVALID_ARG;
-	else
-		return (uint16_t)Car[CarNo].area;
+		return (uint16_t)Car.area;
 }
 uint16_t getObstacleAposX(int ObstacleNo)		    //虚拟障碍Ax坐标
 {
@@ -236,28 +212,18 @@ void DecodeBasicInfo()
 	Game.GameState = (zigbeeReceive[2] & 0xC0) >> 6;
 	Game.stop=(zigbeeReceive[2]& 0x03);
 }
-void DecodeCarAInfo()
+void DecodeCarInfo()
 {
-    Car[0].pos.X=(zigbeeReceive[3]);
-    Car[0].pos.Y=(zigbeeReceive[4]);
-    Car[0].score=(zigbeeReceive[28]<<8)+zigbeeReceive[29];
-    Car[0].picknum=zigbeeReceive[34];
-    Car[0].task=(zigbeeReceive[2] & 0x20>>5);
-    Car[0].transport=(zigbeeReceive[2] & 0x08>>3);
-    Car[0].transportnum=(zigbeeReceive[32]);
-    Car[0].area=(zigbeeReceive[15] & 0x02>>1);
+    Car.pos.X=(zigbeeReceive[3]);
+    Car.pos.Y=(zigbeeReceive[4]);
+    Car.score=(zigbeeReceive[28]<<8)+zigbeeReceive[29];
+    Car.picknum=zigbeeReceive[34];
+    Car.task=(zigbeeReceive[2] & 0x20>>5);
+    Car.transport=(zigbeeReceive[2] & 0x08>>3);
+    Car.transportnum=(zigbeeReceive[32]);
+    Car.area=(zigbeeReceive[15] & 0x02>>1);
 }
-void DecodeCarBInfo()
-{
-    Car[1].pos.X=(zigbeeReceive[5]);
-    Car[1].pos.Y=(zigbeeReceive[6]);
-    Car[1].score=(zigbeeReceive[30]<<8)+zigbeeReceive[31];
-    Car[1].picknum=zigbeeReceive[35];
-    Car[1].task=(zigbeeReceive[2] & 0x08>>5);
-    Car[1].transport=(zigbeeReceive[2] & 0x04>>3);
-    Car[1].transportnum=(zigbeeReceive[33]);
-    Car[1].area=(zigbeeReceive[15] & 0x01);
-}
+
 void DecodePassengerInfo()
 {
     Passenger.startpos.X=(zigbeeReceive[11]);
@@ -313,70 +279,70 @@ void DecodeFloodBInfo()
 }
 void DecodeObstacle()
 {
-    Obstacle[0].posA.X=(zigbeeReceive[36]);
-    Obstacle[0].posA.Y=(zigbeeReceive[37]);
-    Obstacle[0].posB.X=(zigbeeReceive[38]);
-    Obstacle[0].posB.Y=(zigbeeReceive[39]);
-    Obstacle[1].posA.X=(zigbeeReceive[40]);
-    Obstacle[1].posA.Y=(zigbeeReceive[41]);
-    Obstacle[1].posB.X=(zigbeeReceive[42]);
-    Obstacle[1].posB.Y=(zigbeeReceive[43]);
-    Obstacle[2].posA.X=(zigbeeReceive[44]);
-    Obstacle[2].posA.Y=(zigbeeReceive[45]);
-    Obstacle[2].posB.X=(zigbeeReceive[46]);
-    Obstacle[2].posB.Y=(zigbeeReceive[47]);
-    Obstacle[3].posA.X=(zigbeeReceive[48]);
-    Obstacle[3].posA.Y=(zigbeeReceive[49]);
-    Obstacle[3].posB.X=(zigbeeReceive[50]);
-    Obstacle[3].posB.Y=(zigbeeReceive[51]);
-    Obstacle[4].posA.X=(zigbeeReceive[52]);
-    Obstacle[4].posA.Y=(zigbeeReceive[53]);
-    Obstacle[4].posB.X=(zigbeeReceive[54]);
-    Obstacle[4].posB.Y=(zigbeeReceive[55]);
-    Obstacle[5].posA.X=(zigbeeReceive[56]);
-    Obstacle[5].posA.Y=(zigbeeReceive[57]);
-    Obstacle[5].posB.X=(zigbeeReceive[58]);
-    Obstacle[5].posB.Y=(zigbeeReceive[59]);
-    Obstacle[6].posA.X=(zigbeeReceive[60]);
-    Obstacle[6].posA.Y=(zigbeeReceive[61]);
-    Obstacle[6].posB.X=(zigbeeReceive[62]);
-    Obstacle[6].posB.Y=(zigbeeReceive[63]);
-    Obstacle[7].posA.X=(zigbeeReceive[64]);
-    Obstacle[7].posA.Y=(zigbeeReceive[65]);
-    Obstacle[7].posB.X=(zigbeeReceive[66]);
-    Obstacle[7].posB.Y=(zigbeeReceive[67]);
-    Obstacle[8].posA.X=(zigbeeReceive[68]);
-    Obstacle[8].posA.Y=(zigbeeReceive[69]);
-    Obstacle[8].posB.X=(zigbeeReceive[70]);
-    Obstacle[8].posB.Y=(zigbeeReceive[71]);
-    Obstacle[9].posA.X=(zigbeeReceive[72]);
-    Obstacle[9].posA.Y=(zigbeeReceive[73]);
-    Obstacle[9].posB.X=(zigbeeReceive[74]);
-    Obstacle[9].posB.Y=(zigbeeReceive[75]);
-    Obstacle[10].posA.X=(zigbeeReceive[76]);
-    Obstacle[10].posA.Y=(zigbeeReceive[77]);
-    Obstacle[10].posB.X=(zigbeeReceive[78]);
-    Obstacle[10].posB.Y=(zigbeeReceive[79]);
-    Obstacle[11].posA.X=(zigbeeReceive[80]);
-    Obstacle[11].posA.Y=(zigbeeReceive[81]);
-    Obstacle[11].posB.X=(zigbeeReceive[82]);
-    Obstacle[11].posB.Y=(zigbeeReceive[83]);
-    Obstacle[12].posA.X=(zigbeeReceive[84]);
-    Obstacle[12].posA.Y=(zigbeeReceive[85]);
-    Obstacle[12].posB.X=(zigbeeReceive[86]);
-    Obstacle[12].posB.Y=(zigbeeReceive[87]);
-    Obstacle[13].posA.X=(zigbeeReceive[88]);
-    Obstacle[13].posA.Y=(zigbeeReceive[89]);
-    Obstacle[13].posB.X=(zigbeeReceive[90]);
-    Obstacle[13].posB.Y=(zigbeeReceive[91]);
-    Obstacle[14].posA.X=(zigbeeReceive[92]);
-    Obstacle[14].posA.Y=(zigbeeReceive[93]);
-    Obstacle[14].posB.X=(zigbeeReceive[94]);
-    Obstacle[14].posB.Y=(zigbeeReceive[95]);
-    Obstacle[15].posA.X=(zigbeeReceive[96]);
-    Obstacle[15].posA.Y=(zigbeeReceive[97]);
-    Obstacle[15].posB.X=(zigbeeReceive[98]);
-    Obstacle[15].posB.Y=(zigbeeReceive[99]);
+    Obstacle[0].posA.X=(zigbeeReceive[32]);
+    Obstacle[0].posA.Y=(zigbeeReceive[33]);
+    Obstacle[0].posB.X=(zigbeeReceive[34]);
+    Obstacle[0].posB.Y=(zigbeeReceive[35]);
+    Obstacle[1].posA.X=(zigbeeReceive[36]);
+    Obstacle[1].posA.Y=(zigbeeReceive[37]);
+    Obstacle[1].posB.X=(zigbeeReceive[38]);
+    Obstacle[1].posB.Y=(zigbeeReceive[39]);
+    Obstacle[2].posA.X=(zigbeeReceive[40]);
+    Obstacle[2].posA.Y=(zigbeeReceive[41]);
+    Obstacle[2].posB.X=(zigbeeReceive[42]);
+    Obstacle[2].posB.Y=(zigbeeReceive[43]);
+    Obstacle[3].posA.X=(zigbeeReceive[44]);
+    Obstacle[3].posA.Y=(zigbeeReceive[45]);
+    Obstacle[3].posB.X=(zigbeeReceive[46]);
+    Obstacle[3].posB.Y=(zigbeeReceive[47]);
+    Obstacle[4].posA.X=(zigbeeReceive[48]);
+    Obstacle[4].posA.Y=(zigbeeReceive[49]);
+    Obstacle[4].posB.X=(zigbeeReceive[50]);
+    Obstacle[4].posB.Y=(zigbeeReceive[51]);
+    Obstacle[5].posA.X=(zigbeeReceive[52]);
+    Obstacle[5].posA.Y=(zigbeeReceive[53]);
+    Obstacle[5].posB.X=(zigbeeReceive[54]);
+    Obstacle[5].posB.Y=(zigbeeReceive[55]);
+    Obstacle[6].posA.X=(zigbeeReceive[56]);
+    Obstacle[6].posA.Y=(zigbeeReceive[57]);
+    Obstacle[6].posB.X=(zigbeeReceive[58]);
+    Obstacle[6].posB.Y=(zigbeeReceive[59]);
+    Obstacle[7].posA.X=(zigbeeReceive[60]);
+    Obstacle[7].posA.Y=(zigbeeReceive[61]);
+    Obstacle[7].posB.X=(zigbeeReceive[62]);
+    Obstacle[7].posB.Y=(zigbeeReceive[63]);
+    Obstacle[8].posA.X=(zigbeeReceive[64]);
+    Obstacle[8].posA.Y=(zigbeeReceive[65]);
+    Obstacle[8].posB.X=(zigbeeReceive[66]);
+    Obstacle[8].posB.Y=(zigbeeReceive[67]);
+    Obstacle[9].posA.X=(zigbeeReceive[68]);
+    Obstacle[9].posA.Y=(zigbeeReceive[69]);
+    Obstacle[9].posB.X=(zigbeeReceive[70]);
+    Obstacle[9].posB.Y=(zigbeeReceive[71]);
+    Obstacle[10].posA.X=(zigbeeReceive[72]);
+    Obstacle[10].posA.Y=(zigbeeReceive[73]);
+    Obstacle[10].posB.X=(zigbeeReceive[74]);
+    Obstacle[10].posB.Y=(zigbeeReceive[75]);
+    Obstacle[11].posA.X=(zigbeeReceive[76]);
+    Obstacle[11].posA.Y=(zigbeeReceive[77]);
+    Obstacle[11].posB.X=(zigbeeReceive[78]);
+    Obstacle[11].posB.Y=(zigbeeReceive[79]);
+    Obstacle[12].posA.X=(zigbeeReceive[80]);
+    Obstacle[12].posA.Y=(zigbeeReceive[81]);
+    Obstacle[12].posB.X=(zigbeeReceive[82]);
+    Obstacle[12].posB.Y=(zigbeeReceive[83]);
+    Obstacle[13].posA.X=(zigbeeReceive[84]);
+    Obstacle[13].posA.Y=(zigbeeReceive[85]);
+    Obstacle[13].posB.X=(zigbeeReceive[86]);
+    Obstacle[13].posB.Y=(zigbeeReceive[87]);
+    Obstacle[14].posA.X=(zigbeeReceive[88]);
+    Obstacle[14].posA.Y=(zigbeeReceive[89]);
+    Obstacle[14].posB.X=(zigbeeReceive[90]);
+    Obstacle[14].posB.Y=(zigbeeReceive[91]);
+    Obstacle[15].posA.X=(zigbeeReceive[92]);
+    Obstacle[15].posA.Y=(zigbeeReceive[93]);
+    Obstacle[15].posB.X=(zigbeeReceive[94]);
+    Obstacle[15].posB.Y=(zigbeeReceive[95]);
 
 }
 void DecodeAll()
@@ -418,7 +384,4 @@ int receiveIndexAdd(int index_h, int num)
 		return index_h + num - ZIGBEE_MESSAGE_LENTH;
 	}
 }
-int main()
-{
-    return 0;
-}
+
