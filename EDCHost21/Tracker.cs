@@ -198,16 +198,19 @@ namespace EDCHOST21
 
             }
 
-            // 以下是通讯的部分内容，应当有变化
-            /*
+            
+        }
+
+        private void SendMessage()
+        {
             byte[] Message = game.PackMessage();
-            label_CountDown.Text = Convert.ToString(game.Round);
+            // label_CountDown.Text = Convert.ToString(game.Round);
             if (serial1 != null && serial1.IsOpen)
-                serial1.Write(Message, 0, 32);
+                serial1.Write(Message, 0, 102);
             if (serial2 != null && serial2.IsOpen)
-                serial2.Write(Message, 0, 32); ShowMessage(Message);
+                serial2.Write(Message, 0, 102);
+            ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
-            */
         }
 
         //从视频帧中读取一帧，进行图像处理、绘图和数值更新
@@ -372,7 +375,7 @@ namespace EDCHOST21
         }
 
         //计时器事件：执行Flush
-        private void timer100ms_Tick(object sender, EventArgs e)
+        private void timer_Tick(object sender, EventArgs e)
         {
             Flush();
         }
@@ -640,6 +643,11 @@ namespace EDCHOST21
             }
         }
 
+        private void timerMsg_Tick(object sender, EventArgs e)
+        {
+            SendMessage();
+        }
+
         private void buttonEnd_Click(object sender, EventArgs e)
         {
             game.End();
@@ -719,6 +727,13 @@ namespace EDCHOST21
         public OpenCvSharp.Size showSize;
         public OpenCvSharp.Size cameraSize;
         public OpenCvSharp.Size logicSize;
+
+        //小车是否在场上
+        public bool CarAInField;
+        public bool CarBInField;
+
+        //在场上的小车是否在迷宫中
+        public bool IsInMaze;
 
         //当前小车的坐标
         public Point2i posCarA;
@@ -1058,7 +1073,7 @@ namespace EDCHOST21
                 contours2 = Cv2.FindContoursAsArray(car2, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
 
                 //根据拐点的图像矩来计算拐点的中心点坐标
-                //小球
+                //
                 foreach (Point2i[] c0 in contours0)
                 {
                     Point2i centre = new Point2i();
