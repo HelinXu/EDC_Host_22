@@ -20,10 +20,11 @@ namespace EDCHOST21
         {
             return (a.x == b.x) && (a.y == b.y);
         }
-        
+
         public static bool operator !=(Dot a, Dot b)
         {
             return !(a == b);
         }
+
     }
 }

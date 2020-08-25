@@ -12,14 +12,14 @@ namespace EDCHOST21
     //3，具体如何生成，可以等地图写出来再说。
     public class PackageGenerator //存储预备要用的物资信息
     {
-        private Dot[] PkgList_Dot;
+        private Package[] mpPackageList;
         private int Package_idx;
         private int PKG_NUM;
         public PackageGenerator(int AMOUNT) //生成指定数量的物资
         {
             Package_idx = 0;
             PKG_NUM = AMOUNT;
-            PkgList_Dot = new Dot[PKG_NUM];
+            mpPackageList = new Package[PKG_NUM];
             int nextX, nextY;
             Dot dots;
             Random NRand = new Random();
@@ -29,22 +29,22 @@ namespace EDCHOST21
                 nextX = NRand.Next(Game.MAZE_CROSS_NUM);//仍然需要改进
                 nextY = NRand.Next(Game.MAZE_CROSS_NUM);
                 dots = CrossNo2Dot(nextX, nextY);
-                PkgList_Dot[i] = dots;
+                mpPackageList[i] = new Package(dots);
                 //需要加上位置是否重合的判断
             }
         }
         //从格点转化为int，传入坐标，返回Dot
         public static Dot CrossNo2Dot(int CrossNoX, int CrossNoY)
         {
-            int x = Game.MazeBorderPoint1 + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoX;
-            int y = Game.MazeBorderPoint1 + Game.MAZE_CROSS_DIST / 2 + Game.MAZE_CROSS_DIST * CrossNoY;
+            int x = Game.MAZE_SHORT_BORDER_CM + Game.MAZE_CROSS_DIST_CM / 2 + Game.MAZE_CROSS_DIST_CM * CrossNoX;
+            int y = Game.MAZE_SHORT_BORDER_CM + Game.MAZE_CROSS_DIST_CM / 2 + Game.MAZE_CROSS_DIST_CM * CrossNoY;
             Dot temp = new Dot(x, y);
             return temp;
         }
         //返回下标为i的PackageDotArray中的点。开发者：xhl
-        public Dot GetPkg_Dot(int i)
+        public Package GetPackage(int i)
         {
-            return PkgList_Dot[i];
+            return mpPackageList[i];
         }
     }
 }

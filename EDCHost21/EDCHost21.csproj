@@ -89,9 +89,9 @@
   <ItemGroup>
     <Compile Include="Dot.cs" />
     <Compile Include="General.cs" />
-    <Compile Include="NewCar.cs" />
-    <Compile Include="NewGame.cs" />
-    <Compile Include="NewObstacle.cs" />
+    <Compile Include="Labyrinth.cs" />
+    <Compile Include="Car.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="PassengerGenerator.cs" />
     <Compile Include="Flood.cs" />
     <Compile Include="Package.cs" />
@@ -111,6 +111,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wall.cs" />
     <EmbeddedResource Include="SetWindow.resx">
       <DependentUpon>SetWindow.cs</DependentUpon>
     </EmbeddedResource>

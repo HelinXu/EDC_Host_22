@@ -168,10 +168,10 @@ namespace EDCHOST21
                 game.BallsDot.Clear();
                 foreach (Point2i posBall in flags.posBalls)
                     game.BallsDot.Add(new Dot(posBall.X, posBall.Y));
-                game.CarA.Pos.x = flags.posCarA.X;
-                game.CarA.Pos.y = flags.posCarA.Y;
-                game.CarB.Pos.x = flags.posCarB.X;
-                game.CarB.Pos.y = flags.posCarB.Y;
+                game.CarA.mPos.x = flags.posCarA.X;
+                game.CarA.mPos.y = flags.posCarA.Y;
+                game.CarB.mPos.x = flags.posCarB.X;
+                game.CarB.mPos.y = flags.posCarB.Y;
             }
             game.Update();
 
