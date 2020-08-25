@@ -505,7 +505,7 @@ namespace EDCHOST21
             int messageCnt = 0;
             message[messageCnt++] = (byte)(mGameTime >> 8);
             message[messageCnt++] = (byte)mGameTime;
-            message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)CarA.mTaskState << 5 | ((byte)CarA.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x03));
+            message[messageCnt++] = (byte)(((byte)State << 6) | ((byte)CarA.mTaskState << 5 | ((byte)CarA.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x03)));
             message[messageCnt++] = (byte)CarA.mPos.x;
             message[messageCnt++] = (byte)CarA.mPos.y;
             message[messageCnt++] = (byte)mFlood.dot1.x;

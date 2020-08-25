@@ -198,21 +198,35 @@ namespace EDCHOST21
                 }
                 */
                 flags.posPersonStart.X = game.Passenger.Start_Dot.x;
-                flags.posPersonStart.Y = game.Passenger.End_Dot.y;
+                flags.posPersonStart.Y = game.Passenger.Start_Dot.y;
 
             }
 
             
         }
 
-        private void SendMessage()
+        private void SendCarAMessage()
         {
-            byte[] Message = game.PackMessage();
+            // 打包好要发给A车的信息
+            byte[] Message = game.PackCarAMessage();
+
             // label_CountDown.Text = Convert.ToString(game.Round);
+            // 通过串口1发送给A车
             if (serial1 != null && serial1.IsOpen)
                 serial1.Write(Message, 0, 102);
+            ShowMessage(Message);
+            validPorts = SerialPort.GetPortNames();
+        }
+
+        private void SendCarBMessage()
+        {
+            // 打包好要发给B车的信息
+            byte[] Message = game.PackCarBMessage();
+
+            // 通过串口2发送给B车
             if (serial2 != null && serial2.IsOpen)
                 serial2.Write(Message, 0, 102);
+
             ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
         }
@@ -230,14 +244,14 @@ namespace EDCHOST21
                 using (Mat videoFrame = new Mat())
                 using (Mat showFrame = new Mat())
                 {
-                    //从视频流中读取一帧相机画面videoFrame
+                    // 从视频流中读取一帧相机画面videoFrame
                     if (capture.Read(videoFrame))
                     {
                         lock (flags)
                         {
-                            //调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
+                            // 调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
                             cc.PeopleFilter(flags);
-                            //调用定位器，进行图像处理，得到小车和小球的位置中心点集
+                            // 调用定位器，进行图像处理，得到小车和小球的位置中心点集
                             localiser.Locate(videoFrame, flags);
 
                             //绘制边界点
@@ -248,7 +262,7 @@ namespace EDCHOST21
                             }
                         }
                         //调用定位器，得到小车和乘客的坐标
-                        localiser.GetLocations(out person, out car1, out car2);
+                        localiser.GetLocations(out car1, out car2);
 
                         lock (flags)
                         {
@@ -382,6 +396,36 @@ namespace EDCHOST21
         private void timer_Tick(object sender, EventArgs e)
         {
             Flush();
+        }
+
+        //计时器事件，每100ms触发一次，向在迷宫外的小车发送信息
+        private void timerMsg100ms_Tick(object sender, EventArgs e)
+        {
+            // 如果A车在场地内且在迷宫外
+            if (game.CarA.mIsInField == 1 && game.CarA.mIsInMaze == 0)
+            {
+                SendCarAMessage();
+            }
+            // 如果B车在场地内且在迷宫外
+            if (game.CarB.mIsInField == 1 && game.CarB.mIsInMaze == 0)
+            {
+                SendCarBMessage();
+            }
+        }
+
+        //计时器事件，每1s触发一次，向在迷宫内的小车发送信息
+        private void timerMsg1s_Tick(object sender, EventArgs e)
+        {
+            // 如果A车在场地内且在迷宫内
+            if (game.CarA.mIsInField == 1 && game.CarA.mIsInMaze == 1)
+            {
+                SendCarAMessage();
+            }
+            // 如果B车在场地内且在迷宫内
+            if (game.CarB.mIsInField == 1 && game.CarB.mIsInMaze == 1)
+            {
+                SendCarBMessage();
+            }
         }
 
         private void buttonStart_Click(object sender, EventArgs e)
@@ -647,10 +691,6 @@ namespace EDCHOST21
             }
         }
 
-        private void timerMsg_Tick(object sender, EventArgs e)
-        {
-            SendMessage();
-        }
 
         private void buttonEnd_Click(object sender, EventArgs e)
         {
@@ -950,34 +990,21 @@ namespace EDCHOST21
     //定位器：进行图像处理，确定位置并且绘图
     public class Localiser
     {
-        //依次为小球、车1、车2位置的中心点集
-        private List<Point2i> centres0;
+        //依次为车1、车2位置的中心点集
         private List<Point2i> centres1;
         private List<Point2i> centres2;
 
         public Localiser()
         {
-            centres0 = new List<Point2i>();
             centres1 = new List<Point2i>();
             centres2 = new List<Point2i>();
 
         }
 
-        //根据计算得到的中心点集，返回定位到的小车、小球坐标
-        //其中，小球坐标返回点数组，小车坐标返回中心点集中的第0个元素
-        public void GetLocations(out Point2i pts0, out Point2i pt1, out Point2i pt2)
+        // 根据计算得到的中心点集，返回定位到的小车坐标
+        // 若在相机拍摄的图中没有发现某小车，则该车的坐标返回(-1, -1)
+        public void GetLocations(out Point2i pt1, out Point2i pt2)
         {
-            //List<Point2f> ptsList0 = new List<Point2f>();
-            if (centres0.Count != 0)
-            {
-                //foreach (Point2i c0 in centres0)
-                //    ptsList0.Add(c0);
-                pts0 = centres0[0];
-                centres0.Clear();
-            }
-            // else ptsList0.Add(new Point2f(-1, -1));
-            else pts0 = new Point2i(-1, -1);
-
             if (centres1.Count != 0)
             {
                 pt1 = centres1[0];
@@ -998,7 +1025,6 @@ namespace EDCHOST21
             if (mat == null || mat.Empty()) return;
             if (localiseFlags == null) return;
             using (Mat hsv = new Mat())
-            using (Mat ball = new Mat())
             using (Mat car1 = new Mat())
             using (Mat car2 = new Mat())
 
@@ -1034,11 +1060,6 @@ namespace EDCHOST21
                 // Lower表示范围的最小值，Upper表示范围的最大值
                 // 注意：只有H,S,V全部位于给定区间内的像素点才会被设为全白
 
-                //针对小球颜色的二值化
-                Cv2.InRange(hsv,
-                    new Scalar(configs.hue0Lower, configs.saturation0Lower, configs.valueLower),
-                    new Scalar(configs.hue0Upper, 255, 255),
-                    ball);
                 //针对小车1颜色的二值化
                 Cv2.InRange(hsv,
                     new Scalar(configs.hue1Lower, configs.saturation1Lower, configs.valueLower),
@@ -1054,7 +1075,6 @@ namespace EDCHOST21
                 // 若被勾选，则将二值化图像打印到窗口，以便调试
                 if (localiseFlags.showMask)
                 {
-                    Cv2.ImShow("Ball", ball);
                     Cv2.ImShow("CarA", car1);
                     Cv2.ImShow("CarB", car2);
                 }
@@ -1065,43 +1085,32 @@ namespace EDCHOST21
 
                 // Contour 意即“轮廓”，contours是双重向量，向量内每个元素保存了一组由连续的Point点构成的向量
                 // 每一组Point点集就是一个轮廓。有多少轮廓，向量contours就有多少元素。
-                Point2i[][] contours0, contours1, contours2;
+                // 下面两个双重向量分别保存两个小车的轮廓拐点坐标
+                Point2i[][] contours1, contours2;
 
                 // FindContoursAsArray(图像轮廓识别)：根据二值化图象，识别值为255的色块轮廓
                 // 参数解释：1、待处理的图像；2、轮廓检索模式；3、轮廓的近似方法
                 // RetrieveModes.External 表示只检测最外围轮廓，忽略内轮廓
                 // ContourApproximationModes.ApproxSimple 表示仅保存轮廓的拐点信息，不保存所有轮廓点
                 // 返回值：轮廓上的拐点集合
-                contours0 = Cv2.FindContoursAsArray(ball, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                 contours1 = Cv2.FindContoursAsArray(car1, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                 contours2 = Cv2.FindContoursAsArray(car2, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
 
                 //根据拐点的图像矩来计算拐点的中心点坐标
-                //
-                foreach (Point2i[] c0 in contours0)
-                {
-                    Point2i centre = new Point2i();
-                    // Moments表示矩，这是一个概率与统计学上的概念
-                    Moments moments = Cv2.Moments(c0);
-                    // Mij = ∑(r * X^i * Y^j)，其中 r = (x, y)为向量
-                    // M00 为面积
-                    // 质心(X0, Y0) = (M10 / M00, M01 / M00)
-                    // 此处计算出拐点的中心点坐标
-                    centre.X = (int)(moments.M10 / moments.M00);
-                    centre.Y = (int)(moments.M01 / moments.M00);
-                    double area = moments.M00;
-                    // 如果计算出的面积太小，则认为是噪声点，不计入统计
-                    if (area <= configs.areaLower / 9) continue;
-                    centres0.Add(centre);
-                }
                 //小车1
                 foreach (Point2i[] c1 in contours1)
                 {
                     Point2i centre = new Point2i();
+                    // Moments表示矩，这是一个概率与统计学上的概念
                     Moments moments = Cv2.Moments(c1);
+                    // Mij = ∑(r * X^i * Y^j)，其中 r = (x, y)为向量
+                    // M00 为面积
+                    // 质心(X0, Y0) = (M10 / M00, M01 / M00)
+                    // 此处计算出轮廓拐点的质心坐标
                     centre.X = (int)(moments.M10 / moments.M00);
                     centre.Y = (int)(moments.M01 / moments.M00);
                     double area = moments.M00;
+                    // 如果计算出的面积太小，则认为是噪声点，不计入统计
                     if (area <= configs.areaLower) continue;
                     centres1.Add(centre);
                 }
@@ -1118,9 +1127,10 @@ namespace EDCHOST21
                 }
 
                 //foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 3, new Scalar(0x1b, 0xa7, 0xff), -1);
-                //分别在小车1和小车2的位置上绘制圆圈
+                // 分别在小车1和小车2的位置上绘制圆圈
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
                 foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
+
                 if (localiseFlags.gameState != GameState.UNTART)
                 {
                     //在人员起始位置上绘制矩形

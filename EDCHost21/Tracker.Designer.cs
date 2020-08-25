@@ -65,7 +65,8 @@
             this.label_AMessage = new System.Windows.Forms.Label();
             this.buttonEnd = new System.Windows.Forms.Button();
             this.label_Debug = new System.Windows.Forms.Label();
-            this.timerMsg = new System.Windows.Forms.Timer(this.components);
+            this.timerMsg100ms = new System.Windows.Forms.Timer(this.components);
+            this.timerMsg1s = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
@@ -476,9 +477,13 @@
             this.label_Debug.Size = new System.Drawing.Size(390, 296);
             this.label_Debug.TabIndex = 102;
             // 
-            // timerMsg
+            // timerMsg100ms
             // 
-            this.timerMsg.Tick += new System.EventHandler(this.timerMsg_Tick);
+            this.timerMsg100ms.Tick += new System.EventHandler(this.timerMsg100ms_Tick);
+            // 
+            // timerMsg1s
+            // 
+            this.timerMsg1s.Tick += new System.EventHandler(this.timerMsg1s_Tick);
             // 
             // Tracker
             // 
@@ -565,7 +570,8 @@
         private System.Windows.Forms.Label label_AMessage;
         private System.Windows.Forms.Button buttonEnd;
         private System.Windows.Forms.Label label_Debug;
-        private System.Windows.Forms.Timer timerMsg;
+        private System.Windows.Forms.Timer timerMsg100ms;
+        private System.Windows.Forms.Timer timerMsg1s;
     }
 }
 

@@ -30,6 +30,7 @@ namespace EDCHOST21
         public int mIsWithPassenger;//小车上是否载人 0未载人 1载人
         public int mRescueCount;//小车成功运送人个数
         public int mIsInMaze;//小车所在的区域 0在迷宫外 1在迷宫内
+        public int mIsInField; //小车目前在不在场地内 0不在场地内 1在场地内
         public int mCrossFloodCount;//小车经过泄洪口的次数
         public int mCrossWallCount;//小车经过虚拟障碍的次数
         public int mWrongDirCount;//小车逆行次数
