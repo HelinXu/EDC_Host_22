@@ -35,7 +35,6 @@ struct BasicInfo
 };
 struct CarInfo
 {
-    uint8_t No;     //车辆编号，A为0，B为1
     struct Position pos;    //小车位置
     uint16_t score;         //得分
     uint8_t picknum;         //小车成功收集物资个数
@@ -89,19 +88,19 @@ uint16_t getGameFlood(void);               //泄洪口开启信息
 uint16_t getFloodposX(int FloodNo);			//泄洪口位置X
 uint16_t getFloodposY(int FloodNo);           //泄洪口位置Y
 struct Position getFloodpos(int FloodNo);     //泄洪口位置
-uint16_t getCarposX(int CarNo);		    //小车x坐标
-uint16_t getCarposY(int CarNo);			//小车y坐标
-struct Position getCarpos(int CarNo);	//小车位置
+uint16_t getCarposX();		    //小车x坐标
+uint16_t getCarposY();			//小车y坐标
+struct Position getCarpos();	//小车位置
 uint16_t getPackageposX(int PackNo);		    //物资x坐标
 uint16_t getPackageposY(int PackNo);			//物资y坐标
 uint16_t getPackagewhetherpicked(int PackNo);   //物资是否已被收集
 struct Position getPackagepos(int PackNo);	//物资位置
-uint16_t getCarpicknum(int CarNo);//小车收集数
-uint16_t getCartransportnum(int CarNo);//小车运送人员数
-uint16_t getCartransport(int CarNo);//小车是否正在运送人员
-uint16_t getCarscore(int CarNo);//小车得分
-uint16_t getCartask(int CarNo);//小车任务
-uint16_t getCararea(int CarNo);//小车区域
+uint16_t getCarpicknum();//小车收集数
+uint16_t getCartransportnum();//小车运送人员数
+uint16_t getCartransport();//小车是否正在运送人员
+uint16_t getCarscore();//小车得分
+uint16_t getCartask();//小车任务
+uint16_t getCararea();//小车区域
 uint16_t getObstacleAposX(int ObstacleNo);		    //虚拟障碍Ax坐标
 uint16_t getObstacleAposY(int ObstacleNo);			//虚拟障碍Ay坐标
 uint16_t getObstacleBposX(int ObstacleNo);          //虚拟障碍Bx坐标
