@@ -27,8 +27,8 @@ namespace EDCHOST21
         public CoordinateConverter cc;
         //定位器
         private Localiser localiser;
-        //小球坐标
-        private Point2f[] ball;
+        //人员坐标
+        private Point2i person;
         //车1坐标
         private Point2i car1;
         //车2坐标
@@ -45,7 +45,9 @@ namespace EDCHOST21
         public string[] validPorts;
 
         private string[] gametext = { "上半场", "下半场", "加时1", "加时2",
-            "加时3", "加时4", "加时5", "加时6", "加时7" , "加时8", "加时9", "加时10", "加时11", "加时12"};
+                                      "加时3", "加时4", "加时5", "加时6", 
+                                      "加时7" , "加时8", "加时9", "加时10", 
+                                      "加时11", "加时12" };
         private Camp[] UI_LastRoundCamp = new Camp[5];
 
         public Dot CarALocation()
@@ -111,7 +113,7 @@ namespace EDCHOST21
             timeCamNow = DateTime.Now;
             timeCamPrev = timeCamNow;
 
-            ball = new Point2f[0];
+            person = new Point2i();
             car1 = new Point2i();
             car2 = new Point2i();
 
@@ -160,17 +162,23 @@ namespace EDCHOST21
             }
             //从视频帧中读取一帧，进行图像处理、绘图和数值更新
             CameraReading();
+
             lock (flags)
             {
-                game.BallsDot.Clear();
-                foreach (Point2i posBall in flags.posBalls)
-                    game.BallsDot.Add(new Dot(posBall.X, posBall.Y));
+                game.Passenger.Start_Dot.x = flags.posPersonStart.X;
+                game.Passenger.Start_Dot.y = flags.posPersonStart.Y;
+
+                game.Passenger.End_Dot.x = flags.posPersonEnd.X;
+                game.Passenger.End_Dot.y = flags.posPersonEnd.Y;
+
                 game.CarA.Pos.x = flags.posCarA.X;
                 game.CarA.Pos.y = flags.posCarA.Y;
+
                 game.CarB.Pos.x = flags.posCarB.X;
                 game.CarB.Pos.y = flags.posCarB.Y;
             }
             game.Update();
+
             lock (flags)
             {
                 flags.currPersonNum = game.CurrPersonNumber;
@@ -1039,6 +1047,7 @@ namespace EDCHOST21
                     centre.X = (int)(moments.M10 / moments.M00);
                     centre.Y = (int)(moments.M01 / moments.M00);
                     double area = moments.M00;
+                    // 如果计算出的面积太小，则认为是噪声点，不计入统计
                     if (area <= configs.areaLower / 9) continue;
                     centres0.Add(centre);
                 }
