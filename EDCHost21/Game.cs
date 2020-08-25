@@ -179,7 +179,7 @@ namespace EDCHOST21
         //每到半点自动更新Package信息函数
         public void UpdatePackage()//到半点时更换Package函数
         {
-            int changenum = mGameTime / 300 + 1;
+            int changenum = mGameTime / 30000 + 1;
             if (mGameStage == 2 && mPackageGroupCount < changenum)
             {
                 for (int i = 0; i < PKG_NUM_perGROUP; i++)
