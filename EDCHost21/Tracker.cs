@@ -40,7 +40,7 @@ namespace EDCHOST21
 
         //是否已经进行了参数设置
         private bool alreadySet;
-        
+
         public SerialPort serial1, serial2;
         public string[] validPorts;
 
@@ -165,15 +165,11 @@ namespace EDCHOST21
 
             lock (flags)
             {
-                game.Passenger.Start_Dot.x = flags.posPersonStart.X;
-                game.Passenger.Start_Dot.y = flags.posPersonStart.Y;
-
-                game.Passenger.End_Dot.x = flags.posPersonEnd.X;
-                game.Passenger.End_Dot.y = flags.posPersonEnd.Y;
-
+                game.BallsDot.Clear();
+                foreach (Point2i posBall in flags.posBalls)
+                    game.BallsDot.Add(new Dot(posBall.X, posBall.Y));
                 game.CarA.Pos.x = flags.posCarA.X;
                 game.CarA.Pos.y = flags.posCarA.Y;
-
                 game.CarB.Pos.x = flags.posCarB.X;
                 game.CarB.Pos.y = flags.posCarB.Y;
             }
@@ -380,10 +376,10 @@ namespace EDCHOST21
         {
             label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
 
-            labelAScore.Text = $"{game.CarA.Score}";
-            labelBScore.Text = $"{game.CarB.Score}";
+            labelAScore.Text = $"{game.CarA.MyScore}";
+            labelBScore.Text = $"{game.CarB.MyScore}";
 
-            label_GameCount.Text = gametext[game.GameCount - 1];
+            label_GameCount.Text = gametext[game.mGameCount - 1];
             label_APauseNum.Text = $"{game.APauseNum}";
             label_BPauseNum.Text = $"{game.BPauseNum}";
             label_AFoul1Num.Text = $"{game.AFoul1}";
@@ -393,7 +389,7 @@ namespace EDCHOST21
 
             label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运回物资数　　{game.CarA.BallOwnCnt}";
             label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　　运回物资数";
-            label_Debug.Text = $"A车坐标： ({game.CarA.Pos.x}, {game.CarA.Pos.y})\nB车坐标： ({game.CarB.Pos.x}, {game.CarB.Pos.y})";
+            label_Debug.Text = $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\nB车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
             //if (game.CarA.HaveBonus)
             //    label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
             //if (game.CarB.HaveBonus)
@@ -581,13 +577,13 @@ namespace EDCHOST21
 
         private void label_AMessage_Click(object sender, EventArgs e)
         {
-            if (game.State == GameState.Normal)
+            if (game.State == GameState.NORMAL)
             {
                 game.AddScore(Camp.CMP_A, Score.BallGetScore);
                 game.CarA.BallGetCnt++;
                 game.CarA.HaveBall = true;
             }
-            else if (game.State == GameState.End)
+            else if (game.State == GameState.END)
             {
                 if (game.CarA.HaveBall)
                 {
@@ -600,13 +596,13 @@ namespace EDCHOST21
 
         private void label_BMessage_Click(object sender, EventArgs e)
         {
-            if (game.State == GameState.Normal)
+            if (game.State == GameState.NORMAL)
             {
                 game.AddScore(Camp.CMP_B, Score.BallGetScore);
                 game.CarB.BallGetCnt++;
                 game.CarB.HaveBall = true;
             }
-            else if (game.State == GameState.End)
+            else if (game.State == GameState.END)
             {
                 if (game.CarB.HaveBall)
                 {
@@ -672,7 +668,7 @@ namespace EDCHOST21
         public int clickCount;
 
         //人员状况：被困、在小车上还未到指定点、到达运送目标点
-        public enum PersonState { TRAPPED, INCAR, RESCUED};
+        public enum PersonState { TRAPPED, INCAR, RESCUED };
 
         //图像识别参数
         //HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
@@ -703,7 +699,7 @@ namespace EDCHOST21
 
         //防汛物资的坐标
         public Point2i[] posPackages;
-        
+
         //人员起始坐标和待运输的位置坐标
         public Point2i posPersonStart;
         public Point2i posPersonEnd;
@@ -729,7 +725,7 @@ namespace EDCHOST21
             //以下数据待定，根据实际设备确定
             showSize = new OpenCvSharp.Size(960, 720);
             cameraSize = new OpenCvSharp.Size(1280, 960);
-            logicSize = new OpenCvSharp.Size(Game.MAX_SIZE, Game.MAX_SIZE);
+            logicSize = new OpenCvSharp.Size(Game.MAX_SIZE_CM, Game.MAX_SIZE_CM);
 
             //点击次数（暂不懂什么意思）
             clickCount = 0;
@@ -1032,7 +1028,7 @@ namespace EDCHOST21
                 contours0 = Cv2.FindContoursAsArray(ball, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                 contours1 = Cv2.FindContoursAsArray(car1, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                 contours2 = Cv2.FindContoursAsArray(car2, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
-                
+
                 //根据拐点的图像矩来计算拐点的中心点坐标
                 //小球
                 foreach (Point2i[] c0 in contours0)
@@ -1078,7 +1074,7 @@ namespace EDCHOST21
                 //分别在小车1和小车2的位置上绘制圆圈
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
                 foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
-                if (localiseFlags.gameState != GameState.Unstart)
+                if (localiseFlags.gameState != GameState.UNTART)
                 {
                     //在人员起始位置上绘制矩形
                     int x10 = localiseFlags.posPersonStart.X - 8;
