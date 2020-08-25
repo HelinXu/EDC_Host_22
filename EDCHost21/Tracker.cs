@@ -175,6 +175,10 @@ namespace EDCHOST21
                 game.Passenger.End_Dot.x = flags.posPersonEnd.X;
                 game.Passenger.End_Dot.y = flags.posPersonEnd.Y;
 
+                game.CarA.mLastPos.x = game.CarA.mPos.x;
+                game.CarA.mLastPos.y = game.CarA.mPos.y;
+                game.CarB.mLastPos.x = game.CarB.mPos.x;
+                game.CarB.mLastPos.y = game.CarB.mPos.y;
                 game.CarA.mPos.x = flags.posCarA.X;
                 game.CarA.mPos.y = flags.posCarA.Y;
                 game.CarB.mPos.x = flags.posCarB.X;
