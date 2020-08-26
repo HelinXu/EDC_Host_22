@@ -35,7 +35,6 @@ namespace EDCHOST21
         public int mCrossWallCount;       //小车经过虚拟障碍的次数
         public int mWrongDirCount;        //小车逆行次数
         public int mFoulCount;            //犯规摁键次数
-        public int mPauseCount;           //小车请求暂停次数
 
 
         public Car(Camp c, int task)
@@ -52,7 +51,6 @@ namespace EDCHOST21
             mCrossWallCount = 0;
             mWrongDirCount = 0;
             mFoulCount = 0; //xhl 0824 添加
-            mPauseCount = 0;
         }
         public void AddFloodPunish() //犯规
         {
@@ -74,11 +72,7 @@ namespace EDCHOST21
             mRescueCount++;
             UpdateScore();
         }
-        public void AddPauseCount()
-        {
-            mPauseCount++;
-            UpdateScore();
-        }
+
         public void AddPickPkgCount()
         {
             mPkgCount++;

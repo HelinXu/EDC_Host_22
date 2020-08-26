@@ -40,33 +40,26 @@
             this.label_CarB = new System.Windows.Forms.Label();
             this.button_restart = new System.Windows.Forms.Button();
             this.button_video = new System.Windows.Forms.Button();
-            this.button_BReset = new System.Windows.Forms.Button();
-            this.button_AReset = new System.Windows.Forms.Button();
             this.button_set = new System.Windows.Forms.Button();
             this.labelBScore = new System.Windows.Forms.Label();
             this.labelAScore = new System.Windows.Forms.Label();
             this.label_CountDown = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.button_BFoul1 = new System.Windows.Forms.Button();
-            this.button_BFoul2 = new System.Windows.Forms.Button();
-            this.button_AFoul2 = new System.Windows.Forms.Button();
-            this.button_AFoul1 = new System.Windows.Forms.Button();
+            this.button_BFoul = new System.Windows.Forms.Button();
+            this.button_AFoul = new System.Windows.Forms.Button();
             this.label_RedBG = new System.Windows.Forms.Label();
             this.label_BlueBG = new System.Windows.Forms.Label();
             this.label_GameCount = new System.Windows.Forms.Label();
             this.button_Continue = new System.Windows.Forms.Button();
-            this.label_APauseNum = new System.Windows.Forms.Label();
-            this.label_AFoul1Num = new System.Windows.Forms.Label();
-            this.label_AFoul2Num = new System.Windows.Forms.Label();
-            this.label_BPauseNum = new System.Windows.Forms.Label();
-            this.label_BFoul1Num = new System.Windows.Forms.Label();
-            this.label_BFoul2Num = new System.Windows.Forms.Label();
+            this.label_AFoulNum = new System.Windows.Forms.Label();
+            this.label_BFoulNum = new System.Windows.Forms.Label();
             this.label_BMessage = new System.Windows.Forms.Label();
             this.label_AMessage = new System.Windows.Forms.Label();
             this.buttonEnd = new System.Windows.Forms.Button();
             this.label_Debug = new System.Windows.Forms.Label();
             this.timerMsg100ms = new System.Windows.Forms.Timer(this.components);
             this.timerMsg1s = new System.Windows.Forms.Timer(this.components);
+            this.label_GameStage = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
@@ -83,9 +76,9 @@
             // 
             this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReset.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnReset.Location = new System.Drawing.Point(126, 1184);
+            this.btnReset.Location = new System.Drawing.Point(88, 1112);
             this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(192, 64);
+            this.btnReset.Size = new System.Drawing.Size(230, 86);
             this.btnReset.TabIndex = 7;
             this.btnReset.Text = "重设边界点";
             this.btnReset.UseVisualStyleBackColor = true;
@@ -98,11 +91,11 @@
             // buttonStart
             // 
             this.buttonStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonStart.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F);
+            this.buttonStart.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.buttonStart.ForeColor = System.Drawing.Color.Green;
-            this.buttonStart.Location = new System.Drawing.Point(2776, 1184);
+            this.buttonStart.Location = new System.Drawing.Point(2621, 1134);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(192, 64);
+            this.buttonStart.Size = new System.Drawing.Size(265, 98);
             this.buttonStart.TabIndex = 27;
             this.buttonStart.Text = "开始";
             this.buttonStart.UseVisualStyleBackColor = true;
@@ -111,11 +104,11 @@
             // buttonPause
             // 
             this.buttonPause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonPause.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F);
+            this.buttonPause.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.buttonPause.ForeColor = System.Drawing.Color.Green;
-            this.buttonPause.Location = new System.Drawing.Point(2776, 1325);
+            this.buttonPause.Location = new System.Drawing.Point(2621, 1396);
             this.buttonPause.Name = "buttonPause";
-            this.buttonPause.Size = new System.Drawing.Size(192, 64);
+            this.buttonPause.Size = new System.Drawing.Size(265, 98);
             this.buttonPause.TabIndex = 28;
             this.buttonPause.Text = "暂停";
             this.buttonPause.UseVisualStyleBackColor = true;
@@ -147,11 +140,11 @@
             // button_restart
             // 
             this.button_restart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_restart.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F);
+            this.button_restart.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.button_restart.ForeColor = System.Drawing.Color.Green;
-            this.button_restart.Location = new System.Drawing.Point(2776, 1114);
+            this.button_restart.Location = new System.Drawing.Point(2621, 1006);
             this.button_restart.Name = "button_restart";
-            this.button_restart.Size = new System.Drawing.Size(192, 64);
+            this.button_restart.Size = new System.Drawing.Size(265, 98);
             this.button_restart.TabIndex = 56;
             this.button_restart.Text = "新游戏";
             this.button_restart.UseVisualStyleBackColor = true;
@@ -162,52 +155,21 @@
             this.button_video.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_video.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F);
             this.button_video.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.button_video.Location = new System.Drawing.Point(126, 1114);
+            this.button_video.Location = new System.Drawing.Point(88, 993);
             this.button_video.Name = "button_video";
-            this.button_video.Size = new System.Drawing.Size(192, 64);
+            this.button_video.Size = new System.Drawing.Size(230, 89);
             this.button_video.TabIndex = 74;
             this.button_video.Text = "开始录像";
             this.button_video.UseVisualStyleBackColor = true;
             this.button_video.Click += new System.EventHandler(this.button_video_Click);
             // 
-            // button_BReset
-            // 
-            this.button_BReset.FlatAppearance.MouseDownBackColor = System.Drawing.Color.PaleTurquoise;
-            this.button_BReset.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button_BReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_BReset.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_BReset.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.button_BReset.Location = new System.Drawing.Point(2734, 368);
-            this.button_BReset.Name = "button_BReset";
-            this.button_BReset.Size = new System.Drawing.Size(256, 115);
-            this.button_BReset.TabIndex = 75;
-            this.button_BReset.Text = "暂停";
-            this.button_BReset.UseVisualStyleBackColor = true;
-            this.button_BReset.Click += new System.EventHandler(this.button_BReset_Click);
-            // 
-            // button_AReset
-            // 
-            this.button_AReset.FlatAppearance.BorderColor = System.Drawing.Color.Red;
-            this.button_AReset.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Pink;
-            this.button_AReset.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LavenderBlush;
-            this.button_AReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_AReset.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_AReset.ForeColor = System.Drawing.Color.Red;
-            this.button_AReset.Location = new System.Drawing.Point(86, 368);
-            this.button_AReset.Name = "button_AReset";
-            this.button_AReset.Size = new System.Drawing.Size(256, 115);
-            this.button_AReset.TabIndex = 76;
-            this.button_AReset.Text = "暂停";
-            this.button_AReset.UseVisualStyleBackColor = true;
-            this.button_AReset.Click += new System.EventHandler(this.button_AReset_Click);
-            // 
             // button_set
             // 
             this.button_set.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_set.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_set.Location = new System.Drawing.Point(126, 1254);
+            this.button_set.Location = new System.Drawing.Point(88, 1226);
             this.button_set.Name = "button_set";
-            this.button_set.Size = new System.Drawing.Size(192, 64);
+            this.button_set.Size = new System.Drawing.Size(230, 85);
             this.button_set.TabIndex = 77;
             this.button_set.Text = "设置";
             this.button_set.UseVisualStyleBackColor = true;
@@ -241,10 +203,10 @@
             // 
             this.label_CountDown.BackColor = System.Drawing.Color.Transparent;
             this.label_CountDown.Font = new System.Drawing.Font("微软雅黑", 30F);
-            this.label_CountDown.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(23)))), ((int)(((byte)(124)))), ((int)(((byte)(176)))));
-            this.label_CountDown.Location = new System.Drawing.Point(2765, 208);
+            this.label_CountDown.ForeColor = System.Drawing.Color.DarkGreen;
+            this.label_CountDown.Location = new System.Drawing.Point(2567, 484);
             this.label_CountDown.Name = "label_CountDown";
-            this.label_CountDown.Size = new System.Drawing.Size(307, 90);
+            this.label_CountDown.Size = new System.Drawing.Size(336, 128);
             this.label_CountDown.TabIndex = 78;
             this.label_CountDown.Text = "02:00";
             this.label_CountDown.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -260,67 +222,36 @@
             this.label1.TabIndex = 79;
             this.label1.Text = ":";
             // 
-            // button_BFoul1
+            // button_BFoul
             // 
-            this.button_BFoul1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.PaleTurquoise;
-            this.button_BFoul1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button_BFoul1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_BFoul1.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_BFoul1.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.button_BFoul1.Location = new System.Drawing.Point(2734, 560);
-            this.button_BFoul1.Name = "button_BFoul1";
-            this.button_BFoul1.Size = new System.Drawing.Size(256, 115);
-            this.button_BFoul1.TabIndex = 64;
-            this.button_BFoul1.Text = "失误";
-            this.button_BFoul1.UseVisualStyleBackColor = true;
-            this.button_BFoul1.Click += new System.EventHandler(this.button_BFoul1_Click);
+            this.button_BFoul.FlatAppearance.MouseDownBackColor = System.Drawing.Color.PaleTurquoise;
+            this.button_BFoul.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
+            this.button_BFoul.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_BFoul.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button_BFoul.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.button_BFoul.Location = new System.Drawing.Point(2675, 784);
+            this.button_BFoul.Name = "button_BFoul";
+            this.button_BFoul.Size = new System.Drawing.Size(256, 115);
+            this.button_BFoul.TabIndex = 65;
+            this.button_BFoul.Text = "犯规";
+            this.button_BFoul.UseVisualStyleBackColor = true;
+            this.button_BFoul.Click += new System.EventHandler(this.button_BFoul_Click);
             // 
-            // button_BFoul2
+            // button_AFoul
             // 
-            this.button_BFoul2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.PaleTurquoise;
-            this.button_BFoul2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button_BFoul2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_BFoul2.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_BFoul2.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.button_BFoul2.Location = new System.Drawing.Point(2734, 752);
-            this.button_BFoul2.Name = "button_BFoul2";
-            this.button_BFoul2.Size = new System.Drawing.Size(256, 115);
-            this.button_BFoul2.TabIndex = 65;
-            this.button_BFoul2.Text = "犯规";
-            this.button_BFoul2.UseVisualStyleBackColor = true;
-            this.button_BFoul2.Click += new System.EventHandler(this.button_BFoul2_Click);
-            // 
-            // button_AFoul2
-            // 
-            this.button_AFoul2.FlatAppearance.BorderColor = System.Drawing.Color.Red;
-            this.button_AFoul2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Pink;
-            this.button_AFoul2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LavenderBlush;
-            this.button_AFoul2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_AFoul2.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_AFoul2.ForeColor = System.Drawing.Color.Red;
-            this.button_AFoul2.Location = new System.Drawing.Point(86, 752);
-            this.button_AFoul2.Name = "button_AFoul2";
-            this.button_AFoul2.Size = new System.Drawing.Size(256, 115);
-            this.button_AFoul2.TabIndex = 86;
-            this.button_AFoul2.Text = "犯规";
-            this.button_AFoul2.UseVisualStyleBackColor = true;
-            this.button_AFoul2.Click += new System.EventHandler(this.button_AFoul2_Click);
-            // 
-            // button_AFoul1
-            // 
-            this.button_AFoul1.FlatAppearance.BorderColor = System.Drawing.Color.Red;
-            this.button_AFoul1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Pink;
-            this.button_AFoul1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LavenderBlush;
-            this.button_AFoul1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_AFoul1.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_AFoul1.ForeColor = System.Drawing.Color.Red;
-            this.button_AFoul1.Location = new System.Drawing.Point(86, 560);
-            this.button_AFoul1.Name = "button_AFoul1";
-            this.button_AFoul1.Size = new System.Drawing.Size(256, 115);
-            this.button_AFoul1.TabIndex = 85;
-            this.button_AFoul1.Text = "失误";
-            this.button_AFoul1.UseVisualStyleBackColor = true;
-            this.button_AFoul1.Click += new System.EventHandler(this.button_AFoul1_Click);
+            this.button_AFoul.FlatAppearance.BorderColor = System.Drawing.Color.Red;
+            this.button_AFoul.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Pink;
+            this.button_AFoul.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LavenderBlush;
+            this.button_AFoul.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_AFoul.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button_AFoul.ForeColor = System.Drawing.Color.Red;
+            this.button_AFoul.Location = new System.Drawing.Point(62, 701);
+            this.button_AFoul.Name = "button_AFoul";
+            this.button_AFoul.Size = new System.Drawing.Size(256, 115);
+            this.button_AFoul.TabIndex = 86;
+            this.button_AFoul.Text = "犯规";
+            this.button_AFoul.UseVisualStyleBackColor = true;
+            this.button_AFoul.Click += new System.EventHandler(this.button_AFoul_Click);
             // 
             // label_RedBG
             // 
@@ -343,9 +274,9 @@
             // label_GameCount
             // 
             this.label_GameCount.BackColor = System.Drawing.Color.Transparent;
-            this.label_GameCount.Font = new System.Drawing.Font("微软雅黑", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label_GameCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(23)))), ((int)(((byte)(124)))), ((int)(((byte)(176)))));
-            this.label_GameCount.Location = new System.Drawing.Point(2499, 205);
+            this.label_GameCount.Font = new System.Drawing.Font("微软雅黑", 25F);
+            this.label_GameCount.ForeColor = System.Drawing.Color.SeaGreen;
+            this.label_GameCount.Location = new System.Drawing.Point(47, 260);
             this.label_GameCount.Name = "label_GameCount";
             this.label_GameCount.Size = new System.Drawing.Size(302, 98);
             this.label_GameCount.TabIndex = 90;
@@ -355,81 +286,37 @@
             // button_Continue
             // 
             this.button_Continue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_Continue.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F);
+            this.button_Continue.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.button_Continue.ForeColor = System.Drawing.Color.Green;
-            this.button_Continue.Location = new System.Drawing.Point(2776, 1254);
+            this.button_Continue.Location = new System.Drawing.Point(2621, 1264);
             this.button_Continue.Name = "button_Continue";
-            this.button_Continue.Size = new System.Drawing.Size(192, 64);
+            this.button_Continue.Size = new System.Drawing.Size(265, 98);
             this.button_Continue.TabIndex = 91;
             this.button_Continue.Text = "下一节";
             this.button_Continue.UseVisualStyleBackColor = true;
             this.button_Continue.Click += new System.EventHandler(this.button_Continue_Click);
             // 
-            // label_APauseNum
+            // label_AFoulNum
             // 
-            this.label_APauseNum.Font = new System.Drawing.Font("微软雅黑", 24F);
-            this.label_APauseNum.ForeColor = System.Drawing.Color.Red;
-            this.label_APauseNum.Location = new System.Drawing.Point(387, 394);
-            this.label_APauseNum.Name = "label_APauseNum";
-            this.label_APauseNum.Size = new System.Drawing.Size(157, 74);
-            this.label_APauseNum.TabIndex = 93;
-            this.label_APauseNum.Text = "0";
-            this.label_APauseNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label_AFoulNum.Font = new System.Drawing.Font("微软雅黑", 24F);
+            this.label_AFoulNum.ForeColor = System.Drawing.Color.Red;
+            this.label_AFoulNum.Location = new System.Drawing.Point(345, 719);
+            this.label_AFoulNum.Name = "label_AFoulNum";
+            this.label_AFoulNum.Size = new System.Drawing.Size(157, 74);
+            this.label_AFoulNum.TabIndex = 95;
+            this.label_AFoulNum.Text = "0";
+            this.label_AFoulNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label_AFoul1Num
+            // label_BFoulNum
             // 
-            this.label_AFoul1Num.Font = new System.Drawing.Font("微软雅黑", 24F);
-            this.label_AFoul1Num.ForeColor = System.Drawing.Color.Red;
-            this.label_AFoul1Num.Location = new System.Drawing.Point(387, 579);
-            this.label_AFoul1Num.Name = "label_AFoul1Num";
-            this.label_AFoul1Num.Size = new System.Drawing.Size(157, 74);
-            this.label_AFoul1Num.TabIndex = 94;
-            this.label_AFoul1Num.Text = "0";
-            this.label_AFoul1Num.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_AFoul2Num
-            // 
-            this.label_AFoul2Num.Font = new System.Drawing.Font("微软雅黑", 24F);
-            this.label_AFoul2Num.ForeColor = System.Drawing.Color.Red;
-            this.label_AFoul2Num.Location = new System.Drawing.Point(387, 771);
-            this.label_AFoul2Num.Name = "label_AFoul2Num";
-            this.label_AFoul2Num.Size = new System.Drawing.Size(157, 74);
-            this.label_AFoul2Num.TabIndex = 95;
-            this.label_AFoul2Num.Text = "0";
-            this.label_AFoul2Num.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_BPauseNum
-            // 
-            this.label_BPauseNum.Font = new System.Drawing.Font("微软雅黑", 24F);
-            this.label_BPauseNum.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.label_BPauseNum.Location = new System.Drawing.Point(2542, 387);
-            this.label_BPauseNum.Name = "label_BPauseNum";
-            this.label_BPauseNum.Size = new System.Drawing.Size(157, 74);
-            this.label_BPauseNum.TabIndex = 96;
-            this.label_BPauseNum.Text = "0";
-            this.label_BPauseNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_BFoul1Num
-            // 
-            this.label_BFoul1Num.Font = new System.Drawing.Font("微软雅黑", 24F);
-            this.label_BFoul1Num.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.label_BFoul1Num.Location = new System.Drawing.Point(2542, 579);
-            this.label_BFoul1Num.Name = "label_BFoul1Num";
-            this.label_BFoul1Num.Size = new System.Drawing.Size(157, 74);
-            this.label_BFoul1Num.TabIndex = 97;
-            this.label_BFoul1Num.Text = "0";
-            this.label_BFoul1Num.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_BFoul2Num
-            // 
-            this.label_BFoul2Num.Font = new System.Drawing.Font("微软雅黑", 24F);
-            this.label_BFoul2Num.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.label_BFoul2Num.Location = new System.Drawing.Point(2542, 771);
-            this.label_BFoul2Num.Name = "label_BFoul2Num";
-            this.label_BFoul2Num.Size = new System.Drawing.Size(157, 74);
-            this.label_BFoul2Num.TabIndex = 98;
-            this.label_BFoul2Num.Text = "0";
-            this.label_BFoul2Num.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label_BFoulNum.Font = new System.Drawing.Font("微软雅黑", 24F);
+            this.label_BFoulNum.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.label_BFoulNum.Location = new System.Drawing.Point(2512, 802);
+            this.label_BFoulNum.Name = "label_BFoulNum";
+            this.label_BFoulNum.Size = new System.Drawing.Size(157, 74);
+            this.label_BFoulNum.TabIndex = 98;
+            this.label_BFoulNum.Text = "0";
+            this.label_BFoulNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label_BMessage
             // 
@@ -441,7 +328,6 @@
             this.label_BMessage.Size = new System.Drawing.Size(432, 192);
             this.label_BMessage.TabIndex = 99;
             this.label_BMessage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.label_BMessage.Click += new System.EventHandler(this.label_BMessage_Click);
             // 
             // label_AMessage
             // 
@@ -453,16 +339,15 @@
             this.label_AMessage.Size = new System.Drawing.Size(432, 192);
             this.label_AMessage.TabIndex = 100;
             this.label_AMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label_AMessage.Click += new System.EventHandler(this.label_AMessage_Click);
             // 
             // buttonEnd
             // 
             this.buttonEnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonEnd.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F);
+            this.buttonEnd.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.buttonEnd.ForeColor = System.Drawing.Color.Green;
-            this.buttonEnd.Location = new System.Drawing.Point(2776, 1395);
+            this.buttonEnd.Location = new System.Drawing.Point(2621, 1526);
             this.buttonEnd.Name = "buttonEnd";
-            this.buttonEnd.Size = new System.Drawing.Size(192, 64);
+            this.buttonEnd.Size = new System.Drawing.Size(265, 98);
             this.buttonEnd.TabIndex = 101;
             this.buttonEnd.Text = "结束";
             this.buttonEnd.UseVisualStyleBackColor = true;
@@ -485,36 +370,41 @@
             // 
             this.timerMsg1s.Tick += new System.EventHandler(this.timerMsg1s_Tick);
             // 
+            // label_GameStage
+            // 
+            this.label_GameStage.BackColor = System.Drawing.Color.Transparent;
+            this.label_GameStage.Font = new System.Drawing.Font("微软雅黑", 25F);
+            this.label_GameStage.ForeColor = System.Drawing.Color.SeaGreen;
+            this.label_GameStage.Location = new System.Drawing.Point(2540, 260);
+            this.label_GameStage.Name = "label_GameStage";
+            this.label_GameStage.Size = new System.Drawing.Size(391, 113);
+            this.label_GameStage.TabIndex = 103;
+            this.label_GameStage.Text = "阶段一";
+            this.label_GameStage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Tracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(3004, 1688);
+            this.Controls.Add(this.label_GameStage);
             this.Controls.Add(this.label_Debug);
             this.Controls.Add(this.buttonEnd);
             this.Controls.Add(this.label_AMessage);
             this.Controls.Add(this.label_BMessage);
-            this.Controls.Add(this.label_BFoul2Num);
-            this.Controls.Add(this.label_BFoul1Num);
-            this.Controls.Add(this.label_BPauseNum);
-            this.Controls.Add(this.label_AFoul2Num);
-            this.Controls.Add(this.label_AFoul1Num);
-            this.Controls.Add(this.label_APauseNum);
+            this.Controls.Add(this.label_BFoulNum);
+            this.Controls.Add(this.label_AFoulNum);
             this.Controls.Add(this.button_Continue);
             this.Controls.Add(this.label_GameCount);
             this.Controls.Add(this.label_BlueBG);
             this.Controls.Add(this.label_RedBG);
-            this.Controls.Add(this.button_AFoul2);
-            this.Controls.Add(this.button_AFoul1);
+            this.Controls.Add(this.button_AFoul);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label_CountDown);
             this.Controls.Add(this.button_set);
-            this.Controls.Add(this.button_AReset);
-            this.Controls.Add(this.button_BReset);
             this.Controls.Add(this.button_video);
-            this.Controls.Add(this.button_BFoul2);
-            this.Controls.Add(this.button_BFoul1);
+            this.Controls.Add(this.button_BFoul);
             this.Controls.Add(this.button_restart);
             this.Controls.Add(this.labelBScore);
             this.Controls.Add(this.labelAScore);
@@ -545,33 +435,26 @@
         private System.Windows.Forms.Label label_CarB;
         private System.Windows.Forms.Button button_restart;
         private System.Windows.Forms.Button button_video;
-        private System.Windows.Forms.Button button_BReset;
-        private System.Windows.Forms.Button button_AReset;
         private System.Windows.Forms.Button button_set;
         private System.Windows.Forms.Label labelBScore;
         private System.Windows.Forms.Label labelAScore;
         private System.Windows.Forms.Label label_CountDown;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button_BFoul1;
-        private System.Windows.Forms.Button button_BFoul2;
-        private System.Windows.Forms.Button button_AFoul2;
-        private System.Windows.Forms.Button button_AFoul1;
+        private System.Windows.Forms.Button button_BFoul;
+        private System.Windows.Forms.Button button_AFoul;
         private System.Windows.Forms.Label label_RedBG;
         private System.Windows.Forms.Label label_BlueBG;
         private System.Windows.Forms.Label label_GameCount;
         private System.Windows.Forms.Button button_Continue;
-        private System.Windows.Forms.Label label_APauseNum;
-        private System.Windows.Forms.Label label_AFoul1Num;
-        private System.Windows.Forms.Label label_AFoul2Num;
-        private System.Windows.Forms.Label label_BPauseNum;
-        private System.Windows.Forms.Label label_BFoul1Num;
-        private System.Windows.Forms.Label label_BFoul2Num;
+        private System.Windows.Forms.Label label_AFoulNum;
+        private System.Windows.Forms.Label label_BFoulNum;
         private System.Windows.Forms.Label label_BMessage;
         private System.Windows.Forms.Label label_AMessage;
         private System.Windows.Forms.Button buttonEnd;
         private System.Windows.Forms.Label label_Debug;
         private System.Windows.Forms.Timer timerMsg100ms;
         private System.Windows.Forms.Timer timerMsg1s;
+        private System.Windows.Forms.Label label_GameStage;
     }
 }
 

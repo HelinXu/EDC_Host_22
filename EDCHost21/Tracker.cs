@@ -28,7 +28,7 @@ namespace EDCHOST21
         //定位器
         private Localiser localiser;
         //人员坐标
-        private Point2i person;
+        private Point2i passenger;
         //车1坐标
         private Point2i car1;
         //车2坐标
@@ -44,10 +44,6 @@ namespace EDCHOST21
         public SerialPort serial1, serial2;
         public string[] validPorts;
 
-        private string[] gametext = { "上半场", "下半场", "加时1", "加时2",
-                                      "加时3", "加时4", "加时5", "加时6", 
-                                      "加时7" , "加时8", "加时9", "加时10", 
-                                      "加时11", "加时12" };
         private Camp[] UI_LastRoundCamp = new Camp[5];
 
         public Dot CarALocation()
@@ -65,6 +61,7 @@ namespace EDCHOST21
             return D;
         }
 
+        // 主界面初始化
         public Tracker()
         {
             // UI界面初始化
@@ -113,15 +110,13 @@ namespace EDCHOST21
             timeCamNow = DateTime.Now;
             timeCamPrev = timeCamNow;
 
-            person = new Point2i();
+            passenger = new Point2i();
             car1 = new Point2i();
             car2 = new Point2i();
 
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
             buttonEnd.Enabled = false;
-            button_AReset.Enabled = false;
-            button_BReset.Enabled = false;
 
             validPorts = SerialPort.GetPortNames();
             alreadySet = false;
@@ -156,65 +151,55 @@ namespace EDCHOST21
 
         }
 
-        //进行界面刷新、图像处理、逻辑处理的周期性函数
+        // 进行界面刷新、图像处理、逻辑处理的周期性函数
         private void Flush()
         {
-            //如果还未进行参数设置
+            // 如果还未进行参数设置
             if (!alreadySet)
             {
                 lock (flags)
                 {
-                    //创建并打开SetWindow窗口，进行参数设置
+                    // 创建并打开SetWindow窗口，进行参数设置
                     SetWindow st = new SetWindow(ref flags, ref game, this);
                     st.Show();
                 }
                 alreadySet = true;
             }
+
             //从视频帧中读取一帧，进行图像处理、绘图和数值更新
             CameraReading();
 
+            // 保存上一帧的小车位置，以便判断是否逆行
+            game.CarA.mLastPos.x = game.CarA.mPos.x;
+            game.CarA.mLastPos.y = game.CarA.mPos.y;
+            game.CarB.mLastPos.x = game.CarB.mPos.x;
+            game.CarB.mLastPos.y = game.CarB.mPos.y;
+
+            // 主流程端接收图像处理端信息
             lock (flags)
             {
-                /*
-                game.BallsDot.Clear();
-                foreach (Point2i posBall in flags.posBalls)
-                    game.BallsDot.Add(new Dot(posBall.X, posBall.Y));
-                */
-                game.Passenger.Start_Dot.x = flags.posPersonStart.X;
-                game.Passenger.Start_Dot.y = flags.posPersonStart.Y;
-                game.Passenger.End_Dot.x = flags.posPersonEnd.X;
-                game.Passenger.End_Dot.y = flags.posPersonEnd.Y;
-
-                game.CarA.mLastPos.x = game.CarA.mPos.x;
-                game.CarA.mLastPos.y = game.CarA.mPos.y;
-                game.CarB.mLastPos.x = game.CarB.mPos.x;
-                game.CarB.mLastPos.y = game.CarB.mPos.y;
                 game.CarA.mPos.x = flags.posCarA.X;
                 game.CarA.mPos.y = flags.posCarA.Y;
                 game.CarB.mPos.x = flags.posCarB.X;
                 game.CarB.mPos.y = flags.posCarB.Y;
             }
-            //game.Update();
 
+            // 更新比赛信息
+            game.Update();
+
+            // 图像处理端接收主流程端信息
             lock (flags)
             {
-                /*
-                flags.currPersonNum = game.CurrPersonNumber;
-                for (int i = 0; i != Game.MaxPersonNum; ++i)
-                {
-                    flags.posPersonStart[i].X = game.People[i].StartPos.x;
-                    flags.posPersonStart[i].Y = game.People[i].StartPos.y;
-                    flags.gameState = game.State;
-                }
-                */
-                flags.posPersonStart.X = game.Passenger.Start_Dot.x;
-                flags.posPersonStart.Y = game.Passenger.Start_Dot.y;
-
+                flags.posPsgStart.X = game.Passenger.Start_Dot.x;
+                flags.posPsgStart.Y = game.Passenger.Start_Dot.y;
+                flags.posPsgEnd.X = game.Passenger.End_Dot.x;
+                flags.posPsgEnd.Y = game.Passenger.End_Dot.y;
+                flags.gameState = game.State;
             }
-
             
         }
 
+        // 给小车A发送信息
         private void SendCarAMessage()
         {
             // 打包好要发给A车的信息
@@ -228,6 +213,7 @@ namespace EDCHOST21
             validPorts = SerialPort.GetPortNames();
         }
 
+        // 给小车B发送信息
         private void SendCarBMessage()
         {
             // 打包好要发给B车的信息
@@ -272,7 +258,7 @@ namespace EDCHOST21
                             }
                         }
                         //调用定位器，得到小车和乘客的坐标
-                        localiser.GetLocations(out car1, out car2);
+                        localiser.GetCarLocations(out car1, out car2);
 
                         lock (flags)
                         {
@@ -344,6 +330,11 @@ namespace EDCHOST21
             pbCamera.Image = img;
         }
 
+
+
+        #region 与界面控件有关的函数
+
+        // 当Tracker界面被关闭时，处理一些接口的关闭
         private void Tracker_FormClosed(object sender, FormClosedEventArgs e)
         {
             lock (flags)
@@ -359,6 +350,7 @@ namespace EDCHOST21
                 serial2.Close();
         }
 
+        // 重置画面
         private void btnReset_Click(object sender, EventArgs e)
         {
             lock (flags)
@@ -402,6 +394,121 @@ namespace EDCHOST21
             }
         }
 
+        // 比赛开始
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            game.Start();
+            buttonPause.Enabled = true;
+            buttonEnd.Enabled = true;
+            buttonStart.Enabled = false;
+        }
+
+        // 比赛暂停（待完善）
+        private void buttonPause_Click(object sender, EventArgs e)
+        {
+            // to add something...
+
+            buttonPause.Enabled = false;
+            buttonEnd.Enabled = true;
+            buttonStart.Enabled = true;
+        }
+
+        // 比赛重新开始
+        private void button_restart_Click(object sender, EventArgs e)
+        {
+            lock (game) { game = new Game(); }
+            buttonStart.Enabled = true;
+            buttonPause.Enabled = false;
+            buttonEnd.Enabled = false;
+            label_CarA.Text = "A车";
+            label_CarB.Text = "B车";
+        }
+
+        // 开始录像
+        private void button_video_Click(object sender, EventArgs e)
+        {
+            lock (flags)
+            {
+                if (flags.videomode == false)
+                {
+                    string time = DateTime.Now.ToString("MMdd_HH_mm_ss");
+                    vw = new VideoWriter("../../video/" + time + ".avi",
+                        FourCC.XVID, 10.0, flags.showSize);
+                    flags.videomode = true;
+                    ((Button)sender).Text = "停止录像";
+                    game.FoulTimeFS = new FileStream("../../video/" + time + ".txt", FileMode.CreateNew);
+                }
+                else
+                {
+                    vw.Release();
+                    vw = null;
+                    flags.videomode = false;
+                    ((Button)sender).Text = "开始录像";
+                    game.FoulTimeFS = null;
+                }
+            }
+        }
+
+        // 打开设置调试窗口
+        private void button_set_Click(object sender, EventArgs e)
+        {
+            lock (flags)
+            {
+                SetWindow st = new SetWindow(ref flags, ref game, this);
+                st.Show();
+            }
+        }
+
+        // 开始下半场比赛
+        private void button_Continue_Click(object sender, EventArgs e)
+        {
+            //if (game.state == GameState.End)
+            game.NextStage();
+            buttonPause.Enabled = false;
+            buttonEnd.Enabled = true;
+            buttonStart.Enabled = true;
+        }
+
+        // A车记1次犯规
+        private void button_AFoul_Click(object sender, EventArgs e)
+        {
+            game.CarA.mFoulCount++;
+            game.CarA.AddFoulCount();
+
+            if (game.FoulTimeFS != null)
+            {
+                //byte[] data = Encoding.Default.GetBytes($"A -50 {game.Round}\r\n");
+                //game.FoulTimeFS.Write(data, 0, data.Length);
+            }
+        }
+
+        // B车记1次犯规
+        private void button_BFoul_Click(object sender, EventArgs e)
+        {
+            game.CarB.mFoulCount++;
+            game.CarB.AddFoulCount();
+
+            if (game.FoulTimeFS != null)
+            {
+                //byte[] data = Encoding.Default.GetBytes($"B -50 {game.Round}\r\n");
+                //game.FoulTimeFS.Write(data, 0, data.Length);
+            }
+        }
+
+        // 比赛结束（待完善）
+        private void buttonEnd_Click(object sender, EventArgs e)
+        {
+            //game.End();
+            buttonStart.Enabled = true;
+            buttonPause.Enabled = false;
+            buttonEnd.Enabled = false;
+        }
+
+        #endregion
+
+
+
+        #region 由定时器控制的函数
         //计时器事件：执行Flush
         private void timer_Tick(object sender, EventArgs e)
         {
@@ -437,160 +544,43 @@ namespace EDCHOST21
                 SendCarBMessage();
             }
         }
+        #endregion
 
-        private void buttonStart_Click(object sender, EventArgs e)
+
+        // 显示信息到UI界面上
+        private void ShowMessage(byte[] M) 
         {
-            game.Start();
-            buttonPause.Enabled = true;
-            buttonEnd.Enabled = true;
-            buttonStart.Enabled = false;
-            button_AReset.Enabled = true;
-            button_BReset.Enabled = true;
-        }
+            //label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
 
-        private void buttonPause_Click(object sender, EventArgs e)
-        {
-            if (game.CarA.mIsInField == 1)
-            {
-                game.AskPause(Camp.CMP_A);
-            }
-            else if (game.CarB.mIsInField == 1)
-            {
-                game.AskPause(Camp.CMP_B);
-            }
-            
-            buttonPause.Enabled = false;
-            buttonEnd.Enabled = true;
-            buttonStart.Enabled = true;
-            button_AReset.Enabled = false;
-            button_BReset.Enabled = false;
-        }
-
-        private void ShowMessage(byte[] M) //通过Message显示信息到UI上
-        {
-            /*
-            label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
-
+            // A,B车的总分数
             labelAScore.Text = $"{game.CarA.MyScore}";
             labelBScore.Text = $"{game.CarB.MyScore}";
 
-            label_GameCount.Text = gametext[game.mGameCount - 1];
-            label_APauseNum.Text = $"{game.APauseNum}";
-            label_BPauseNum.Text = $"{game.BPauseNum}";
-            label_AFoul1Num.Text = $"{game.AFoul1}";
-            label_BFoul1Num.Text = $"{game.BFoul1}";
-            label_AFoul2Num.Text = $"{game.AFoul2}";
-            label_BFoul2Num.Text = $"{game.BFoul2}";
+            // 上半场或下半场
+            label_GameCount.Text = (game.mGameCount == 0) ? "上半场" : "下半场";
 
-            label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运回物资数　　{game.CarA.BallOwnCnt}";
-            label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　　运回物资数";
-            */
-            label_Debug.Text = $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\nB车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
-            //if (game.CarA.HaveBonus)
-            //    label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
-            //if (game.CarB.HaveBonus)
-            //    label_CarB.Text = label_CarB.Text + "  +" + Car.BonusRate.ToString("0%");
-            //  groupBox_Person.Refresh();
+            // 阶段一或阶段二
+            label_GameStage.Text = (game.mGameStage == 0) ? "阶段一" : "阶段二";
+
+            // A,B车犯规的次数
+            label_AFoulNum.Text = $"{game.CarA.mFoulCount}";
+            label_BFoulNum.Text = $"{game.CarB.mFoulCount}";
+
+            // A,B车的得分明细
+            label_AMessage.Text = 
+                $"转移被困人员数　　{game.CarA.mRescueCount}\n" +
+                $"获得防汛物资数　　{game.CarA.mPkgCount}\n";
+            label_BMessage.Text = 
+                $"{game.CarB.mRescueCount}　　转移被困人员数\n" +
+                $"{game.CarB.mPkgCount}　　获得防汛物资数\n";
+            
+            // A,B车的坐标信息
+            label_Debug.Text = 
+                $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\n" +
+                $"B车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
         }
 
-        private void button_restart_Click(object sender, EventArgs e)
-        {
-            lock (game) { game = new Game(); }
-            buttonStart.Enabled = true;
-            buttonPause.Enabled = false;
-            buttonEnd.Enabled = false;
-            button_AReset.Enabled = false;
-            button_BReset.Enabled = false;
-            label_CarA.Text = "A车";
-            label_CarB.Text = "B车";
-        }
-
-        //private void buttonChangeScore_Click(object sender, EventArgs e)
-        //{
-        //    int AScore = (int)numericUpDownScoreA.Value;
-        //    int BScore = (int)numericUpDownScoreB.Value;
-        //    numericUpDownScoreA.Value = 0;
-        //    numericUpDownScoreB.Value = 0;
-        //    lock (game)
-        //    {
-        //        game.CarA.Score += AScore;
-        //        game.CarB.Score += BScore;
-        //    }
-        //}
-
-
-
-        private void button_video_Click(object sender, EventArgs e)
-        {
-            lock (flags)
-            {
-                if (flags.videomode == false)
-                {
-                    string time = DateTime.Now.ToString("MMdd_HH_mm_ss");
-                    vw = new VideoWriter("../../video/" + time + ".avi",
-                        FourCC.XVID, 10.0, flags.showSize);
-                    flags.videomode = true;
-                    ((Button)sender).Text = "停止录像";
-                    game.FoulTimeFS = new FileStream("../../video/" + time + ".txt", FileMode.CreateNew);
-                }
-                else
-                {
-                    vw.Release();
-                    vw = null;
-                    flags.videomode = false;
-                    ((Button)sender).Text = "开始录像";
-                    game.FoulTimeFS = null;
-                }
-            }
-        }
-
-        private void button_AReset_Click(object sender, EventArgs e)
-        {
-            if (game.CarA.mPauseCount < 3)
-            {
-                game.AskPause(Camp.CMP_A);
-                buttonPause.Enabled = false;
-                buttonEnd.Enabled = false;
-                buttonStart.Enabled = true;
-                button_AReset.Enabled = false;
-                button_BReset.Enabled = false;
-            }
-        }
-
-        private void button_BReset_Click(object sender, EventArgs e)
-        {
-            if (game.CarB.mPauseCount < 3)
-            {
-                game.AskPause(Camp.CMP_B);
-                buttonPause.Enabled = false;
-                buttonEnd.Enabled = false;
-                buttonStart.Enabled = true;
-                button_AReset.Enabled = false;
-                button_BReset.Enabled = false;
-            }
-        }
-
-        private void button_set_Click(object sender, EventArgs e)
-        {
-            lock (flags)
-            {
-                SetWindow st = new SetWindow(ref flags, ref game, this);
-                st.Show();
-            }
-        }
-
-        //private void numericUpDownScoreA_ValueChanged(object sender, EventArgs e)
-        //{
-        //    game.AddScore(Camp.CampA, (int)((NumericUpDown)sender).Value);
-        //    ((NumericUpDown)sender).Value = 0;
-        //}
-
-        //private void numericUpDownScoreB_ValueChanged(object sender, EventArgs e)
-        //{
-        //    game.AddScore(Camp.CampB, (int)((NumericUpDown)sender).Value);
-        //    ((NumericUpDown)sender).Value = 0;
-        //}
-
+        // 读取data.txt文件中存储的hue,saturation,value等的默认值
         private void Tracker_Load(object sender, EventArgs e)
         {
             if (File.Exists("data.txt"))
@@ -598,9 +588,10 @@ namespace EDCHOST21
                 FileStream fsRead = new FileStream("data.txt", FileMode.Open);
                 int fsLen = (int)fsRead.Length;
                 byte[] heByte = new byte[fsLen];
-                int r = fsRead.Read(heByte, 0, heByte.Length);
+                fsRead.Read(heByte, 0, heByte.Length);
                 string myStr = System.Text.Encoding.UTF8.GetString(heByte);
                 string[] str = myStr.Split(' ');
+
                 flags.configs.hue0Lower = Convert.ToInt32(str[0]);
                 flags.configs.hue0Upper = Convert.ToInt32(str[1]);
                 flags.configs.hue1Lower = Convert.ToInt32(str[2]);
@@ -612,160 +603,86 @@ namespace EDCHOST21
                 flags.configs.saturation2Lower = Convert.ToInt32(str[8]);
                 flags.configs.valueLower = Convert.ToInt32(str[9]);
                 flags.configs.areaLower = Convert.ToInt32(str[10]);
+
                 fsRead.Close();
             }
         }
 
-        private void button_Continue_Click(object sender, EventArgs e)
+        #region 被注释的代码 暂先保留
+        /*
+        private void buttonchangescore_click(object sender, eventargs e)
         {
-            //if (game.state == GameState.End)
-            game.NextStage();
-            buttonPause.Enabled = false;
-            buttonEnd.Enabled = true;
-            buttonStart.Enabled = true;
-            button_AReset.Enabled = false;
-            button_BReset.Enabled = false;
-        }
-
-        private void button_AFoul1_Click(object sender, EventArgs e)
-        {
-            game.AFoul1++;
-            game.AddScore(Camp.CMP_A, Score.Foul1);
-            if (game.FoulTimeFS != null)
+            int ascore = (int)numericupdownscorea.value;
+            int bscore = (int)numericupdownscoreb.value;
+            numericupdownscorea.value = 0;
+            numericupdownscoreb.value = 0;
+            lock (game)
             {
-                byte[] data = Encoding.Default.GetBytes($"A -10 {game.Round}\r\n");
-                game.FoulTimeFS.Write(data, 0, data.Length);
+                game.cara.score += ascore;
+                game.carb.score += bscore;
             }
         }
 
-        private void button_AFoul2_Click(object sender, EventArgs e)
+        private void numericUpDownScoreA_ValueChanged(object sender, EventArgs e)
         {
-            game.AFoul2++;
-            game.AddScore(Camp.CMP_A, Score.Foul2);
-            if (game.FoulTimeFS != null)
-            {
-                byte[] data = Encoding.Default.GetBytes($"A -50 {game.Round}\r\n");
-                game.FoulTimeFS.Write(data, 0, data.Length);
-            }
+            game.AddScore(Camp.CampA, (int)((NumericUpDown)sender).Value);
+            ((NumericUpDown)sender).Value = 0;
         }
 
-        private void button_BFoul1_Click(object sender, EventArgs e)
+        private void numericUpDownScoreB_ValueChanged(object sender, EventArgs e)
         {
-            game.BFoul1++;
-            game.AddScore(Camp.CMP_B, Score.Foul1);
-            if (game.FoulTimeFS != null)
-            {
-                byte[] data = Encoding.Default.GetBytes($"B -10 {game.Round}\r\n");
-                game.FoulTimeFS.Write(data, 0, data.Length);
-            }
+            game.AddScore(Camp.CampB, (int)((NumericUpDown)sender).Value);
+            ((NumericUpDown)sender).Value = 0;
         }
 
-        private void button_BFoul2_Click(object sender, EventArgs e)
+        //绘制人员信息
+        private void groupBox_Person_Paint(object sender, PaintEventArgs e)
         {
-            game.BFoul2++;
-            game.AddScore(Camp.CMP_B, Score.Foul2);
-            if (game.FoulTimeFS != null)
+            Brush br_No_NV = new SolidBrush(Color.Silver);
+            Brush br_No_V = new SolidBrush(Color.DimGray);
+            Brush br_A_NV = new SolidBrush(Color.Pink);
+            Brush br_A_V = new SolidBrush(Color.Red);
+            Brush br_B_NV = new SolidBrush(Color.SkyBlue);
+            Brush br_B_V = new SolidBrush(Color.RoyalBlue);
+            Graphics gra = e.Graphics;
+            int vbargin = 100;
+            for (int i = 0; i != game.CurrPersonNumber; ++i)
             {
-                byte[] data = Encoding.Default.GetBytes($"B -50 {game.Round}\r\n");
-                game.FoulTimeFS.Write(data, 0, data.Length);
-            }
-        }
-
-        private void label_AMessage_Click(object sender, EventArgs e)
-        {
-            if (game.State == GameState.NORMAL)
-            {
-                game.AddScore(Camp.CMP_A, Score.BallGetScore);
-                game.CarA.BallGetCnt++;
-                game.CarA.HaveBall = true;
-            }
-            else if (game.State == GameState.END)
-            {
-                if (game.CarA.HaveBall)
+                switch (game.People[i].Owner)
                 {
-                    game.AddScore(Camp.CMP_A, Score.BallStoreScore);
-                    game.CarA.BallOwnCnt++;
-                    game.CarA.HaveBall = false;
+                    case Camp.None:
+                        gra.FillEllipse(br_No_V, 40, 100 + i * vbargin, 30, 30);
+                        gra.FillEllipse(br_A_NV, 100, 100 + i * vbargin, 30, 30);
+                        gra.FillEllipse(br_B_NV, 160, 100 + i * vbargin, 30, 30);
+                        break;
+                    case Camp.CampA:
+                        gra.FillEllipse(br_No_NV, 40, 100 + i * vbargin, 30, 30);
+                        gra.FillEllipse(br_A_V, 100, 100 + i * vbargin, 30, 30);
+                        gra.FillEllipse(br_B_NV, 160, 100 + i * vbargin, 30, 30);
+                        break;
+                    case Camp.CampB:
+                        gra.FillEllipse(br_No_NV, 40, 100 + i * vbargin, 30, 30);
+                        gra.FillEllipse(br_A_NV, 100, 100 + i * vbargin, 30, 30);
+                        gra.FillEllipse(br_B_V, 160, 100 + i * vbargin, 30, 30);
+                        break;
+                    default: break;
                 }
             }
         }
-
-        private void label_BMessage_Click(object sender, EventArgs e)
-        {
-            if (game.State == GameState.NORMAL)
-            {
-                game.AddScore(Camp.CMP_B, Score.BallGetScore);
-                game.CarB.BallGetCnt++;
-                game.CarB.HaveBall = true;
-            }
-            else if (game.State == GameState.END)
-            {
-                if (game.CarB.HaveBall)
-                {
-                    game.AddScore(Camp.CMP_B, Score.BallStoreScore);
-                    game.CarB.BallOwnCnt++;
-                    game.CarB.HaveBall = false;
-                }
-            }
-        }
-
-
-        private void buttonEnd_Click(object sender, EventArgs e)
-        {
-            game.End();
-            buttonStart.Enabled = true;
-            buttonPause.Enabled = false;
-            buttonEnd.Enabled = false;
-            button_AReset.Enabled = false;
-            button_BReset.Enabled = false;
-        }
-
-        ////绘制人员信息
-        //private void groupBox_Person_Paint(object sender, PaintEventArgs e)
-        //{
-        //    Brush br_No_NV = new SolidBrush(Color.Silver);
-        //    Brush br_No_V = new SolidBrush(Color.DimGray);
-        //    Brush br_A_NV = new SolidBrush(Color.Pink);
-        //    Brush br_A_V = new SolidBrush(Color.Red);
-        //    Brush br_B_NV = new SolidBrush(Color.SkyBlue);
-        //    Brush br_B_V = new SolidBrush(Color.RoyalBlue);
-        //    Graphics gra = e.Graphics;
-        //    int vbargin = 100;
-        //    for(int i = 0;i!=game.CurrPersonNumber;++i)
-        //    {
-        //        switch(game.People[i].Owner)
-        //        {
-        //            case Camp.None:
-        //                gra.FillEllipse(br_No_V, 40, 100 + i * vbargin, 30, 30);
-        //                gra.FillEllipse(br_A_NV, 100, 100 + i * vbargin, 30, 30);
-        //                gra.FillEllipse(br_B_NV, 160, 100 + i * vbargin, 30, 30);
-        //                break;
-        //            case Camp.CampA:
-        //                gra.FillEllipse(br_No_NV, 40, 100 + i * vbargin, 30, 30);
-        //                gra.FillEllipse(br_A_V, 100, 100 + i * vbargin, 30, 30);
-        //                gra.FillEllipse(br_B_NV, 160, 100 + i * vbargin, 30, 30);
-        //                break;
-        //            case Camp.CampB:
-        //                gra.FillEllipse(br_No_NV, 40, 100 + i * vbargin, 30, 30);
-        //                gra.FillEllipse(br_A_NV, 100, 100 + i * vbargin, 30, 30);
-        //                gra.FillEllipse(br_B_V, 160, 100 + i * vbargin, 30, 30);
-        //                break;
-        //            default:break;
-        //        }
-        //    }
-        //}
+        */
+        #endregion
     }
 
     public class MyFlags
     {
-        public bool showMask;    //调试颜色识别
-        public bool running;     //比赛是否正在进行
-        public bool calibrated;  //地图是否被校准
+        public bool showMask;    // 调试颜色识别
+        public bool running;     // 比赛是否正在进行
+        public bool calibrated;  // 地图是否被校准
         public bool videomode;
         public int clickCount;
 
-        //图像识别参数
-        //HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
+        // 图像识别参数
+        // HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
         public struct LocConfigs
         {
             public int hue0Lower;
@@ -783,38 +700,38 @@ namespace EDCHOST21
         }
         public LocConfigs configs;
 
-        //三个画面的大小
+        // 三个画面的大小
         public OpenCvSharp.Size showSize;
         public OpenCvSharp.Size cameraSize;
         public OpenCvSharp.Size logicSize;
 
-        //小车是否在场上
+        // 小车是否在场上
         public bool CarAInField;
         public bool CarBInField;
 
-        //在场上的小车是否在迷宫中
+        // 在场上的小车是否在迷宫中
         public bool IsInMaze;
 
-        //当前小车的坐标
+        // 当前小车的坐标
         public Point2i posCarA;
         public Point2i posCarB;
 
-        //防汛物资的坐标
+        // 防汛物资的坐标
         public Point2i[] posPackages;
 
-        //人员起始坐标和待运输的位置坐标
-        public Point2i posPersonStart;
-        public Point2i posPersonEnd;
+        // 人员起始坐标和待运输的位置坐标
+        public Point2i posPsgStart;
+        public Point2i posPsgEnd;
 
-        //目前场上被困人员的状况（同一时间场上最多1个被困人员）
-        public PersonState personState;
+        // 目前场上被困人员的状况（同一时间场上最多1个被困人员）
+        public PassengerState psgState;
 
-        //比赛状态：未开始、正常进行、暂停、结束
+        // 比赛状态：未开始、正常进行、暂停、结束
         public GameState gameState;
 
         public void Init()
         {
-            //初始化比赛状况相关数据
+            // 初始化比赛状况相关数据
             showMask = false;
             running = false;
             calibrated = false;
@@ -824,17 +741,19 @@ namespace EDCHOST21
             posCarA = new Point2i();
             posCarB = new Point2i();
 
-            //以下数据待定，根据实际设备确定
+
+            // 设置3张地图的大小
+            // 以下数据待定，根据实际设备确定
             showSize = new OpenCvSharp.Size(960, 720);
             cameraSize = new OpenCvSharp.Size(1280, 960);
             logicSize = new OpenCvSharp.Size(Game.MAX_SIZE_CM, Game.MAX_SIZE_CM);
 
-            //点击次数（暂不懂什么意思）
+            // 点击次数（暂不懂什么意思）
             clickCount = 0;
 
-            //初始化人员位置
-            posPersonStart = new Point2i();
-            posPersonEnd = new Point2i();
+            // 初始化人员位置
+            posPsgStart = new Point2i();
+            posPsgEnd = new Point2i();
         }
 
         public void Start()
@@ -848,13 +767,13 @@ namespace EDCHOST21
         }
     }
 
-    //坐标转换器：将三种坐标（摄像头坐标、显示坐标、逻辑坐标）上的点坐标进行相互转换
-    //摄像头坐标：摄像头直接捕捉到的视频帧对应的坐标
-    //显示坐标：界面上的组件大小所决定的显示画面帧对应的坐标
-    //逻辑坐标：规则文档中描述的场地大小对应的坐标
+    // 坐标转换器：将三种坐标（摄像头坐标、显示坐标、逻辑坐标）上的点坐标进行相互转换
+    // 摄像头坐标：摄像头直接捕捉到的视频帧对应的坐标
+    // 显示坐标：界面上的组件大小所决定的显示画面帧对应的坐标
+    // 逻辑坐标：规则文档中描述的场地大小对应的坐标
     public class CoordinateConverter : IDisposable
     {
-        //投影变换中的变换矩阵
+        // 投影变换中的变换矩阵
         private Mat cam2logic;
         private Mat logic2cam;
         private Mat show2cam;
@@ -862,12 +781,12 @@ namespace EDCHOST21
         private Mat show2logic;
         private Mat logic2show;
 
-        //逻辑画面、摄像头画面、显示画面的四个角坐标（顺序依次为左上、右上、左下、右下）
+        // 逻辑画面、摄像头画面、显示画面的四个角坐标（顺序依次为左上、右上、左下、右下）
         private Point2f[] logicCorners;
         private Point2f[] camCorners;
         private Point2f[] showCorners;
 
-        //释放托管资源
+        // 释放托管资源
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -940,7 +859,7 @@ namespace EDCHOST21
             cam2show = Cv2.GetPerspectiveTransform(camCorners, showCorners);
         }
 
-        //校正摄像机画面？
+        //校正摄像机画面
         public void UpdateCorners(Point2f[] corners, MyFlags myFlags)
         {
             if (corners == null) return;
@@ -959,8 +878,9 @@ namespace EDCHOST21
             myFlags.calibrated = true;
         }
 
-        //以下为变换函数：输入某一个画面对应的坐标序列，
-        //通过透视（投影）矩阵的作用，输出另一个画面对应的坐标序列。
+        #region 投影变换函数
+
+        // 输入某一地图上一串坐标序列，通过投影矩阵的作用，输出另一地图对应的坐标序列
         public Point2f[] ShowToCamera(Point2f[] ptsShow)
         {
             return Cv2.PerspectiveTransform(ptsShow, show2cam);
@@ -991,20 +911,24 @@ namespace EDCHOST21
             return Cv2.PerspectiveTransform(ptsShow, show2logic);
         }
 
-        //将flags中人员的起始位置从逻辑坐标转换为摄像头坐标
+        #endregion
+
+        // 将flags中人员的起始位置从逻辑坐标转换为摄像头坐标
         public void PeopleFilter(MyFlags flags)
         {
-            //如果图像还未被校正，直接返回
+            // 如果图像还未被校正，直接返回
             if (!flags.calibrated) return;
-            //因为被困人员同一时间在场上只有1个，其实只要计算1个坐标变换
-            //但是还是将这1个坐标构造成了坐标点列方便调用已有函数
-            Point2f[] res = LogicToCamera(new Point2f[] { flags.posPersonStart });
-            //此句存疑[yd]
-            flags.posPersonStart = res[0];
+
+            // 因为被困人员同一时间在场上只有1个，其实只要计算1个坐标变换
+            // 但是还是将这1个坐标构造成了坐标点列方便调用已有函数
+            Point2f[] res = LogicToCamera(new Point2f[] { flags.posPsgStart });
+
+            // 计算被困人员在画面地图上的坐标
+            flags.posPsgStart = res[0];
         }
     }
 
-    //定位器：进行图像处理，确定位置并且绘图
+    // 定位器：进行图像处理，确定位置并绘图
     public class Localiser
     {
         //依次为车1、车2位置的中心点集
@@ -1015,12 +939,11 @@ namespace EDCHOST21
         {
             centres1 = new List<Point2i>();
             centres2 = new List<Point2i>();
-
         }
 
         // 根据计算得到的中心点集，返回定位到的小车坐标
         // 若在相机拍摄的图中没有发现某小车，则该车的坐标返回(-1, -1)
-        public void GetLocations(out Point2i pt1, out Point2i pt2)
+        public void GetCarLocations(out Point2i pt1, out Point2i pt2)
         {
             if (centres1.Count != 0)
             {
@@ -1028,6 +951,7 @@ namespace EDCHOST21
                 centres1.Clear();
             }
             else pt1 = new Point2i(-1, -1);
+
             if (centres2.Count != 0)
             {
                 pt2 = centres2[0];
@@ -1036,38 +960,39 @@ namespace EDCHOST21
             else pt2 = new Point2i(-1, -1);
         }
 
-        //定位核心代码
+        // 定位核心代码
         public void Locate(Mat mat, MyFlags localiseFlags)
         {
+            // 如果没有传入摄像机拍摄的画面，则返回
             if (mat == null || mat.Empty()) return;
+            // 如果没有指定定位小车的标准，则返回
             if (localiseFlags == null) return;
-            using (Mat hsv = new Mat())
-            using (Mat car1 = new Mat())
-            using (Mat car2 = new Mat())
 
-            //using (Mat merged = new Mat())
-
+            // 解释：
             // MatType的组成方式：CV_(位数）+（数据类型）+ C（通道数）
             // 位数：1个像素点在内存中占据的大小（bit），有 8, 16, 32, 64；
             // 数据类型：U(unsigned), S(signed), F(float);
             // 通道数：1（灰度图），2（实数+虚数，用于特殊处理，不常见）
             //         3（RGB彩色图像）,4（带Alpha通道的RGB图像）
+            // 可见本上位机采用的图像格式为 “8位深度无符号整数灰度图”
 
-            //本上位机采用的图像格式为 “8位深度无符号整数灰度图”
+            // using表示在代码作用域结束后自动释放资源
+            using (Mat hsv = new Mat())
+            using (Mat car1 = new Mat())
+            using (Mat car2 = new Mat())
 
             using (Mat black = new Mat(mat.Size(), MatType.CV_8UC1))
             {
-                //颜色空间转化：将图片从RGB格式转化为HSV格式
-                //hue色调，sat饱和度，value亮度
+                // 颜色空间转化：将图片从RGB格式转化为HSV格式
+                // hue色调，sat饱和度，value亮度
                 Cv2.CvtColor(mat, hsv, ColorConversionCodes.RGB2HSV);
-                //为了后面Scalar函数中参数写起来方便
+                // 为了后面Scalar函数中参数写起来方便
                 MyFlags.LocConfigs configs = localiseFlags.configs;
-
 
                 // 由定义：typedef struct Scalar { 
                 //            double val[4]; 
                 //        } Scalar;
-                // 看出 Scalar是由1~4个数据组成的结构体，对应的是图像的1~4个通道的值
+                // 可见Scalar是由1~4个数据组成的结构体，对应的是图像的1~4个通道的值
                 // 可以认为 Scalar 是某个像素点（不一定在图像中）
                 // 在下面的代码中，Scalar()中的3个参数分别对应 HSV 图像的 H、S、V 通道
 
@@ -1143,16 +1068,16 @@ namespace EDCHOST21
                     centres2.Add(centre);
                 }
 
-                //foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 3, new Scalar(0x1b, 0xa7, 0xff), -1);
                 // 分别在小车1和小车2的位置上绘制圆圈
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
                 foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
 
+                // 如果比赛已经开始
                 if (localiseFlags.gameState != GameState.UNSTART)
                 {
                     //在人员起始位置上绘制矩形
-                    int x10 = localiseFlags.posPersonStart.X - 8;
-                    int y10 = localiseFlags.posPersonStart.Y - 8;
+                    int x10 = localiseFlags.posPsgStart.X - 8;
+                    int y10 = localiseFlags.posPsgStart.Y - 8;
                     Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
 
                 }
