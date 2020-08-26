@@ -13,28 +13,30 @@ namespace EDCHOST21
     };
     public class Car //选手的车
     {
-        public const int PKG_CREDIT = 10;//获取物资可以得到10分;
-        public const int RESCUE_CREDIT = 30;//营救人员可以得到30分;
-        public const int FLOOD_PENALTY = 15;//经过泄洪口惩罚15分;
-        public const int OBST_PENALTY = 10;//经过虚拟障碍物惩罚15分;
-        public const int WRONG_DIR_PENALTY = 10;//逆行惩罚10分;
-        public const int FOUL_PENALTY = 50; //犯规扣分50分;
+        public const int PKG_CREDIT = 10;        //获取物资可以得到10分;
+        public const int RESCUE_CREDIT = 30;     //营救人员可以得到30分;
+        public const int FLOOD_PENALTY = 15;     //经过泄洪口惩罚15分;
+        public const int OBST_PENALTY = 10;      //经过虚拟障碍物惩罚15分;
+        public const int WRONG_DIR_PENALTY = 10; //逆行惩罚10分;
+        public const int FOUL_PENALTY = 50;      //犯规扣分50分;
 
 
         public Dot mPos;
         public Dot mLastPos;
-        public Camp MyCamp { get; set; }//A or B get、set直接两个封装好的函数
-        public int MyScore { get; set; } //得分
-        public int mPkgCount;//小车成功收集物资个数
-        public int mTaskState;//小车任务 0为上半场任务，1为下半场任务
-        public int mIsWithPassenger;//小车上是否载人 0未载人 1载人
-        public int mRescueCount;//小车成功运送人个数
-        public int mIsInMaze;//小车所在的区域 0在迷宫外 1在迷宫内
-        public int mIsInField; //小车目前在不在场地内 0不在场地内 1在场地内
-        public int mCrossFloodCount;//小车经过泄洪口的次数
-        public int mCrossWallCount;//小车经过虚拟障碍的次数
-        public int mWrongDirCount;//小车逆行次数
-        public int mFoulCount;//犯规摁键次数
+        public Camp MyCamp { get; set; }  //A or B get、set直接两个封装好的函数
+        public int MyScore { get; set; }  //得分
+        public int mPkgCount;             //小车成功收集物资个数
+        public int mTaskState;            //小车任务 0为上半场任务，1为下半场任务
+        public int mIsWithPassenger;      //小车上是否载人 0未载人 1载人
+        public int mRescueCount;          //小车成功运送人个数
+        public int mIsInMaze;             //小车所在的区域 0在迷宫外 1在迷宫内
+        public int mIsInField;            //小车目前在不在场地内 0不在场地内 1在场地内
+        public int mCrossFloodCount;      //小车经过泄洪口的次数
+        public int mCrossWallCount;       //小车经过虚拟障碍的次数
+        public int mWrongDirCount;        //小车逆行次数
+        public int mFoulCount;            //犯规摁键次数
+        public int mPauseCount;           //小车请求暂停次数
+
 
         public Car(Camp c, int task)
         {
@@ -50,6 +52,7 @@ namespace EDCHOST21
             mCrossWallCount = 0;
             mWrongDirCount = 0;
             mFoulCount = 0; //xhl 0824 添加
+            mPauseCount = 0;
         }
         public void AddFloodPunish() //犯规
         {
@@ -69,6 +72,11 @@ namespace EDCHOST21
         public void AddRescueCount()
         {
             mRescueCount++;
+            UpdateScore();
+        }
+        public void AddPauseCount()
+        {
+            mPauseCount++;
             UpdateScore();
         }
         public void AddPickPkgCount()

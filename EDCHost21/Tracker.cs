@@ -67,10 +67,10 @@ namespace EDCHOST21
 
         public Tracker()
         {
-            //UI界面初始化
+            // UI界面初始化
             InitializeComponent();
 
-            //组件设置与初始化
+            // 组件设置与初始化
             label_RedBG.SendToBack();
             label_BlueBG.SendToBack();
             label_RedBG.Controls.Add(label_CarA);
@@ -129,19 +129,29 @@ namespace EDCHOST21
             //Game.LoadMap();
             game = new Game();
 
-            //如果视频流开启，开始进行计时器事件
+            // 如果视频流开启，开始进行计时器事件
             if (capture.IsOpened())
             {
-                //设置帧大小
+                // 设置帧大小
                 capture.FrameWidth = flags.cameraSize.Width;
                 capture.FrameHeight = flags.cameraSize.Height;
                 capture.ConvertRgb = true;
 
-                //设置计时器timer100ms的触发间隔：75ms
+                // 设置计时器timer100ms的触发间隔：75ms
                 timer.Interval = 75;
-                //计时器事件开始：间隔75ms执行Flush
+                // 计时器事件开始：间隔75ms执行Flush
                 timer.Start();
-                //Cv2.NamedWindow("binary");
+                // Cv2.NamedWindow("binary");
+
+                // 设置定时器的触发间隔为 100ms
+                timerMsg100ms.Interval = 100;
+                // 启动计时器，执行给迷宫外的小车定时发信息的任务
+                timerMsg100ms.Start();
+
+                // 设置定时器的触发间隔为 1s
+                timerMsg1s.Interval = 1000;
+                // 启动计时器，执行给迷宫内的小车定时发送信息的任务
+                timerMsg1s.Start();
             }
 
         }
@@ -440,7 +450,15 @@ namespace EDCHOST21
 
         private void buttonPause_Click(object sender, EventArgs e)
         {
-            game.Pause();
+            if (game.CarA.mIsInField == 1)
+            {
+                game.AskPause(Camp.CMP_A);
+            }
+            else if (game.CarB.mIsInField == 1)
+            {
+                game.AskPause(Camp.CMP_B);
+            }
+            
             buttonPause.Enabled = false;
             buttonEnd.Enabled = true;
             buttonStart.Enabled = true;
@@ -528,7 +546,7 @@ namespace EDCHOST21
 
         private void button_AReset_Click(object sender, EventArgs e)
         {
-            if (game.APauseNum < 3)
+            if (game.CarA.mPauseCount < 3)
             {
                 game.AskPause(Camp.CMP_A);
                 buttonPause.Enabled = false;
@@ -541,7 +559,7 @@ namespace EDCHOST21
 
         private void button_BReset_Click(object sender, EventArgs e)
         {
-            if (game.BPauseNum < 3)
+            if (game.CarB.mPauseCount < 3)
             {
                 game.AskPause(Camp.CMP_B);
                 buttonPause.Enabled = false;
@@ -746,9 +764,6 @@ namespace EDCHOST21
         public bool videomode;
         public int clickCount;
 
-        //人员状况：被困、在小车上还未到指定点、到达运送目标点
-        public enum PersonState { TRAPPED, INCAR, RESCUED };
-
         //图像识别参数
         //HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
         public struct LocConfigs
@@ -763,7 +778,8 @@ namespace EDCHOST21
             public int saturation1Lower;
             public int saturation2Lower;
             public int valueLower;
-            public int areaLower; // 可能是小车面积的最小值
+            // 小车面积的最小值，低于这个值的检测对象会被过滤掉
+            public int areaLower; 
         }
         public LocConfigs configs;
 
@@ -872,13 +888,14 @@ namespace EDCHOST21
             GC.SuppressFinalize(this);
         }
 
+        // 设置3种画面的分别的4个角的坐标，并计算出投影变化矩阵
         public CoordinateConverter(MyFlags myFlags)
         {
-            //相机拍摄的地图
+            // 相机拍摄的地图
             camCorners = new Point2f[4];
-            //内存中存储的逻辑的地图
+            // 逻辑的地图
             logicCorners = new Point2f[4];
-            //在屏幕上显示的地图
+            // 在屏幕上显示的地图
             showCorners = new Point2f[4];
 
             cam2logic = new Mat();
@@ -888,7 +905,7 @@ namespace EDCHOST21
             cam2show = new Mat();
             logic2cam = new Mat();
 
-            //逻辑画面四角坐标设置
+            // 逻辑画面四角坐标设置
             logicCorners[0].X = 0;
             logicCorners[0].Y = 0;
             logicCorners[1].X = myFlags.logicSize.Width;
@@ -898,7 +915,7 @@ namespace EDCHOST21
             logicCorners[3].X = myFlags.logicSize.Width;
             logicCorners[3].Y = myFlags.logicSize.Height;
 
-            //显示画面四角坐标设置
+            // 显示画面四角坐标设置
             showCorners[0].X = 0;
             showCorners[0].Y = 0;
             showCorners[1].X = myFlags.showSize.Width;
@@ -908,7 +925,7 @@ namespace EDCHOST21
             showCorners[3].X = myFlags.showSize.Width;
             showCorners[3].Y = myFlags.showSize.Height;
 
-            //摄像头画面四角坐标设置
+            // 摄像头画面四角坐标设置
             camCorners[0].X = 0;
             camCorners[0].Y = 0;
             camCorners[1].X = myFlags.cameraSize.Width;
@@ -918,7 +935,7 @@ namespace EDCHOST21
             camCorners[3].X = myFlags.cameraSize.Width;
             camCorners[3].Y = myFlags.cameraSize.Height;
 
-            //通过投影变换函数计算变换矩阵
+            // 通过投影变换函数计算变换矩阵
             show2cam = Cv2.GetPerspectiveTransform(showCorners, camCorners);
             cam2show = Cv2.GetPerspectiveTransform(camCorners, showCorners);
         }
@@ -1131,7 +1148,7 @@ namespace EDCHOST21
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
                 foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
 
-                if (localiseFlags.gameState != GameState.UNTART)
+                if (localiseFlags.gameState != GameState.UNSTART)
                 {
                     //在人员起始位置上绘制矩形
                     int x10 = localiseFlags.posPersonStart.X - 8;

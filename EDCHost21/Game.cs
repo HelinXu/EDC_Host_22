@@ -9,7 +9,11 @@ using System.Drawing;
 
 namespace EDCHOST21
 {
-    public enum GameState { UNTART = 0, NORMAL = 1, PAUSE = 2, END = 3 };
+    // 比赛状况：未开始、正常进行中、暂停、结束
+    public enum GameState { UNSTART = 0, NORMAL = 1, PAUSE = 2, END = 3 };
+
+    // 人员状况：被困、在小车上且还未到指定点、到达目标点
+    public enum PersonState { TRAPPED, INCAR, RESCUED };
 
     public class Game
     {
@@ -112,7 +116,7 @@ namespace EDCHOST21
             UpperCamp = Camp.CMP_A;
             CarA = new Car(Camp.CMP_A, 0);
             CarB = new Car(Camp.CMP_B, 1);
-            State = GameState.UNTART;
+            State = GameState.UNSTART;
             PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
             PkgGenerator[0] = new PackageGenerator(6);
             PkgGenerator[1] = new PackageGenerator(6);
@@ -135,6 +139,20 @@ namespace EDCHOST21
             State = GameState.PAUSE;
             mGameTime = mGameTime + GetCurrentTime().Hour * 3600000 + GetCurrentTime().Minute * 60000 + GetCurrentTime().Second * 1000 - mStartTime;//记录现在比赛已经进行了多少时间了
         }
+        public void AskPause(Camp Cmp)
+        {
+            if (Cmp == Camp.CMP_A)
+            {
+                CarA.mPauseCount++;
+                Pause();
+            }
+            else if (Cmp == Camp.CMP_B)
+            {
+                CarB.mPauseCount++;
+                Pause();
+            }
+        }
+
         //半场交换函数自动调用依照时间控制
         public void NextCount()//从上半场更换到下半场函数
         {
