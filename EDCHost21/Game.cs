@@ -17,17 +17,19 @@ namespace EDCHOST21
 
     public class Game
     {
-        public bool DebugMode; //调试模式，最大回合数 = 1,000,000
-        public const int MAX_SIZE_CM = 280;
-        public const int MAZE_CROSS_NUM = 6; //迷宫由几条线交叉而成
-        public const int MAZE_CROSS_DIST_CM = 30; //间隔的长度
-        public const int MAZE_SHORT_BORDER_CM = 35; //迷宫最短的靠边距离  xhl?
-        public const int MAZE_LONG_BORDER_CM = MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * MAZE_CROSS_NUM;//迷宫最长的靠边距离 xhl?
-        public const int COINCIDE_ERR_DIST_CM = 10; //判定小车到达某点允许的最大误差距离
-        public const int PKG_NUM_perGROUP = 6; //场上每次刷新package物资的个数
+        public bool DebugMode;                       //调试模式，最大回合数 = 1,000,000
+        public const int MAX_SIZE_CM = 280;          //地图大小
+        public const int MAZE_CROSS_NUM = 6;         //迷宫由几条线交叉而成
+        public const int MAZE_CROSS_DIST_CM = 30;    //间隔的长度
+        public const int MAZE_SHORT_BORDER_CM = 35;  //迷宫最短的靠边距离  xhl?
+        public const int MAZE_LONG_BORDER_CM = MAZE_SHORT_BORDER_CM 
+                                             + MAZE_CROSS_DIST_CM * MAZE_CROSS_NUM;                        
+                                                     //迷宫最长的靠边距离 xhl?
+        public const int COINCIDE_ERR_DIST_CM = 10;  //判定小车到达某点允许的最大误差距离
+        public const int PKG_NUM_perGROUP = 6;       //场上每次刷新package物资的个数
 
         public int mGameCount; //上下半场 1是上半场 2是下半场
-        public int mGameStage; //上下阶段 1是上阶段 2是下阶段
+        public int mGameStage; //上下阶段 1是阶段一 2是下阶段
         public Camp UpperCamp; //当前半场需完成“上半场”任务的一方
         public GameState State { get; set; }//比赛状态
         public Car CarA, CarB;//定义小车

@@ -14,52 +14,43 @@ namespace EDCHOST21
 {
     public partial class Tracker : Form
     {
+        #region 成员变量的声明
+
+        // 比赛所用参数和场上状况
         public MyFlags flags = null;
         public VideoCapture capture = null;
-        //private Thread threadCamera = null;
-        //设定的显示画面四角坐标
+        // 设定的显示画面四角坐标
         private Point2f[] ptsShowCorners = null;
-        //当前时间
+        // 当前时间
         private DateTime timeCamNow;
-        //上一个记录的时间
+        // 上一个记录的时间
         private DateTime timeCamPrev;
-        //坐标转换器
+        // 坐标转换器
         public CoordinateConverter cc;
-        //定位器
+        // 定位器
         private Localiser localiser;
-        //人员坐标
+        // 人员坐标
         private Point2i passenger;
-        //车1坐标
+        // 车1坐标
         private Point2i car1;
-        //车2坐标
+        // 车2坐标
         private Point2i car2;
-        //游戏逻辑
+        // 游戏逻辑
         private Game game;
-        //视频输出流
+        // 视频输出流
         private VideoWriter vw = null;
 
         //是否已经进行了参数设置
         private bool alreadySet;
 
+        // 与小车进行蓝牙通讯的端口
         public SerialPort serial1, serial2;
+
+        // 可用的端口名称
         public string[] validPorts;
 
-        private Camp[] UI_LastRoundCamp = new Camp[5];
-
-        public Dot CarALocation()
-        {
-            Dot D = new Dot(0, 0);
-            D.x = car1.X;
-            D.y = car1.Y;
-            return D;
-        }
-        public Dot CarBLocation()
-        {
-            Dot D = new Dot(0, 0);
-            D.x = car2.X;
-            D.y = car2.Y;
-            return D;
-        }
+        // private Camp[] UI_LastRoundCamp = new Camp[5];
+        #endregion
 
         // 主界面初始化
         public Tracker()
@@ -151,22 +142,21 @@ namespace EDCHOST21
 
         }
 
-        // 进行界面刷新、图像处理、逻辑处理的周期性函数
+        // 进行界面刷新、读取摄像头图像、与游戏逻辑交互的周期性函数
         private void Flush()
         {
-            // 如果还未进行参数设置
+            // 如果还未进行参数设置，则创建并打开SetWindow窗口，进行参数设置
             if (!alreadySet)
             {
                 lock (flags)
                 {
-                    // 创建并打开SetWindow窗口，进行参数设置
                     SetWindow st = new SetWindow(ref flags, ref game, this);
                     st.Show();
                 }
                 alreadySet = true;
             }
 
-            //从视频帧中读取一帧，进行图像处理、绘图和数值更新
+            // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
             CameraReading();
 
             // 保存上一帧的小车位置，以便判断是否逆行
@@ -199,13 +189,42 @@ namespace EDCHOST21
             
         }
 
+        // 当Tracker被加载时调用此函数
+        // 读取data.txt文件中存储的hue,saturation,value等的默认值
+        private void Tracker_Load(object sender, EventArgs e)
+        {
+            if (File.Exists("data.txt"))
+            {
+                FileStream fsRead = new FileStream("data.txt", FileMode.Open);
+                int fsLen = (int)fsRead.Length;
+                byte[] heByte = new byte[fsLen];
+                fsRead.Read(heByte, 0, heByte.Length);
+                string myStr = System.Text.Encoding.UTF8.GetString(heByte);
+                string[] str = myStr.Split(' ');
+
+                flags.configs.hue0Lower = Convert.ToInt32(str[0]);
+                flags.configs.hue0Upper = Convert.ToInt32(str[1]);
+                flags.configs.hue1Lower = Convert.ToInt32(str[2]);
+                flags.configs.hue1Upper = Convert.ToInt32(str[3]);
+                flags.configs.hue2Lower = Convert.ToInt32(str[4]);
+                flags.configs.hue2Upper = Convert.ToInt32(str[5]);
+                flags.configs.saturation0Lower = Convert.ToInt32(str[6]);
+                flags.configs.saturation1Lower = Convert.ToInt32(str[7]);
+                flags.configs.saturation2Lower = Convert.ToInt32(str[8]);
+                flags.configs.valueLower = Convert.ToInt32(str[9]);
+                flags.configs.areaLower = Convert.ToInt32(str[10]);
+
+                fsRead.Close();
+            }
+        }
+
+        #region 向小车传送信息
         // 给小车A发送信息
         private void SendCarAMessage()
         {
             // 打包好要发给A车的信息
             byte[] Message = game.PackCarAMessage();
 
-            // label_CountDown.Text = Convert.ToString(game.Round);
             // 通过串口1发送给A车
             if (serial1 != null && serial1.IsOpen)
                 serial1.Write(Message, 0, 102);
@@ -226,17 +245,24 @@ namespace EDCHOST21
             ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
         }
+        #endregion
 
-        //从视频帧中读取一帧，进行图像处理、绘图和数值更新
+
+        #region 图像处理与界面显示
+
+        // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
         private void CameraReading()
         {
             bool control = false;
+
             lock (flags)
             {
                 control = flags.running;
             }
+
             if (control)
             {
+                // 多个using连在一起写可能是共用最后一个using的作用域（没查到相关资料）
                 using (Mat videoFrame = new Mat())
                 using (Mat showFrame = new Mat())
                 {
@@ -253,53 +279,34 @@ namespace EDCHOST21
                             //绘制边界点
                             foreach (Point2f pt in cc.ShowToCamera(ptsShowCorners))
                             {
-                                Cv2.Line(videoFrame, (int)(pt.X - 3), (int)(pt.Y), (int)(pt.X + 3), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
-                                Cv2.Line(videoFrame, (int)(pt.X), (int)(pt.Y - 3), (int)(pt.X), (int)(pt.Y + 3), new Scalar(0x00, 0xff, 0x98));
+                                Cv2.Line(videoFrame, (int)(pt.X - 3), (int)(pt.Y), 
+                                    (int)(pt.X + 3), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
+                                Cv2.Line(videoFrame, (int)(pt.X), (int)(pt.Y - 3), 
+                                    (int)(pt.X), (int)(pt.Y + 3), new Scalar(0x00, 0xff, 0x98));
                             }
                         }
-                        //调用定位器，得到小车和乘客的坐标
+                        // 调用定位器，得到小车的坐标
                         localiser.GetCarLocations(out car1, out car2);
 
                         lock (flags)
                         {
-                            //Point2f[] posBallsF = new Point2f[0];
-
+                            // 如果画面已经被手工校正
                             if (flags.calibrated)
                             {
-                                //将小车坐标从摄像头画面坐标转化成逻辑坐标
-                                //再将小车坐标存储到flags中
-                                /*
-                                if (ball.Any())
-                                    posBallsF = cc.CameraToLogic(ball);
-                                */
+                                // 将小车坐标从摄像头画面坐标转化成逻辑坐标
                                 Point2f[] car12 = { car1, car2 };
                                 Point2f[] carAB = cc.CameraToLogic(car12);
+
+                                // 将小车坐标存储到flags中
                                 flags.posCarA = carAB[0];
                                 flags.posCarB = carAB[1];
                             }
-                            else
+                            else // 这边没看懂，为什么在图像未被校正的情况下直接赋值？
                             {
-                                //直接将小车坐标存储到flags中
-                                // posBallsF = ball;
+                                // 直接将小车坐标存储到flags中
                                 flags.posCarA = car1;
                                 flags.posCarB = car2;
                             }
-
-                            /*
-                            //将球坐标从float转为int
-                            Point2i[] posBallsI = new Point2i[posBallsF.Length];
-                            for (int i = 0; i < posBallsF.Length; ++i)
-                                posBallsI[i] = posBallsF[i];
-                            
-                            //检验小球坐标是否符合逻辑规则，若符合才将其转入flags中
-                            List<Point2i> posBallsList = new List<Point2i>();
-                            foreach (Point2i b in posBallsI)
-                            {
-                                if (!posBallsList.Any(bb => b.DistanceTo(bb) < Game.MinBallSept))
-                                    posBallsList.Add(b);
-                            }
-                            flags.posBalls = posBallsList.ToArray();
-                            */
                         }
 
                         // 处理时间参数
@@ -308,8 +315,8 @@ namespace EDCHOST21
                         timeCamPrev = timeCamNow;
 
                         // 将摄像头视频帧缩放成显示帧
-                        // Resize函数的最后一个参数是缩放的插值算法
-                        // InterpolationFlags.Cubic 表示双三次插值法，放大图像时效果较好，速度铰慢
+                        // Resize函数的最后一个参数是缩放函数的插值算法
+                        // InterpolationFlags.Cubic 表示双三次插值法，放大图像时效果较好，但速度较慢
                         Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Cubic);
                         // 更新界面组件的画面显示
                         BeginInvoke(new Action<Image>(UpdateCameraPicture), BitmapConverter.ToBitmap(showFrame));
@@ -325,11 +332,47 @@ namespace EDCHOST21
             }
         }
 
+        // 更新UI界面上的显示图像
         private void UpdateCameraPicture(Image img)
         {
             pbCamera.Image = img;
         }
 
+        // 显示信息到UI界面上
+        // 参数 M 接收的是发送给小车的编码过的信息，但并未使用，猜测可能仅于调试时使用
+        private void ShowMessage(byte[] M)
+        {
+            //label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
+
+            // A,B车的总分数
+            labelAScore.Text = $"{game.CarA.MyScore}";
+            labelBScore.Text = $"{game.CarB.MyScore}";
+
+            // 上半场或下半场
+            label_GameCount.Text = (game.mGameCount == 0) ? "上半场" : "下半场";
+
+            // 阶段一或阶段二
+            label_GameStage.Text = (game.mGameStage == 0) ? "阶段一" : "阶段二";
+
+            // A,B车犯规的次数
+            label_AFoulNum.Text = $"{game.CarA.mFoulCount}";
+            label_BFoulNum.Text = $"{game.CarB.mFoulCount}";
+
+            // A,B车的得分明细
+            label_AMessage.Text =
+                $"转移被困人员数　　{game.CarA.mRescueCount}\n" +
+                $"获得防汛物资数　　{game.CarA.mPkgCount}\n";
+            label_BMessage.Text =
+                $"{game.CarB.mRescueCount}　　转移被困人员数\n" +
+                $"{game.CarB.mPkgCount}　　获得防汛物资数\n";
+
+            // A,B车的坐标信息
+            label_Debug.Text =
+                $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\n" +
+                $"B车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
+        }
+
+        #endregion
 
 
         #region 与界面控件有关的函数
@@ -362,6 +405,11 @@ namespace EDCHOST21
             }
         }
 
+        // 通过鼠标点击屏幕上的地图的4个角以校正画面
+        // 当显示画面被点击时触发
+        // C#中，X轴从左向右，Y轴从上向下
+        // 左上角（0,0）；     右上角（width，0）
+        // 左下角（0,height）；右下角（width，height）
         private void pbCamera_MouseClick(object sender, MouseEventArgs e)
         {
             int widthView = pbCamera.Width;
@@ -371,11 +419,17 @@ namespace EDCHOST21
             int yMouse = e.Y;
 
             int idx = -1;
+
             lock (flags)
             {
-                if (flags.clickCount < 4) idx = flags.clickCount++;
+                if (flags.clickCount < 4)
+                {
+                    flags.clickCount++;
+                    idx = flags.clickCount - 1;
+                }
             }
 
+            // 如果画面已经被点击了4次，则不再重复校正
             if (idx == -1) return;
 
             if (xMouse >= 0 && xMouse < widthView && yMouse >= 0 && yMouse < heightView)
@@ -385,11 +439,12 @@ namespace EDCHOST21
                 if (idx == 3)
                 {
                     cc.UpdateCorners(ptsShowCorners, flags);
-                    MessageBox.Show($"边界点设置完成\n"
-                        + $"0: {ptsShowCorners[0].X,5}, {ptsShowCorners[0].Y,5}\t"
-                        + $"1: {ptsShowCorners[1].X,5}, {ptsShowCorners[1].Y,5}\n"
-                        + $"2: {ptsShowCorners[2].X,5}, {ptsShowCorners[2].Y,5}\t"
-                        + $"3: {ptsShowCorners[3].X,5}, {ptsShowCorners[3].Y,5}");
+                    MessageBox.Show(
+                          $"边界点设置完成\n"
+                        + $"0: {ptsShowCorners[0].X, 5}, {ptsShowCorners[0].Y, 5}\t"
+                        + $"1: {ptsShowCorners[1].X, 5}, {ptsShowCorners[1].Y, 5}\n"
+                        + $"2: {ptsShowCorners[2].X, 5}, {ptsShowCorners[2].Y, 5}\t"
+                        + $"3: {ptsShowCorners[3].X, 5}, {ptsShowCorners[3].Y, 5}");
                 }
             }
         }
@@ -507,7 +562,6 @@ namespace EDCHOST21
         #endregion
 
 
-
         #region 由定时器控制的函数
         //计时器事件：执行Flush
         private void timer_Tick(object sender, EventArgs e)
@@ -546,67 +600,6 @@ namespace EDCHOST21
         }
         #endregion
 
-
-        // 显示信息到UI界面上
-        private void ShowMessage(byte[] M) 
-        {
-            //label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
-
-            // A,B车的总分数
-            labelAScore.Text = $"{game.CarA.MyScore}";
-            labelBScore.Text = $"{game.CarB.MyScore}";
-
-            // 上半场或下半场
-            label_GameCount.Text = (game.mGameCount == 0) ? "上半场" : "下半场";
-
-            // 阶段一或阶段二
-            label_GameStage.Text = (game.mGameStage == 0) ? "阶段一" : "阶段二";
-
-            // A,B车犯规的次数
-            label_AFoulNum.Text = $"{game.CarA.mFoulCount}";
-            label_BFoulNum.Text = $"{game.CarB.mFoulCount}";
-
-            // A,B车的得分明细
-            label_AMessage.Text = 
-                $"转移被困人员数　　{game.CarA.mRescueCount}\n" +
-                $"获得防汛物资数　　{game.CarA.mPkgCount}\n";
-            label_BMessage.Text = 
-                $"{game.CarB.mRescueCount}　　转移被困人员数\n" +
-                $"{game.CarB.mPkgCount}　　获得防汛物资数\n";
-            
-            // A,B车的坐标信息
-            label_Debug.Text = 
-                $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\n" +
-                $"B车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
-        }
-
-        // 读取data.txt文件中存储的hue,saturation,value等的默认值
-        private void Tracker_Load(object sender, EventArgs e)
-        {
-            if (File.Exists("data.txt"))
-            {
-                FileStream fsRead = new FileStream("data.txt", FileMode.Open);
-                int fsLen = (int)fsRead.Length;
-                byte[] heByte = new byte[fsLen];
-                fsRead.Read(heByte, 0, heByte.Length);
-                string myStr = System.Text.Encoding.UTF8.GetString(heByte);
-                string[] str = myStr.Split(' ');
-
-                flags.configs.hue0Lower = Convert.ToInt32(str[0]);
-                flags.configs.hue0Upper = Convert.ToInt32(str[1]);
-                flags.configs.hue1Lower = Convert.ToInt32(str[2]);
-                flags.configs.hue1Upper = Convert.ToInt32(str[3]);
-                flags.configs.hue2Lower = Convert.ToInt32(str[4]);
-                flags.configs.hue2Upper = Convert.ToInt32(str[5]);
-                flags.configs.saturation0Lower = Convert.ToInt32(str[6]);
-                flags.configs.saturation1Lower = Convert.ToInt32(str[7]);
-                flags.configs.saturation2Lower = Convert.ToInt32(str[8]);
-                flags.configs.valueLower = Convert.ToInt32(str[9]);
-                flags.configs.areaLower = Convert.ToInt32(str[10]);
-
-                fsRead.Close();
-            }
-        }
 
         #region 被注释的代码 暂先保留
         /*
@@ -679,7 +672,7 @@ namespace EDCHOST21
         public bool running;     // 比赛是否正在进行
         public bool calibrated;  // 地图是否被校准
         public bool videomode;
-        public int clickCount;
+        public int clickCount;   // 画面被点击的次数
 
         // 图像识别参数
         // HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
@@ -781,7 +774,8 @@ namespace EDCHOST21
         private Mat show2logic;
         private Mat logic2show;
 
-        // 逻辑画面、摄像头画面、显示画面的四个角坐标（顺序依次为左上、右上、左下、右下）
+        // 逻辑画面、摄像头画面、显示画面的四个角坐标
+        // 顺序依次为左上、右上、左下、右下
         private Point2f[] logicCorners;
         private Point2f[] camCorners;
         private Point2f[] showCorners;
@@ -859,22 +853,28 @@ namespace EDCHOST21
             cam2show = Cv2.GetPerspectiveTransform(camCorners, showCorners);
         }
 
-        //校正摄像机画面
+        // 传入鼠标点击的画面上的4个点，校正摄像机画面
         public void UpdateCorners(Point2f[] corners, MyFlags myFlags)
         {
+            // 如果传入的不是4个点则返回
             if (corners == null) return;
             if (corners.Length != 4) return;
             else showCorners = corners;
+            // showCorners被更新为鼠标点击的4个点（左上、右上、左下、右下）
 
-            //计算几个变换矩阵
+            // logicCorners不需要改变
+            // 直接计算showCorners和logicCorners间的变换矩阵
             logic2show = Cv2.GetPerspectiveTransform(logicCorners, showCorners);
             show2logic = Cv2.GetPerspectiveTransform(showCorners, logicCorners);
-            //将显示画面投影变换成摄像头画面，同时更新摄像头画面的四个角标
-            //（没看懂为什么）
+
+            // 将显示画面投影变换成摄像头画面，同时更新摄像头画面的四个角标
+            // 通过修正后的showCorners和先前已计算过的showCorners至camCorners的变换矩阵
+            // 计算出实际上摄像头拍到的场地边界camCorners
             camCorners = Cv2.PerspectiveTransform(showCorners, show2cam);
             cam2logic = Cv2.GetPerspectiveTransform(camCorners, logicCorners);
             logic2cam = Cv2.GetPerspectiveTransform(logicCorners, camCorners);
-            //标记为已校正
+
+            // 标记摄像机画面为已校正
             myFlags.calibrated = true;
         }
 
@@ -1067,6 +1067,7 @@ namespace EDCHOST21
                     if (area <= configs.areaLower) continue;
                     centres2.Add(centre);
                 }
+
 
                 // 分别在小车1和小车2的位置上绘制圆圈
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
