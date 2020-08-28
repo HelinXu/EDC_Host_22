@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-
+using System.Security.Cryptography;
 
 namespace EDCHOST21
 {
@@ -21,10 +21,10 @@ namespace EDCHOST21
         public const int MAX_SIZE_CM = 280;          //地图大小
         public const int MAZE_CROSS_NUM = 6;         //迷宫由几条线交叉而成
         public const int MAZE_CROSS_DIST_CM = 30;    //间隔的长度
-        public const int MAZE_SHORT_BORDER_CM = 35;  //迷宫最短的靠边距离  xhl?
+        public const int MAZE_SHORT_BORDER_CM = 35;  //迷宫最短的靠边距离
         public const int MAZE_LONG_BORDER_CM = MAZE_SHORT_BORDER_CM 
                                              + MAZE_CROSS_DIST_CM * MAZE_CROSS_NUM;                        
-                                                     //迷宫最长的靠边距离 xhl?
+                                                     //迷宫最长的靠边距离
         public const int COINCIDE_ERR_DIST_CM = 10;  //判定小车到达某点允许的最大误差距离
         public const int PKG_NUM_perGROUP = 6;       //场上每次刷新package物资的个数
 
@@ -120,6 +120,7 @@ namespace EDCHOST21
             CarB = new Car(Camp.CMP_B, 1);
             State = GameState.UNSTART;
             PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
+            PkgGenerator = new PackageGenerator[4];
             PkgGenerator[0] = new PackageGenerator(6);
             PkgGenerator[1] = new PackageGenerator(6);
             PkgGenerator[2] = new PackageGenerator(6);
