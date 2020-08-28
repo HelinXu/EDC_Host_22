@@ -46,6 +46,25 @@ namespace EDCHOST21
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
         public FileStream FoulTimeFS;
 
+        public Game()//构造一个新的Game类 默认为CampA是先上半场上一阶段进行
+        {
+            mGameCount = 1;
+            mGameStage = 1;
+            UpperCamp = Camp.CMP_A;
+            CarA = new Car(Camp.CMP_A, 0);
+            CarB = new Car(Camp.CMP_B, 1);
+            State = GameState.UNSTART;
+            PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
+            PkgGenerator = new PackageGenerator[4];
+            PkgGenerator[0] = new PackageGenerator(6);
+            PkgGenerator[1] = new PackageGenerator(6);
+            PkgGenerator[2] = new PackageGenerator(6);
+            PkgGenerator[3] = new PackageGenerator(6);
+            mFlood = new Flood(0);
+            mPackageGroupCount = 0;
+            mLastWrongDirTime = -10;
+        }
+
         //该方法用于返回系统现在的时间。开发者：xhl
         public System.DateTime GetCurrentTime()
         {
@@ -111,24 +130,7 @@ namespace EDCHOST21
         {
             return Math.Sqrt((A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y - B.y));
         }
-        public Game()//构造一个新的Game类 默认为CampA是先上半场上一阶段进行
-        {
-            mGameCount = 1;
-            mGameStage = 1;
-            UpperCamp = Camp.CMP_A;
-            CarA = new Car(Camp.CMP_A, 0);
-            CarB = new Car(Camp.CMP_B, 1);
-            State = GameState.UNSTART;
-            PsgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
-            PkgGenerator = new PackageGenerator[4];
-            PkgGenerator[0] = new PackageGenerator(6);
-            PkgGenerator[1] = new PackageGenerator(6);
-            PkgGenerator[2] = new PackageGenerator(6);
-            PkgGenerator[3] = new PackageGenerator(6);
-            mFlood = new Flood(0);
-            mPackageGroupCount = 0;
-            mLastWrongDirTime = -10;
-        }
+
         //点击开始键时调用Start函数 上半场上一阶段、上半场下一阶段、下半场上一阶段、下半场下一阶段开始时需要这一函数都需要调用这一函数来开始
         public void Start() //开始比赛上下半场都用这个
         {
