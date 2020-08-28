@@ -87,11 +87,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoordinateConverter.cs" />
     <Compile Include="Dot.cs" />
     <Compile Include="General.cs" />
     <Compile Include="Labyrinth.cs" />
     <Compile Include="Car.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Localiser.cs" />
+    <Compile Include="MyFlags.cs" />
     <Compile Include="PassengerGenerator.cs" />
     <Compile Include="Flood.cs" />
     <Compile Include="Package.cs" />
