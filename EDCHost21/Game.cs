@@ -63,6 +63,8 @@ namespace EDCHOST21
             mFlood = new Flood(0);
             mPackageGroupCount = 0;
             mLastWrongDirTime = -10;
+            PkgList = new Package[7];
+            Passenger = new Passenger(new Dot(), new Dot());
         }
 
         //该方法用于返回系统现在的时间。开发者：xhl
@@ -494,20 +496,24 @@ namespace EDCHOST21
         {
             JudgeAIsInMaze();
             JudgeBIsInMaze();
+            /*
             UpdatePackage();
             UpdatePassenger();
             CarAGetpackage();
             CarBGetpackage();
             CarBGetPassenger();
             CarAGetPassenger();
+            
             CarAonFlood();
             CarBonFlood();
             CarAonObstacle();
             CarBonObstacle();
+            
             CarATransPassenger();
             CarBTransPassenger();
             CarAWrongDirection();
             CarBWrongDirection();
+            */
         }
         public byte[] PackCarAMessage()//已更新到最新通信协议
         {

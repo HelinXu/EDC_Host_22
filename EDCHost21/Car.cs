@@ -41,6 +41,7 @@ namespace EDCHOST21
         {
             MyCamp = c;
             mPos = new Dot(0, 0);
+            mLastPos = new Dot(0, 0);
             MyScore = 0;
             mPkgCount = 0;
             mTaskState = task;
