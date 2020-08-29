@@ -115,9 +115,9 @@ namespace EDCHOST21
         //这个函数可能放到dot里面更好
         public void JudgeAIsInMaze()//确定点是否在迷宫内
         {
-            if (CarA.mPos.x >= MAZE_SHORT_BORDER_CM 
-                && CarA.mPos.x <= MAZE_LONG_BORDER_CM 
-                && CarA.mPos.y >= MAZE_SHORT_BORDER_CM 
+            if (CarA.mPos.x >= MAZE_SHORT_BORDER_CM
+                && CarA.mPos.x <= MAZE_LONG_BORDER_CM
+                && CarA.mPos.y >= MAZE_SHORT_BORDER_CM
                 && CarA.mPos.y <= MAZE_LONG_BORDER_CM)
             {
                 CarA.mIsInMaze = 1;
@@ -129,9 +129,9 @@ namespace EDCHOST21
         }
         public void JudgeBIsInMaze()//确定点是否在迷宫内
         {
-            if (CarB.mPos.x >= MAZE_SHORT_BORDER_CM 
-                && CarB.mPos.x <= MAZE_LONG_BORDER_CM 
-                && CarB.mPos.y >= MAZE_SHORT_BORDER_CM 
+            if (CarB.mPos.x >= MAZE_SHORT_BORDER_CM
+                && CarB.mPos.x <= MAZE_LONG_BORDER_CM
+                && CarB.mPos.y >= MAZE_SHORT_BORDER_CM
                 && CarB.mPos.y <= MAZE_LONG_BORDER_CM)
             {
                 CarB.mIsInMaze = 1;
@@ -185,8 +185,8 @@ namespace EDCHOST21
         //下面四个为接口
         public void CheckCarAGetPassenger()//小车A接到了乘客
         {
-            if (GetDistance(CarA.mPos, currentPassenger.Start_Dot) 
-                <= COINCIDE_ERR_DIST_CM 
+            if (GetDistance(CarA.mPos, currentPassenger.Start_Dot)
+                <= COINCIDE_ERR_DIST_CM
                 && CarA.mIsWithPassenger == 0)
             {
                 CarA.SwitchPassengerState();
@@ -195,8 +195,8 @@ namespace EDCHOST21
         }
         public void CheckCarBGetPassenger()//小车B接到了乘客
         {
-            if (GetDistance(CarB.mPos, currentPassenger.Start_Dot) 
-                <= COINCIDE_ERR_DIST_CM 
+            if (GetDistance(CarB.mPos, currentPassenger.Start_Dot)
+                <= COINCIDE_ERR_DIST_CM
                 && CarB.mIsWithPassenger == 0)
             {
                 CarB.SwitchPassengerState();
@@ -205,8 +205,8 @@ namespace EDCHOST21
         public void CheckCarATransPassenger()//小车A成功运送了乘客
         {
 
-            if (GetDistance(CarA.mPos, currentPassenger.End_Dot) 
-                <= COINCIDE_ERR_DIST_CM 
+            if (GetDistance(CarA.mPos, currentPassenger.End_Dot)
+                <= COINCIDE_ERR_DIST_CM
                 && CarA.mIsWithPassenger == 1)
             {
                 CarA.SwitchPassengerState();
@@ -216,8 +216,8 @@ namespace EDCHOST21
         }
         public void CheckCarBTransPassenger()//小车A成功运送了乘客
         {
-            if (GetDistance(CarB.mPos, currentPassenger.End_Dot) 
-                <= COINCIDE_ERR_DIST_CM 
+            if (GetDistance(CarB.mPos, currentPassenger.End_Dot)
+                <= COINCIDE_ERR_DIST_CM
                 && CarB.mIsWithPassenger == 1)
             {
                 CarB.SwitchPassengerState();
@@ -233,7 +233,7 @@ namespace EDCHOST21
             for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
                 if (GetDistance(CarA.mPos, currentPackageList[i].mPos)
-                    <= COINCIDE_ERR_DIST_CM 
+                    <= COINCIDE_ERR_DIST_CM
                     && currentPackageList[i].IsPicked == 0)
                 {
                     CarA.AddPickPkgCount();
@@ -246,7 +246,7 @@ namespace EDCHOST21
         {
             for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
-                if (GetDistance(CarB.mPos, currentPackageList[i].mPos) 
+                if (GetDistance(CarB.mPos, currentPackageList[i].mPos)
                     <= COINCIDE_ERR_DIST_CM
                     && currentPackageList[i].IsPicked == 0)
                 {
@@ -261,15 +261,15 @@ namespace EDCHOST21
         {
             for (int i = 0; i < 16; i++)
             {
-                if (mLabyrinth.mpWallList[i].w1.x 
+                if (mLabyrinth.mpWallList[i].w1.x
                     == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
                 {
-                    if (mLabyrinth.mpWallList[i].w1.y 
+                    if (mLabyrinth.mpWallList[i].w1.y
                         < mLabyrinth.mpWallList[i].w2.y)//障碍1在障碍2的下面
                     {
                         if (mLabyrinth.mpWallList[i].w1.x >= CarA.mPos.x - 5
                             && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x + 5
-                            && CarA.mPos.y <= mLabyrinth.mpWallList[i].w2.y 
+                            && CarA.mPos.y <= mLabyrinth.mpWallList[i].w2.y
                             && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y)
                         {
                             CarA.AddWallPunish();
@@ -280,7 +280,7 @@ namespace EDCHOST21
                     {
                         if (mLabyrinth.mpWallList[i].w1.x >= CarA.mPos.x - 5
                             && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x + 5
-                            && CarA.mPos.y <= mLabyrinth.mpWallList[i].w1.y 
+                            && CarA.mPos.y <= mLabyrinth.mpWallList[i].w1.y
                             && mLabyrinth.mpWallList[i].w2.y <= CarA.mPos.y)
                         {
                             CarA.AddWallPunish();
@@ -294,7 +294,7 @@ namespace EDCHOST21
                     {
                         if (mLabyrinth.mpWallList[i].w1.y >= CarA.mPos.y - 5
                             && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y + 5
-                            && CarA.mPos.x <= mLabyrinth.mpWallList[i].w2.x 
+                            && CarA.mPos.x <= mLabyrinth.mpWallList[i].w2.x
                             && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x)
                         {
                             CarA.AddWallPunish();
@@ -305,7 +305,7 @@ namespace EDCHOST21
                     {
                         if (mLabyrinth.mpWallList[i].w1.y >= CarA.mPos.y - 5
                             && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y + 5
-                            && CarA.mPos.x <= mLabyrinth.mpWallList[i].w1.x 
+                            && CarA.mPos.x <= mLabyrinth.mpWallList[i].w1.x
                             && mLabyrinth.mpWallList[i].w2.x <= CarA.mPos.x)
                         {
                             CarA.AddWallPunish();
@@ -480,7 +480,7 @@ namespace EDCHOST21
             }
         }
 
-       
+
 
         public void UpdateGameTime()
         {
