@@ -19,11 +19,11 @@ namespace EDCHOST21
     public class Game
     {
         public bool DebugMode;                       //调试模式，最大回合数 = 1,000,000
-        public const double MAX_SIZE_CM = 280;          //地图大小
-        public const double MAZE_CROSS_NUM = 6;         //迷宫由几条线交叉而成
-        public const double MAZE_CROSS_DIST_CM = 30;    //间隔的长度
-        public const double MAZE_SHORT_BORDER_CM = 35;  //迷宫最短的靠边距离
-        public const double MAZE_LONG_BORDER_CM = MAZE_SHORT_BORDER_CM
+        public const int MAX_SIZE_CM = 280;          //地图大小
+        public const int MAZE_CROSS_NUM = 6;         //迷宫由几条线交叉而成
+        public const int MAZE_CROSS_DIST_CM = 30;    //间隔的长度
+        public const int MAZE_SHORT_BORDER_CM = 35;  //迷宫最短的靠边距离
+        public const int MAZE_LONG_BORDER_CM = MAZE_SHORT_BORDER_CM
                                              + MAZE_CROSS_DIST_CM * MAZE_CROSS_NUM;
         //迷宫最长的靠边距离
         public const double COINCIDE_ERR_DIST_CM = 10;  //判定小车到达某点允许的最大误差距离
@@ -227,7 +227,7 @@ namespace EDCHOST21
         }
 
         //下面四个为接口
-        public void CarAGetPassenger()//小车A接到了乘客
+        public void CheckCarAGetPassenger()//小车A接到了乘客
         {
             if (GetDistance(CarA.mPos, currentPassenger.Start_Dot) 
                 <= COINCIDE_ERR_DIST_CM 
@@ -237,7 +237,7 @@ namespace EDCHOST21
             }
 
         }
-        public void CarBGetPassenger()//小车B接到了乘客
+        public void CheckCarBGetPassenger()//小车B接到了乘客
         {
             if (GetDistance(CarB.mPos, currentPassenger.Start_Dot) 
                 <= COINCIDE_ERR_DIST_CM 
@@ -246,7 +246,7 @@ namespace EDCHOST21
                 CarB.SwitchPassengerState();
             }
         }
-        public void CarATransPassenger()//小车A成功运送了乘客
+        public void CheckCarATransPassenger()//小车A成功运送了乘客
         {
 
             if (GetDistance(CarA.mPos, currentPassenger.End_Dot) 
@@ -258,7 +258,7 @@ namespace EDCHOST21
             }
             UpdatePassenger();
         }
-        public void CarBTransPassenger()//小车A成功运送了乘客
+        public void CheckCarBTransPassenger()//小车A成功运送了乘客
         {
             if (GetDistance(CarB.mPos, currentPassenger.End_Dot) 
                 <= COINCIDE_ERR_DIST_CM 
@@ -271,7 +271,7 @@ namespace EDCHOST21
         }
 
         //下面是两个关于包裹的接口
-        public void CarAGetpackage()//小车A得到了包裹
+        public void CheckCarAGetpackage()//小车A得到了包裹
         {
 
             for (int i = 0; i < PKG_NUM_perGROUP; i++)
@@ -286,7 +286,7 @@ namespace EDCHOST21
             }
 
         }
-        public void CarBGetpackage()//小车B得到了包裹
+        public void CheckCarBGetpackage()//小车B得到了包裹
         {
             for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
@@ -301,15 +301,20 @@ namespace EDCHOST21
             }
         }
 
-        public void CarAonObstacle()//小车A到达了障碍上              
+        public void CheckCarAonObstacle()//小车A到达了障碍上              
         {
-            for (int i = 0; i <= 15; i++)
+            for (int i = 0; i < 16; i++)
             {
-                if (mLabyrinth.mpWallList[i].w1.x == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
+                if (mLabyrinth.mpWallList[i].w1.x 
+                    == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
                 {
-                    if (mLabyrinth.mpWallList[i].w1.y < mLabyrinth.mpWallList[i].w2.y)//障碍1在障碍2的下面
+                    if (mLabyrinth.mpWallList[i].w1.y 
+                        < mLabyrinth.mpWallList[i].w2.y)//障碍1在障碍2的下面
                     {
-                        if (mLabyrinth.mpWallList[i].w1.x == CarA.mPos.x && CarA.mPos.y <= mLabyrinth.mpWallList[i].w2.y && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y)
+                        if (mLabyrinth.mpWallList[i].w1.x >= CarA.mPos.x - 5
+                            && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x + 5
+                            && CarA.mPos.y <= mLabyrinth.mpWallList[i].w2.y 
+                            && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y)
                         {
                             CarA.AddWallPunish();
                         }
@@ -317,7 +322,10 @@ namespace EDCHOST21
                     }
                     if (mLabyrinth.mpWallList[i].w2.y < mLabyrinth.mpWallList[i].w1.y)//障碍2在障碍1的下面
                     {
-                        if (mLabyrinth.mpWallList[i].w1.x == CarA.mPos.x && CarA.mPos.y <= mLabyrinth.mpWallList[i].w1.y && mLabyrinth.mpWallList[i].w2.y <= CarA.mPos.y)
+                        if (mLabyrinth.mpWallList[i].w1.x >= CarA.mPos.x - 5
+                            && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x + 5
+                            && CarA.mPos.y <= mLabyrinth.mpWallList[i].w1.y 
+                            && mLabyrinth.mpWallList[i].w2.y <= CarA.mPos.y)
                         {
                             CarA.AddWallPunish();
                         }
@@ -328,7 +336,10 @@ namespace EDCHOST21
                 {
                     if (mLabyrinth.mpWallList[i].w1.x < mLabyrinth.mpWallList[i].w2.x)//障碍1在障碍2的左面
                     {
-                        if (mLabyrinth.mpWallList[i].w1.y == CarA.mPos.y && CarA.mPos.x <= mLabyrinth.mpWallList[i].w2.x && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x)
+                        if (mLabyrinth.mpWallList[i].w1.y >= CarA.mPos.y - 5
+                            && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y + 5
+                            && CarA.mPos.x <= mLabyrinth.mpWallList[i].w2.x 
+                            && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x)
                         {
                             CarA.AddWallPunish();
                         }
@@ -336,24 +347,31 @@ namespace EDCHOST21
                     }
                     if (mLabyrinth.mpWallList[i].w2.x < mLabyrinth.mpWallList[i].w1.x)//障碍2在障碍1的下面
                     {
-                        if (mLabyrinth.mpWallList[i].w1.y == CarA.mPos.y && CarA.mPos.x <= mLabyrinth.mpWallList[i].w1.x && mLabyrinth.mpWallList[i].w2.x <= CarA.mPos.x)
+                        if (mLabyrinth.mpWallList[i].w1.y >= CarA.mPos.y - 5
+                            && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y + 5
+                            && CarA.mPos.x <= mLabyrinth.mpWallList[i].w1.x 
+                            && mLabyrinth.mpWallList[i].w2.x <= CarA.mPos.x)
                         {
                             CarA.AddWallPunish();
                         }
-
                     }
                 }
             }
         }
-        public void CarBonObstacle()//小车B到达了障碍上               
+        public void CheckCarBonObstacle()//小车B到达了障碍上               
         {
-            for (int i = 0; i <= 15; i++)
+            for (int i = 0; i < 16; i++)
             {
-                if (mLabyrinth.mpWallList[i].w1.x == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
+                if (mLabyrinth.mpWallList[i].w1.x
+                    == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
                 {
-                    if (mLabyrinth.mpWallList[i].w1.y < mLabyrinth.mpWallList[i].w2.y)//障碍1在障碍2的下面
+                    if (mLabyrinth.mpWallList[i].w1.y
+                        < mLabyrinth.mpWallList[i].w2.y)//障碍1在障碍2的下面
                     {
-                        if (mLabyrinth.mpWallList[i].w1.x == CarB.mPos.x && CarB.mPos.y <= mLabyrinth.mpWallList[i].w2.y && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y)
+                        if (mLabyrinth.mpWallList[i].w1.x >= CarB.mPos.x - 5
+                            && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x + 5
+                            && CarB.mPos.y <= mLabyrinth.mpWallList[i].w2.y
+                            && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y)
                         {
                             CarB.AddWallPunish();
                         }
@@ -361,7 +379,10 @@ namespace EDCHOST21
                     }
                     if (mLabyrinth.mpWallList[i].w2.y < mLabyrinth.mpWallList[i].w1.y)//障碍2在障碍1的下面
                     {
-                        if (mLabyrinth.mpWallList[i].w1.x == CarB.mPos.x && CarB.mPos.y <= mLabyrinth.mpWallList[i].w1.y && mLabyrinth.mpWallList[i].w2.y <= CarB.mPos.y)
+                        if (mLabyrinth.mpWallList[i].w1.x >= CarB.mPos.x - 5
+                            && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x + 5
+                            && CarB.mPos.y <= mLabyrinth.mpWallList[i].w1.y
+                            && mLabyrinth.mpWallList[i].w2.y <= CarB.mPos.y)
                         {
                             CarB.AddWallPunish();
                         }
@@ -372,7 +393,10 @@ namespace EDCHOST21
                 {
                     if (mLabyrinth.mpWallList[i].w1.x < mLabyrinth.mpWallList[i].w2.x)//障碍1在障碍2的左面
                     {
-                        if (mLabyrinth.mpWallList[i].w1.y == CarB.mPos.y && CarB.mPos.x <= mLabyrinth.mpWallList[i].w2.x && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x)
+                        if (mLabyrinth.mpWallList[i].w1.y >= CarB.mPos.y - 5
+                            && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y + 5
+                            && CarB.mPos.x <= mLabyrinth.mpWallList[i].w2.x
+                            && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x)
                         {
                             CarB.AddWallPunish();
                         }
@@ -380,22 +404,25 @@ namespace EDCHOST21
                     }
                     if (mLabyrinth.mpWallList[i].w2.x < mLabyrinth.mpWallList[i].w1.x)//障碍2在障碍1的下面
                     {
-                        if (mLabyrinth.mpWallList[i].w1.y == CarB.mPos.y && CarB.mPos.x <= mLabyrinth.mpWallList[i].w1.x && mLabyrinth.mpWallList[i].w2.x <= CarB.mPos.x)
+                        if (mLabyrinth.mpWallList[i].w1.y >= CarB.mPos.y - 5
+                            && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y + 5
+                            && CarB.mPos.x <= mLabyrinth.mpWallList[i].w1.x
+                            && mLabyrinth.mpWallList[i].w2.x <= CarB.mPos.x)
                         {
                             CarB.AddWallPunish();
                         }
-
                     }
                 }
             }
         }
-        public void CarAonFlood()//A车到大障碍上
+        public void CheckCarAonFlood()//A车到大障碍上
         {
 
             if (CarA.mTaskState == 1)//在下半场的时候才应该判断小车是否经过Flood
             {
                 if (mFlood.num == 0)
-                { }
+                {
+                }
                 else if (mFlood.num == 1)
                 {
                     if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM)
@@ -419,12 +446,13 @@ namespace EDCHOST21
 
             }
         }
-        public void CarBonFlood()
+        public void CheckCarBonFlood()
         {
             if (CarB.mTaskState == 1)//在下半场的时候才应该判断小车是否经过Flood
             {
                 if (mFlood.num == 0)
-                { }
+                {
+                }
                 else if (mFlood.num == 1)
                 {
                     if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM)
@@ -449,14 +477,14 @@ namespace EDCHOST21
             }
         }
         //逆行自动判断//目前为思路两次逆行之间间隔时间判断为5s，这5s之间的逆行忽略不计
-        public void CarAWrongDirection()
+        public void CheckCarAWrongDirection()
         {
             if (CarA.mLastPos.x < 30 && CarA.mPos.x < 30 && CarA.mLastPos.y > 30 && CarA.mLastPos.y < 220 && CarA.mPos.y > 30 && CarA.mPos.y < 220 && CarA.mPos.y > CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
             }
-            if (CarA.mLastPos.x > 220 && CarA.mPos.x < 220 && CarA.mLastPos.y > 30 && CarA.mLastPos.y < 220 && CarA.mPos.y > 30 && CarA.mPos.y < 220 && CarA.mPos.y < CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
+            if (CarA.mLastPos.x > 220 && CarA.mPos.x > 220 && CarA.mLastPos.y > 30 && CarA.mLastPos.y < 220 && CarA.mPos.y > 30 && CarA.mPos.y < 220 && CarA.mPos.y < CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -472,14 +500,14 @@ namespace EDCHOST21
                 mLastWrongDirTime = mGameTime;
             }
         }
-        public void CarBWrongDirection()
+        public void CheckCarBWrongDirection()
         {
             if (CarB.mLastPos.x < 30 && CarB.mPos.x < 30 && CarB.mLastPos.y > 30 && CarB.mLastPos.y < 220 && CarB.mPos.y > 30 && CarB.mPos.y < 220 && CarB.mPos.y > CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
             }
-            if (CarB.mLastPos.x > 220 && CarB.mPos.x < 220 && CarB.mLastPos.y > 30 && CarB.mLastPos.y < 220 && CarB.mPos.y > 30 && CarB.mPos.y < 220 && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
+            if (CarB.mLastPos.x > 220 && CarB.mPos.x > 220 && CarB.mLastPos.y > 30 && CarB.mLastPos.y < 220 && CarB.mPos.y > 30 && CarB.mPos.y < 220 && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -495,6 +523,7 @@ namespace EDCHOST21
                 mLastWrongDirTime = mGameTime;
             }
         }
+
         public void SetFlood()
         {
             if (gameStage == GameStage.FIRST_1)
@@ -583,22 +612,22 @@ namespace EDCHOST21
                 if (gameStage == GameStage.FIRST_1 || gameStage == GameStage.LATTER_2)
                 {
                     JudgeAIsInMaze();
-                    CarAGetpackage();
-                    CarAGetPassenger();
-                    CarAonFlood();
-                    CarAonObstacle();
-                    CarATransPassenger();
-                    CarAWrongDirection();
+                    CheckCarAGetpackage();
+                    CheckCarAGetPassenger();
+                    CheckCarAonFlood();
+                    CheckCarAonObstacle();
+                    CheckCarATransPassenger();
+                    CheckCarAWrongDirection();
                 }
                 else
                 {
                     JudgeBIsInMaze();
-                    CarBGetpackage();
-                    CarBGetPassenger();
-                    CarBonFlood();
-                    CarBonObstacle();
-                    CarBTransPassenger();
-                    CarBWrongDirection();
+                    CheckCarBGetpackage();
+                    CheckCarBGetPassenger();
+                    CheckCarBonFlood();
+                    CheckCarBonObstacle();
+                    CheckCarBTransPassenger();
+                    CheckCarBWrongDirection();
                 }
             }
         }
