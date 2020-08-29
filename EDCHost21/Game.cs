@@ -56,6 +56,7 @@ namespace EDCHOST21
                 psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
                 pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 4);
                 currentPackageList = new Package[PKG_NUM_perGROUP];
+                currentPassenger = new Passenger(new Dot(), new Dot()); //?
                 mFlood = new Flood(0);
                 mPackageGroupCount = 0;
                 mLastWrongDirTime = -10;
@@ -607,20 +608,24 @@ namespace EDCHOST21
             UpdateGameTime();
             JudgeAIsInMaze();
             JudgeBIsInMaze();
+            /*
             UpdatePackage();
             UpdatePassenger();
             CarAGetpackage();
             CarBGetpackage();
             CarBGetPassenger();
             CarAGetPassenger();
+            
             CarAonFlood();
             CarBonFlood();
             CarAonObstacle();
             CarBonObstacle();
+            
             CarATransPassenger();
             CarBTransPassenger();
             CarAWrongDirection();
             CarBWrongDirection();
+            */
         }
         public void UpdateCarLastOneSecondPos()
         {
