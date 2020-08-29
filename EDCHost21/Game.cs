@@ -77,6 +77,7 @@ namespace EDCHOST21
                 mLastWrongDirTime = -10;
             }
         }
+        #region
         //每到半点自动更新Package信息函数,8.29已更新
         public void UpdatePackage()//更换Package函数,每次都更新，而只在半分钟的时候起作用
         {
@@ -141,31 +142,17 @@ namespace EDCHOST21
             }
         }
 
-        //点击开始键时调用Start函数 
-        //上半场上一阶段、上半场下一阶段、下半场上一阶段、
-        //下半场下一阶段开始时需要这一函数都需要调用这一函数来开始
-        //暂停不用这个函数开始
-        public void Start() //开始比赛上下半场都用这个
+
+        //下面为更新乘客信息函数
+        public void UpdatePassenger()//更新乘客信息
         {
-            if (gameState == GameState.UNSTART)
-            {
-                gameState = GameState.NORMAL;
-                mGameTime = 0;
-                mPrevTime = GetCurrentTime();
-            }
+            currentPassenger = psgGenerator.Next();
         }
 
-        //点击暂停比赛键时调用Pause函数
-        public void Pause() //暂停比赛
-        {
-            gameState = GameState.PAUSE;
-        }
-
-        //半场交换函数自动调用依照时间控制
         public void CheckNextStage()//从上半场更换到下半场函数
         {
             //判断是否结束
-            if (gameStage == GameStage.FIRST_1 
+            if (gameStage == GameStage.FIRST_1
                 || gameStage == GameStage.LATTER_1)
             {
                 if (mGameTime >= 60000)
@@ -193,37 +180,6 @@ namespace EDCHOST21
                     }
                 }
             }
-        }
-        
-        //在暂停后需要摁下继续按钮来继续比赛
-        public void Continue()
-        {
-            gameState = GameState.NORMAL;
-            mPrevTime = GetCurrentTime();
-        }
-        //重置摁键对应的函数
-        //@TODO
-        public void Reset()
-        {
-            //Game = new Game();
-        }
-        //犯规键对应的函数
-        public void AddFoul()
-        {
-            if (gameStage == GameStage.FIRST_2 || gameStage == GameStage.LATTER_1)
-            {
-                CarB.mFoulCount++;
-            }
-            else
-            {
-                CarA.mFoulCount++;
-            }
-        }
-
-        //下面为更新乘客信息函数
-        public void UpdatePassenger()//更新乘客信息
-        {
-            currentPassenger = psgGenerator.Next();
         }
 
         //下面四个为接口
@@ -524,6 +480,58 @@ namespace EDCHOST21
             }
         }
 
+       
+
+        public void UpdateGameTime()
+        {
+            if (gameState == GameState.NORMAL)
+            {
+                mGameTime = GetCurrentTime() - mPrevTime + mGameTime;
+            }
+            mPrevTime = GetCurrentTime();
+        }
+        #endregion
+        //0.1s
+        public void Update()
+        {
+            if (gameState == GameState.NORMAL)
+            {
+                UpdateGameTime();
+                UpdatePackage();
+                CheckNextStage();
+                if (gameStage == GameStage.FIRST_1 || gameStage == GameStage.LATTER_2)
+                {
+                    JudgeAIsInMaze();
+                    CheckCarAGetpackage();
+                    CheckCarAGetPassenger();
+                    CheckCarAonFlood();
+                    CheckCarAonObstacle();
+                    CheckCarATransPassenger();
+                    CheckCarAWrongDirection();
+                }
+                else
+                {
+                    JudgeBIsInMaze();
+                    CheckCarBGetpackage();
+                    CheckCarBGetPassenger();
+                    CheckCarBonFlood();
+                    CheckCarBonObstacle();
+                    CheckCarBTransPassenger();
+                    CheckCarBWrongDirection();
+                }
+            }
+        }
+
+        #region 1秒区域
+        public void UpdateCarLastOneSecondPos()
+        {
+            if (gameState == GameState.NORMAL)
+            {
+                CarA.mLastOneSecondPos = CarA.mPos;
+                CarB.mLastOneSecondPos = CarB.mPos;
+            }
+        }
+
         public void SetFlood()
         {
             if (gameStage == GameStage.FIRST_1)
@@ -553,7 +561,7 @@ namespace EDCHOST21
                                 mFlood.num = 2;
                             }
                         }
-                       
+
 
                     }
                 }
@@ -586,60 +594,62 @@ namespace EDCHOST21
                                 mFlood.num = 2;
                             }
                         }
-                        
+
                     }
                 }
 
             }
         }
-
-        public void UpdateGameTime()
+        #endregion
+        #region 按键功能函数
+        //点击开始键时调用Start函数 
+        //上半场上一阶段、上半场下一阶段、下半场上一阶段、
+        //下半场下一阶段开始时需要这一函数都需要调用这一函数来开始
+        //暂停不用这个函数开始
+        public void Start() //开始比赛上下半场都用这个
         {
-            if (gameState == GameState.NORMAL)
+            if (gameState == GameState.UNSTART)
             {
-                mGameTime = GetCurrentTime() - mPrevTime + mGameTime;
+                gameState = GameState.NORMAL;
+                mGameTime = 0;
+                mPrevTime = GetCurrentTime();
             }
+        }
+
+        //点击暂停比赛键时调用Pause函数
+        public void Pause() //暂停比赛
+        {
+            gameState = GameState.PAUSE;
+        }
+
+        //半场交换函数自动调用依照时间控制
+
+
+        //在暂停后需要摁下继续按钮来继续比赛
+        public void Continue()
+        {
+            gameState = GameState.NORMAL;
             mPrevTime = GetCurrentTime();
         }
-        //0.1s
-        public void Update()
+        //重置摁键对应的函数
+        //@TODO
+        public void Reset()
         {
-            if (gameState == GameState.NORMAL)
+            //Game = new Game();
+        }
+        //犯规键对应的函数
+        public void AddFoul()
+        {
+            if (gameStage == GameStage.FIRST_2 || gameStage == GameStage.LATTER_1)
             {
-                UpdateGameTime();
-                UpdatePackage();
-                CheckNextStage();
-                if (gameStage == GameStage.FIRST_1 || gameStage == GameStage.LATTER_2)
-                {
-                    JudgeAIsInMaze();
-                    CheckCarAGetpackage();
-                    CheckCarAGetPassenger();
-                    CheckCarAonFlood();
-                    CheckCarAonObstacle();
-                    CheckCarATransPassenger();
-                    CheckCarAWrongDirection();
-                }
-                else
-                {
-                    JudgeBIsInMaze();
-                    CheckCarBGetpackage();
-                    CheckCarBGetPassenger();
-                    CheckCarBonFlood();
-                    CheckCarBonObstacle();
-                    CheckCarBTransPassenger();
-                    CheckCarBWrongDirection();
-                }
+                CarB.mFoulCount++;
+            }
+            else
+            {
+                CarA.mFoulCount++;
             }
         }
-
-        public void UpdateCarLastOneSecondPos()
-        {
-            if (gameState == GameState.NORMAL)
-            {
-                CarA.mLastOneSecondPos = CarA.mPos;
-                CarB.mLastOneSecondPos = CarB.mPos;
-            }
-        }
+        #endregion
         public byte[] PackCarAMessage()//已更新到最新通信协议
         {
             byte[] message = new byte[102]; //上位机传递多少信息
