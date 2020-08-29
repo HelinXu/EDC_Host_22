@@ -13,11 +13,9 @@ namespace EDCHOST21
     public class PackageGenerator //存储预备要用的物资信息
     {
         private Package[] mpPackageList;
-        private int Package_idx;
         private int PKG_NUM;
         public PackageGenerator(int AMOUNT) //生成指定数量的物资
         {
-            Package_idx = 0;
             PKG_NUM = AMOUNT;
             mpPackageList = new Package[PKG_NUM];
             int nextX, nextY;
@@ -25,14 +23,13 @@ namespace EDCHOST21
             Random NRand = new Random();
             for (int i = 0; i < PKG_NUM; ++i)
             {
-
-                nextX = NRand.Next(Game.MAZE_CROSS_NUM);//仍然需要改进
+                nextX = NRand.Next(Game.MAZE_CROSS_NUM);
                 nextY = NRand.Next(Game.MAZE_CROSS_NUM);
                 dots = CrossNo2Dot(nextX, nextY);
                 mpPackageList[i] = new Package(dots);
-                //需要加上位置是否重合的判断
             }
         }
+
         //从格点转化为int，传入坐标，返回Dot
         public static Dot CrossNo2Dot(int CrossNoX, int CrossNoY)
         {

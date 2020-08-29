@@ -23,6 +23,7 @@ namespace EDCHOST21
 
         public Dot mPos;
         public Dot mLastPos;
+        public Dot mLastOneSecondPos;
         public Camp MyCamp { get; set; }  //A or B get、set直接两个封装好的函数
         public int MyScore { get; set; }  //得分
         public int mPkgCount;             //小车成功收集物资个数
@@ -41,6 +42,8 @@ namespace EDCHOST21
         {
             MyCamp = c;
             mPos = new Dot(0, 0);
+            mLastPos = new Dot(0, 0);
+            mLastOneSecondPos = new Dot(0, 0);
             MyScore = 0;
             mPkgCount = 0;
             mTaskState = task;

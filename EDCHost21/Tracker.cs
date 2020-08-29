@@ -180,11 +180,11 @@ namespace EDCHOST21
             // 图像处理端接收主流程端信息
             lock (flags)
             {
-                flags.posPsgStart.X = game.Passenger.Start_Dot.x;
-                flags.posPsgStart.Y = game.Passenger.Start_Dot.y;
-                flags.posPsgEnd.X = game.Passenger.End_Dot.x;
-                flags.posPsgEnd.Y = game.Passenger.End_Dot.y;
-                flags.gameState = game.State;
+                flags.posPsgStart.X = game.currentPassenger.Start_Dot.x;
+                flags.posPsgStart.Y = game.currentPassenger.Start_Dot.y;
+                flags.posPsgEnd.X = game.currentPassenger.End_Dot.x;
+                flags.posPsgEnd.Y = game.currentPassenger.End_Dot.y;
+                flags.gameState = game.gameState;
             }
             
         }
@@ -587,6 +587,8 @@ namespace EDCHOST21
         //计时器事件，每1s触发一次，向在迷宫内的小车发送信息
         private void timerMsg1s_Tick(object sender, EventArgs e)
         {
+            game.UpdateCarLastOneSecondPos();
+            game.SetFlood();
             // 如果A车在场地内且在迷宫内
             if (game.CarA.mIsInField == 1 && game.CarA.mIsInMaze == 1)
             {
