@@ -518,7 +518,7 @@ namespace EDCHOST21
         private void button_Continue_Click(object sender, EventArgs e)
         {
             //if (game.state == GameState.End)
-            game.NextStage();
+            game.Continue();
             buttonPause.Enabled = false;
             buttonEnd.Enabled = true;
             buttonStart.Enabled = true;
