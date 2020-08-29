@@ -349,10 +349,10 @@ namespace EDCHOST21
             labelBScore.Text = $"{game.CarB.MyScore}";
 
             // 上半场或下半场
-            label_GameCount.Text = (game.mGameCount == 0) ? "上半场" : "下半场";
+            label_GameCount.Text = (game.gameStage == GameStage.FIRST_1 || game.gameStage == GameStage.LATTER_1) ? "上半场" : "下半场";
 
             // 阶段一或阶段二
-            label_GameStage.Text = (game.mGameStage == 0) ? "阶段一" : "阶段二";
+            label_GameStage.Text = (game.gameStage == GameStage.FIRST_2 || game.gameStage == GameStage.LATTER_2) ? "阶段一" : "阶段二";
 
             // A,B车犯规的次数
             label_AFoulNum.Text = $"{game.CarA.mFoulCount}";
