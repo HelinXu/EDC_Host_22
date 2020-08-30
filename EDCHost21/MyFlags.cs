@@ -51,16 +51,17 @@ namespace EDCHOST21
         // 在场上的小车是否在迷宫中
         public bool IsInMaze;
 
+        // 以下的坐标都是逻辑坐标
         // 当前小车的坐标
-        public Point2i posCarA;
-        public Point2i posCarB;
+        public Point2i logicCarA;
+        public Point2i logicCarB;
 
         // 防汛物资的坐标
-        public Point2i[] posPackages;
+        public Point2i[] logicPkgs;
 
         // 人员起始坐标和待运输的位置坐标
-        public Point2i posPsgStart;
-        public Point2i posPsgEnd;
+        public Point2i logicPsgStart;
+        public Point2i logicPsgEnd;
 
         // 目前场上被困人员的状况（同一时间场上最多1个被困人员）
         public PassengerState psgState;
@@ -70,16 +71,22 @@ namespace EDCHOST21
 
         public void Init()
         {
-            // 初始化比赛状况相关数据
             showMask = false;
             running = false;
             calibrated = false;
             videomode = false;
-            configs = new LocConfigs();
-            posPackages = new Point2i[0];
-            posCarA = new Point2i();
-            posCarB = new Point2i();
 
+            // 初始化色彩识别参数
+            configs = new LocConfigs();
+
+            // 初始化物资和小车的位置
+            logicPkgs = new Point2i[0];
+            logicCarA = new Point2i();
+            logicCarB = new Point2i();
+
+            // 初始化人员位置
+            logicPsgStart = new Point2i();
+            logicPsgEnd = new Point2i();
 
             // 设置3张地图的大小
             // 以下数据待定，根据实际设备确定
@@ -87,12 +94,8 @@ namespace EDCHOST21
             cameraSize = new OpenCvSharp.Size(1280, 960);
             logicSize = new OpenCvSharp.Size(Game.MAX_SIZE_CM, Game.MAX_SIZE_CM);
 
-            // 点击次数（暂不懂什么意思）
+            // 点击显示画面的次数，用于校正画面
             clickCount = 0;
-
-            // 初始化人员位置
-            posPsgStart = new Point2i();
-            posPsgEnd = new Point2i();
         }
 
         public void Start()

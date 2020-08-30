@@ -166,7 +166,7 @@ namespace EDCHOST21
 
         #endregion
 
-        // 将flags中人员的起始位置从逻辑坐标转换为摄像头坐标
+        // 将flags中人员的起始位置从逻辑坐标转换为显示坐标
         public void PeopleFilter(MyFlags flags)
         {
             // 如果图像还未被校正，直接返回
@@ -174,10 +174,10 @@ namespace EDCHOST21
 
             // 因为被困人员同一时间在场上只有1个，其实只要计算1个坐标变换
             // 但是还是将这1个坐标构造成了坐标点列方便调用已有函数
-            Point2f[] res = LogicToCamera(new Point2f[] { flags.posPsgStart });
+            Point2f[] res = LogicToCamera(new Point2f[] { flags.logicPsgStart });
 
             // 计算被困人员在画面地图上的坐标
-            flags.posPsgStart = res[0];
+            flags.logicPsgStart = res[0];
         }
     }
 }

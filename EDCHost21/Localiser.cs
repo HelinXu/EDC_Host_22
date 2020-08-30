@@ -15,7 +15,8 @@ namespace EDCHOST21
     // 定位器：进行图像处理，确定位置并绘图
     public class Localiser
     {
-        //依次为车1、车2位置的中心点集
+        // 依次为车1、车2位置的中心点集
+        // 均为 showMap 中的坐标
         private List<Point2i> centres1;
         private List<Point2i> centres2;
 
@@ -25,7 +26,7 @@ namespace EDCHOST21
             centres2 = new List<Point2i>();
         }
 
-        // 根据计算得到的中心点集，返回定位到的小车坐标
+        // 根据计算得到的中心点集，返回定位到的小车 showMap 坐标
         // 若在相机拍摄的图中没有发现某小车，则该车的坐标返回(-1, -1)
         public void GetCarLocations(out Point2i pt1, out Point2i pt2)
         {
@@ -161,8 +162,8 @@ namespace EDCHOST21
                 if (localiseFlags.gameState != GameState.UNSTART)
                 {
                     //在人员起始位置上绘制矩形
-                    int x10 = localiseFlags.posPsgStart.X - 8;
-                    int y10 = localiseFlags.posPsgStart.Y - 8;
+                    int x10 = localiseFlags.logicPsgStart.X - 8;
+                    int y10 = localiseFlags.logicPsgStart.Y - 8;
                     Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
 
                 }

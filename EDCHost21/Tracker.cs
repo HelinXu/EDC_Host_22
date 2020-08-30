@@ -19,8 +19,9 @@ namespace EDCHOST21
         // 比赛所用参数和场上状况
         public MyFlags flags = null;
         public VideoCapture capture = null;
+
         // 设定的显示画面四角坐标
-        private Point2f[] ptsShowCorners = null;
+        private Point2f[] showCornerPts = null;
         // 当前时间
         private DateTime timeCamNow;
         // 上一个记录的时间
@@ -29,12 +30,16 @@ namespace EDCHOST21
         public CoordinateConverter cc;
         // 定位器
         private Localiser localiser;
+
+        // 以下坐标均为相机坐标
         // 人员坐标
-        private Point2i passenger;
-        // 车1坐标
-        private Point2i car1;
-        // 车2坐标
-        private Point2i car2;
+        private Point2i camPsgStart;
+        private Point2i camPsgEnd;
+        // 车A坐标
+        private Point2i camCarA;
+        // 车B坐标
+        private Point2i camCarB;
+
         // 游戏逻辑
         private Game game;
         // 视频输出流
@@ -49,7 +54,6 @@ namespace EDCHOST21
         // 可用的端口名称
         public string[] validPorts;
 
-        // private Camp[] UI_LastRoundCamp = new Camp[5];
         #endregion
 
         // 主界面初始化
@@ -92,7 +96,7 @@ namespace EDCHOST21
             flags.showSize.Height = pbCamera.Height;
 
             // 用于存储鼠标点击的画面中场地的4个角的坐标
-            ptsShowCorners = new Point2f[4];
+            showCornerPts = new Point2f[4];
 
             // 以既有的flags参数初始化坐标转换器
             cc = new CoordinateConverter(flags);
@@ -104,10 +108,11 @@ namespace EDCHOST21
             timeCamNow = DateTime.Now;
             timeCamPrev = timeCamNow;
 
-            // 人员、小车在
-            passenger = new Point2i();
-            car1 = new Point2i();
-            car2 = new Point2i();
+            // 人员、小车相机坐标的初始化
+            camPsgStart = new Point2i();
+            camPsgEnd = new Point2i();
+            camCarA = new Point2i();
+            camCarB = new Point2i();
 
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
@@ -163,6 +168,7 @@ namespace EDCHOST21
             // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
             CameraReading();
 
+            // 此段代码可以交给Game完成
             // 保存上一帧的小车位置，以便判断是否逆行
             game.CarA.mLastPos.x = game.CarA.mPos.x;
             game.CarA.mLastPos.y = game.CarA.mPos.y;
@@ -172,10 +178,10 @@ namespace EDCHOST21
             // 游戏逻辑端接收图像处理端信息
             lock (flags)
             {
-                game.CarA.mPos.x = flags.posCarA.X;
-                game.CarA.mPos.y = flags.posCarA.Y;
-                game.CarB.mPos.x = flags.posCarB.X;
-                game.CarB.mPos.y = flags.posCarB.Y;
+                game.CarA.mPos.x = flags.logicCarA.X;
+                game.CarA.mPos.y = flags.logicCarA.Y;
+                game.CarB.mPos.x = flags.logicCarB.X;
+                game.CarB.mPos.y = flags.logicCarB.Y;
             }
 
             // 更新比赛信息
@@ -184,10 +190,10 @@ namespace EDCHOST21
             // 图像处理端接收游戏逻辑端信息
             lock (flags)
             {
-                flags.posPsgStart.X = game.currentPassenger.Start_Dot.x;
-                flags.posPsgStart.Y = game.currentPassenger.Start_Dot.y;
-                flags.posPsgEnd.X = game.currentPassenger.End_Dot.x;
-                flags.posPsgEnd.Y = game.currentPassenger.End_Dot.y;
+                flags.logicPsgStart.X = game.currentPassenger.Start_Dot.x;
+                flags.logicPsgStart.Y = game.currentPassenger.Start_Dot.y;
+                flags.logicPsgEnd.X = game.currentPassenger.End_Dot.x;
+                flags.logicPsgEnd.Y = game.currentPassenger.End_Dot.y;
                 flags.gameState = game.gameState;
             }
             
@@ -283,7 +289,7 @@ namespace EDCHOST21
                             localiser.Locate(videoFrame, flags);
 
                             // 绘制边界点，在鼠标点击的场地的四个边界点上画上绿色小十字
-                            foreach (Point2f pt in cc.ShowToCamera(ptsShowCorners))
+                            foreach (Point2f pt in cc.ShowToCamera(showCornerPts))
                             {
                                 Cv2.Line(videoFrame, (int)(pt.X - 3), (int)(pt.Y), 
                                     (int)(pt.X + 3), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
@@ -292,26 +298,26 @@ namespace EDCHOST21
                             }
                         }
                         // 调用定位器，得到小车的坐标
-                        localiser.GetCarLocations(out car1, out car2);
+                        localiser.GetCarLocations(out camCarA, out camCarB);
 
                         lock (flags)
                         {
                             // 如果画面已经被手工校正
                             if (flags.calibrated)
                             {
-                                // 将小车坐标从摄像头画面坐标转化成逻辑坐标
-                                Point2f[] car12 = { car1, car2 };
+                                // 将小车坐标从相机坐标转化成逻辑坐标
+                                Point2f[] car12 = { camCarA, camCarB };
                                 Point2f[] carAB = cc.CameraToLogic(car12);
 
                                 // 将小车坐标存储到flags中
-                                flags.posCarA = carAB[0];
-                                flags.posCarB = carAB[1];
+                                flags.logicCarA = carAB[0];
+                                flags.logicCarB = carAB[1];
                             }
                             else // 这边没看懂，为什么在图像未被校正的情况下直接赋值？
                             {
                                 // 直接将小车坐标存储到flags中
-                                flags.posCarA = car1;
-                                flags.posCarB = car2;
+                                flags.logicCarA = camCarA;
+                                flags.logicCarB = camCarB;
                             }
                         }
 
@@ -407,7 +413,7 @@ namespace EDCHOST21
                 flags.clickCount = 0;
                 flags.calibrated = false;
                 for (int i = 0; i < 4; ++i)
-                    ptsShowCorners[i].X = ptsShowCorners[i].Y = 0;
+                    showCornerPts[i].X = showCornerPts[i].Y = 0;
             }
         }
 
@@ -440,17 +446,17 @@ namespace EDCHOST21
 
             if (xMouse >= 0 && xMouse < widthView && yMouse >= 0 && yMouse < heightView)
             {
-                ptsShowCorners[idx].X = xMouse;
-                ptsShowCorners[idx].Y = yMouse;
+                showCornerPts[idx].X = xMouse;
+                showCornerPts[idx].Y = yMouse;
                 if (idx == 3)
                 {
-                    cc.UpdateCorners(ptsShowCorners, flags);
+                    cc.UpdateCorners(showCornerPts, flags);
                     MessageBox.Show(
                           $"边界点设置完成\n"
-                        + $"0: {ptsShowCorners[0].X, 5}, {ptsShowCorners[0].Y, 5}\t"
-                        + $"1: {ptsShowCorners[1].X, 5}, {ptsShowCorners[1].Y, 5}\n"
-                        + $"2: {ptsShowCorners[2].X, 5}, {ptsShowCorners[2].Y, 5}\t"
-                        + $"3: {ptsShowCorners[3].X, 5}, {ptsShowCorners[3].Y, 5}");
+                        + $"0: {showCornerPts[0].X, 5}, {showCornerPts[0].Y, 5}\t"
+                        + $"1: {showCornerPts[1].X, 5}, {showCornerPts[1].Y, 5}\n"
+                        + $"2: {showCornerPts[2].X, 5}, {showCornerPts[2].Y, 5}\t"
+                        + $"3: {showCornerPts[3].X, 5}, {showCornerPts[3].Y, 5}");
                 }
             }
         }
