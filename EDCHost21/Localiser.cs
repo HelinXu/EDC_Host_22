@@ -154,6 +154,8 @@ namespace EDCHOST21
                 }
 
 
+                /*
+                绘图部分统一转移到Tracker中，并且小车的绘制改为只绘制第一个点。 .. cxy
                 // 分别在小车1和小车2的位置上绘制圆圈
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
                 foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
@@ -167,6 +169,7 @@ namespace EDCHOST21
                     Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
 
                 }
+                */
                 //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
                 //Cv2.ImShow("binary", merged);
             }
