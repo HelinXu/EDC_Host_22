@@ -78,29 +78,33 @@ namespace EDCHOST21
             flags.Init();
             flags.Start();
 
-            //创建视频流
+            // 创建视频流
             capture = new VideoCapture();
             // threadCamera = new Thread(CameraReading);
             capture.Open(0);
 
-            //相机画面大小设为视频帧大小
+            // 相机画面大小设为视频帧大小
             flags.cameraSize.Width = capture.FrameWidth;
             flags.cameraSize.Height = capture.FrameHeight;
 
-            //显示大小设为界面组件大小
+            // 显示大小设为界面组件大小
             flags.showSize.Width = pbCamera.Width;
             flags.showSize.Height = pbCamera.Height;
+
+            // 用于存储鼠标点击的画面中场地的4个角的坐标
             ptsShowCorners = new Point2f[4];
 
-            //以既有的flags参数初始化坐标转换器
+            // 以既有的flags参数初始化坐标转换器
             cc = new CoordinateConverter(flags);
 
+            // 定位小车位置的类
             localiser = new Localiser();
 
-            //记录时间
+            // 记录时间
             timeCamNow = DateTime.Now;
             timeCamPrev = timeCamNow;
 
+            // 人员、小车在
             passenger = new Point2i();
             car1 = new Point2i();
             car2 = new Point2i();
@@ -165,7 +169,7 @@ namespace EDCHOST21
             game.CarB.mLastPos.x = game.CarB.mPos.x;
             game.CarB.mLastPos.y = game.CarB.mPos.y;
 
-            // 主流程端接收图像处理端信息
+            // 游戏逻辑端接收图像处理端信息
             lock (flags)
             {
                 game.CarA.mPos.x = flags.posCarA.X;
@@ -177,7 +181,7 @@ namespace EDCHOST21
             // 更新比赛信息
             game.Update();
 
-            // 图像处理端接收主流程端信息
+            // 图像处理端接收游戏逻辑端信息
             lock (flags)
             {
                 flags.posPsgStart.X = game.currentPassenger.Start_Dot.x;
@@ -273,10 +277,12 @@ namespace EDCHOST21
                         {
                             // 调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
                             cc.PeopleFilter(flags);
+
                             // 调用定位器，进行图像处理，得到小车和小球的位置中心点集
+                            // 第一个形参传入的是指针，所以videoFrame已被修改（画上了红蓝圆点）
                             localiser.Locate(videoFrame, flags);
 
-                            //绘制边界点
+                            // 绘制边界点，在鼠标点击的场地的四个边界点上画上绿色小十字
                             foreach (Point2f pt in cc.ShowToCamera(ptsShowCorners))
                             {
                                 Cv2.Line(videoFrame, (int)(pt.X - 3), (int)(pt.Y), 
