@@ -372,7 +372,7 @@ namespace EDCHOST21
             // 在小车2的位置上绘制蓝色实心圆
             foreach (Point2i c2 in loc.GetCentres(Camp.B))
                 Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
-
+/*
             // 在人员起始位置上绘制矩形
             // 如果人员存在
             if (logicPsgStart != InvalidPos)
@@ -380,7 +380,7 @@ namespace EDCHOST21
                 int x10 = logicPsgStart.X - 8;
                 int y10 = logicPsgStart.Y - 8;
                 Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-            }
+            }*/
             //绘图    可考虑放置到一个方法中  cxy
             //绘制小车
             //car1 深蓝色 圆  半径10
@@ -393,38 +393,38 @@ namespace EDCHOST21
             //连线 浅绿 线长 3
             if (game.gameState != GameState.UNSTART)
             {
-                if (game.UpperCamp == Camp.CMP_A)
+                if (game.UpperCamp == Camp.A)
                 {
                     if (game.CarB.mIsWithPassenger == 0)
                     {
-                        int x10 = flags.logicPsgStart.X - 8;
-                        int y10 = flags.logicPsgStart.Y - 8;
-                        Cv2.Rectangle(videoFrame, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-                        Cv2.Line(videoFrame, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        int x10 = logicPsgStart.X - 8;
+                        int y10 = logicPsgStart.Y - 8;
+                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                     else
                     {
-                        int x10 = flags.logicPsgEnd.X - 8;
-                        int y10 = flags.logicPsgEnd.Y - 8;
-                        Cv2.Rectangle(videoFrame, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-                        Cv2.Line(videoFrame, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        int x10 = logicPsgEnd.X - 8;
+                        int y10 = logicPsgEnd.Y - 8;
+                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                 }
-                else if (game.UpperCamp == Camp.CMP_B)
+                else if (game.UpperCamp == Camp.B)
                 {
                     if (game.CarA.mIsWithPassenger == 0)
                     {
-                        int x10 = flags.logicPsgStart.X - 8;
-                        int y10 = flags.logicPsgStart.Y - 8;
-                        Cv2.Rectangle(videoFrame, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-                        Cv2.Line(videoFrame, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        int x10 = logicPsgStart.X - 8;
+                        int y10 = logicPsgStart.Y - 8;
+                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                     else
                     {
-                        int x10 = flags.logicPsgEnd.X - 8;
-                        int y10 = flags.logicPsgEnd.Y - 8;
-                        Cv2.Rectangle(videoFrame, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-                        Cv2.Line(videoFrame, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        int x10 = logicPsgEnd.X - 8;
+                        int y10 = logicPsgEnd.Y - 8;
+                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                 }
 

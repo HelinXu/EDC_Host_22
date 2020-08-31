@@ -164,7 +164,7 @@ namespace EDCHOST21
         public void UpdatePassenger()//更新乘客信息
         {
             Debug.WriteLine("开始执行 Update Passenger");
-            currentPassenger = psgGenerator.Next();
+            curPsg = psgGenerator.Next();
             Debug.WriteLine("Next Passenger 成功更新");
         }
 
@@ -188,7 +188,7 @@ namespace EDCHOST21
                     if (gameStage == GameStage.FIRST_2)
                     {
                         Debug.WriteLine("开始执行上下半场转换");
-                        UpperCamp = Camp.CMP_B;//上半场转换
+                        UpperCamp = Camp.B;//上半场转换
                         psgGenerator.ResetIndex();//Passenger的索引复位
                         if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
                         {
@@ -262,7 +262,7 @@ namespace EDCHOST21
                     && currentPkgList[i].IsPicked == 0)
                 {
                     CarA.AddPickPkgCount();
-                    currentPackageList[i].IsPicked = 1;
+                    currentPkgList[i].IsPicked = 1;
                     Debug.WriteLine("A车接到了包裹，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                 }
             }
@@ -277,7 +277,7 @@ namespace EDCHOST21
                     && currentPkgList[i].IsPicked == 0)
                 {
                     CarB.AddPickPkgCount();
-                    currentPackageList[i].IsPicked = 1;
+                    currentPkgList[i].IsPicked = 1;
                     Debug.WriteLine("B车接到了包裹，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                 }
 
