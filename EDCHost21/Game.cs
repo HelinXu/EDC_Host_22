@@ -88,6 +88,11 @@ namespace EDCHOST21
         //每到半点自动更新Package信息函数,8.29已更新
         public void UpdatePackage()//更换Package函数,每次都更新，而只在半分钟的时候起作用
         {
+            if (gameStage == GameStage.FIRST_1
+                || gameStage == GameStage.LATTER_1)
+            {
+                return;
+            }
             int changenum = mGameTime / 30000 + 1;
             if ((gameStage == GameStage.FIRST_2
                 || gameStage == GameStage.LATTER_2)
@@ -206,6 +211,10 @@ namespace EDCHOST21
         //下面四个为接口
         public void CheckCarAGetPassenger()//小车A接到了乘客
         {
+            if (gameStage != GameStage.LATTER_2)
+            {
+                return;
+            }
             if (GetDistance(CarA.mPos, curPsg.Start_Dot)
                 <= COINCIDE_ERR_DIST_CM
                 && CarA.mIsWithPassenger == 0)
@@ -217,6 +226,10 @@ namespace EDCHOST21
         }
         public void CheckCarBGetPassenger()//小车B接到了乘客
         {
+            if (gameStage != GameStage.FIRST_2)
+            {
+                return;
+            }
             if (GetDistance(CarB.mPos, curPsg.Start_Dot)
                 <= COINCIDE_ERR_DIST_CM
                 && CarB.mIsWithPassenger == 0)
@@ -227,6 +240,10 @@ namespace EDCHOST21
         }
         public void CheckCarATransPassenger()//小车A成功运送了乘客
         {
+            if (gameStage != GameStage.LATTER_2)
+            {
+                return;
+            }
 
             if (GetDistance(CarA.mPos, curPsg.End_Dot)
                 <= COINCIDE_ERR_DIST_CM
@@ -240,6 +257,10 @@ namespace EDCHOST21
         }
         public void CheckCarBTransPassenger()//小车B成功运送了乘客
         {
+            if (gameStage != GameStage.FIRST_2)
+            {
+                return;
+            }
             if (GetDistance(CarB.mPos, curPsg.End_Dot)
                 <= COINCIDE_ERR_DIST_CM
                 && CarB.mIsWithPassenger == 1)
@@ -254,7 +275,10 @@ namespace EDCHOST21
         //下面是两个关于包裹的接口
         public void CheckCarAGetpackage()//小车A得到了包裹
         {
-
+            if (gameStage != GameStage.LATTER_2)
+            {
+                return;
+            }
             for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
                 if (GetDistance(CarA.mPos, currentPkgList[i].mPos)
@@ -270,6 +294,10 @@ namespace EDCHOST21
         }
         public void CheckCarBGetpackage()//小车B得到了包裹
         {
+            if (gameStage != GameStage.FIRST_2)
+            {
+                return;
+            }
             for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
                 if (GetDistance(CarB.mPos, currentPkgList[i].mPos)
