@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace EDCHOST21
 {
@@ -46,6 +47,7 @@ namespace EDCHOST21
 
         public Game(GameStage gameStage = GameStage.FIRST_1)//构造一个新的Game类 默认为CampA是先上半场上一阶段进行
         {
+            Debug.WriteLine("开始执行Game构造函数");
             if (gameStage == GameStage.FIRST_1)
             {
 
@@ -60,6 +62,7 @@ namespace EDCHOST21
                 mFlood = new Flood(0);
                 mPackageGroupCount = 0;
                 mLastWrongDirTime = -10;
+                Debug.WriteLine("Game构造函数FIRST_1执行完毕");
             }
             else
             {
@@ -75,6 +78,7 @@ namespace EDCHOST21
                 mFlood = new Flood(0);
                 mPackageGroupCount = 0;
                 mLastWrongDirTime = -10;
+                Debug.WriteLine("Game构造函数FIRST_2执行完毕");
             }
         }
         #region
@@ -95,14 +99,18 @@ namespace EDCHOST21
                     currentPackageList[i].IsPicked = 0;
                 }
                 mPackageGroupCount++;
+                Debug.WriteLine("UpdatePackage被触发，并执行完毕");
             }
+
         }
 
         //该方法用于返回系统现在的时间。开发者：xhl
         public int GetCurrentTime()
         {
             System.DateTime currentTime = new System.DateTime();
-            return currentTime.Hour * 3600000 + currentTime.Minute * 60000 + currentTime.Second * 1000;
+            int time = currentTime.Hour * 3600000 + currentTime.Minute * 60000 + currentTime.Second * 1000;
+            Debug.WriteLine("GetCurrentTime，Time = {0}", time); 
+            return time;
         }
 
         public static double GetDistance(Dot A, Dot B)//得到两个点之间的距离
@@ -115,29 +123,35 @@ namespace EDCHOST21
         //这个函数可能放到dot里面更好
         public void JudgeAIsInMaze()//确定点是否在迷宫内
         {
+            Debug.WriteLine("开始执行JudgeAIsInMaze");
             if (CarA.mPos.x >= MAZE_SHORT_BORDER_CM
                 && CarA.mPos.x <= MAZE_LONG_BORDER_CM
                 && CarA.mPos.y >= MAZE_SHORT_BORDER_CM
                 && CarA.mPos.y <= MAZE_LONG_BORDER_CM)
             {
+                Debug.WriteLine("A 在 Maze 中");
                 CarA.mIsInMaze = 1;
             }
             else
             {
+                Debug.WriteLine("A 不在 Maze 中");
                 CarA.mIsInMaze = 0;
             }
         }
         public void JudgeBIsInMaze()//确定点是否在迷宫内
         {
+            Debug.WriteLine("开始执行JudgeBIsInMaze");
             if (CarB.mPos.x >= MAZE_SHORT_BORDER_CM
                 && CarB.mPos.x <= MAZE_LONG_BORDER_CM
                 && CarB.mPos.y >= MAZE_SHORT_BORDER_CM
                 && CarB.mPos.y <= MAZE_LONG_BORDER_CM)
             {
+                Debug.WriteLine("B 在 Maze 中");
                 CarB.mIsInMaze = 1;
             }
             else
             {
+                Debug.WriteLine("B 不在 Maze 中");
                 CarB.mIsInMaze = 0;
             }
         }
@@ -146,7 +160,9 @@ namespace EDCHOST21
         //下面为更新乘客信息函数
         public void UpdatePassenger()//更新乘客信息
         {
+            Debug.WriteLine("开始执行 Update Passenger");
             currentPassenger = psgGenerator.Next();
+            Debug.WriteLine("Next Passenger 成功更新");
         }
 
         public void CheckNextStage()//从上半场更换到下半场函数
@@ -168,6 +184,7 @@ namespace EDCHOST21
                     gameState = GameState.UNSTART;
                     if (gameStage == GameStage.FIRST_2)
                     {
+                        Debug.WriteLine("开始执行上下半场转换");
                         UpperCamp = Camp.CMP_B;//上半场转换
                         psgGenerator.ResetIndex();//Passenger的索引复位
                         if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
@@ -177,6 +194,7 @@ namespace EDCHOST21
                         }
                         CarA.mTaskState = 1;//交换A和B的任务
                         CarB.mTaskState = 0;
+                        Debug.WriteLine("上下半场转换成功");
                     }
                 }
             }
@@ -189,6 +207,7 @@ namespace EDCHOST21
                 <= COINCIDE_ERR_DIST_CM
                 && CarA.mIsWithPassenger == 0)
             {
+                Debug.WriteLine("A车接到了乘客，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                 CarA.SwitchPassengerState();
             }
 
@@ -199,6 +218,7 @@ namespace EDCHOST21
                 <= COINCIDE_ERR_DIST_CM
                 && CarB.mIsWithPassenger == 0)
             {
+                Debug.WriteLine("B车接到了乘客，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                 CarB.SwitchPassengerState();
             }
         }
@@ -211,10 +231,11 @@ namespace EDCHOST21
             {
                 CarA.SwitchPassengerState();
                 CarA.AddRescueCount();
+                Debug.WriteLine("A车送达了乘客，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
             }
             UpdatePassenger();
         }
-        public void CheckCarBTransPassenger()//小车A成功运送了乘客
+        public void CheckCarBTransPassenger()//小车B成功运送了乘客
         {
             if (GetDistance(CarB.mPos, currentPassenger.End_Dot)
                 <= COINCIDE_ERR_DIST_CM
@@ -222,6 +243,7 @@ namespace EDCHOST21
             {
                 CarB.SwitchPassengerState();
                 CarB.AddRescueCount();
+                Debug.WriteLine("B车送达了乘客，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
             }
             UpdatePassenger();
         }
@@ -238,6 +260,7 @@ namespace EDCHOST21
                 {
                     CarA.AddPickPkgCount();
                     currentPackageList[i].IsPicked = 1;
+                    Debug.WriteLine("A车接到了包裹，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                 }
             }
 
@@ -252,6 +275,7 @@ namespace EDCHOST21
                 {
                     CarB.AddPickPkgCount();
                     currentPackageList[i].IsPicked = 1;
+                    Debug.WriteLine("B车接到了包裹，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                 }
 
             }
@@ -273,6 +297,7 @@ namespace EDCHOST21
                             && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y)
                         {
                             CarA.AddWallPunish();
+                            Debug.WriteLine("A车撞到了竖着的墙，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         }
 
                     }
@@ -284,6 +309,7 @@ namespace EDCHOST21
                             && mLabyrinth.mpWallList[i].w2.y <= CarA.mPos.y)
                         {
                             CarA.AddWallPunish();
+                            Debug.WriteLine("A车撞到了竖着的墙，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         }
 
                     }
@@ -298,10 +324,11 @@ namespace EDCHOST21
                             && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x)
                         {
                             CarA.AddWallPunish();
+                            Debug.WriteLine("A车撞到了横着的墙，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         }
 
                     }
-                    if (mLabyrinth.mpWallList[i].w2.x < mLabyrinth.mpWallList[i].w1.x)//障碍2在障碍1的下面
+                    if (mLabyrinth.mpWallList[i].w2.x < mLabyrinth.mpWallList[i].w1.x)//障碍2在障碍1的
                     {
                         if (mLabyrinth.mpWallList[i].w1.y >= CarA.mPos.y - 5
                             && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y + 5
@@ -309,6 +336,7 @@ namespace EDCHOST21
                             && mLabyrinth.mpWallList[i].w2.x <= CarA.mPos.x)
                         {
                             CarA.AddWallPunish();
+                            Debug.WriteLine("A车撞到了横着的墙，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         }
                     }
                 }
@@ -330,6 +358,7 @@ namespace EDCHOST21
                             && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y)
                         {
                             CarB.AddWallPunish();
+                            Debug.WriteLine("B车撞到了竖着的墙，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                         }
 
                     }
@@ -341,6 +370,7 @@ namespace EDCHOST21
                             && mLabyrinth.mpWallList[i].w2.y <= CarB.mPos.y)
                         {
                             CarB.AddWallPunish();
+                            Debug.WriteLine("B车撞到了竖着的墙，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                         }
 
                     }
@@ -355,10 +385,11 @@ namespace EDCHOST21
                             && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x)
                         {
                             CarB.AddWallPunish();
+                            Debug.WriteLine("B车撞到了横着的墙，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                         }
 
                     }
-                    if (mLabyrinth.mpWallList[i].w2.x < mLabyrinth.mpWallList[i].w1.x)//障碍2在障碍1的下面
+                    if (mLabyrinth.mpWallList[i].w2.x < mLabyrinth.mpWallList[i].w1.x)//障碍2在障碍1的
                     {
                         if (mLabyrinth.mpWallList[i].w1.y >= CarB.mPos.y - 5
                             && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y + 5
@@ -366,6 +397,7 @@ namespace EDCHOST21
                             && mLabyrinth.mpWallList[i].w2.x <= CarB.mPos.x)
                         {
                             CarB.AddWallPunish();
+                            Debug.WriteLine("B车撞到了横着的墙，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                         }
                     }
                 }
@@ -385,6 +417,7 @@ namespace EDCHOST21
                     {
 
                         CarA.AddFloodPunish();
+                        Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                     }
                 }
                 else if (mFlood.num == 2)
@@ -393,10 +426,12 @@ namespace EDCHOST21
                     if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM)
                     {
                         CarA.AddFloodPunish();
+                        Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                     }
                     if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM)
                     {
                         CarA.AddFloodPunish();
+                        Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                     }
                 }
 
@@ -415,6 +450,7 @@ namespace EDCHOST21
                     {
 
                         CarB.AddFloodPunish();
+                        Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                     }
                 }
                 else if (mFlood.num == 2)
@@ -423,10 +459,12 @@ namespace EDCHOST21
                     if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM)
                     {
                         CarB.AddFloodPunish();
+                        Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                     }
                     if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM)
                     {
                         CarB.AddFloodPunish();
+                        Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                     }
                 }
 
@@ -439,21 +477,25 @@ namespace EDCHOST21
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
+                Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
             if (CarA.mLastPos.x > 220 && CarA.mPos.x > 220 && CarA.mLastPos.y > 30 && CarA.mLastPos.y < 220 && CarA.mPos.y > 30 && CarA.mPos.y < 220 && CarA.mPos.y < CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
+                Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
             if (CarA.mLastPos.y < 30 && CarA.mPos.y < 30 && CarA.mLastPos.x > 30 && CarA.mLastPos.x < 220 && CarA.mPos.x > 30 && CarA.mPos.x < 220 && CarA.mPos.x < CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
+                Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
             if (CarA.mLastPos.y > 220 && CarA.mPos.y > 220 && CarA.mLastPos.x > 30 && CarA.mLastPos.x < 220 && CarA.mPos.x > 30 && CarA.mPos.x < 220 && CarA.mPos.x > CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
+                Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
         }
         public void CheckCarBWrongDirection()
@@ -462,21 +504,25 @@ namespace EDCHOST21
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
+                Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
             if (CarB.mLastPos.x > 220 && CarB.mPos.x > 220 && CarB.mLastPos.y > 30 && CarB.mLastPos.y < 220 && CarB.mPos.y > 30 && CarB.mPos.y < 220 && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
+                Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
             if (CarB.mLastPos.y < 30 && CarB.mPos.y < 30 && CarB.mLastPos.x > 30 && CarB.mLastPos.x < 220 && CarB.mPos.x > 30 && CarB.mPos.x < 220 && CarB.mPos.x < CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
+                Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
             if (CarB.mLastPos.y > 220 && CarB.mPos.y > 220 && CarB.mLastPos.x > 30 && CarB.mLastPos.x < 220 && CarB.mPos.x > 30 && CarB.mPos.x < 220 && CarB.mPos.x > CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
+                Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
         }
 
@@ -508,6 +554,7 @@ namespace EDCHOST21
                     CheckCarAonObstacle();
                     CheckCarATransPassenger();
                     CheckCarAWrongDirection();
+                    Debug.WriteLine("0.1 Update！");
                 }
                 else
                 {
@@ -518,6 +565,7 @@ namespace EDCHOST21
                     CheckCarBonObstacle();
                     CheckCarBTransPassenger();
                     CheckCarBWrongDirection();
+                    Debug.WriteLine("0.1 Update！");
                 }
             }
         }
@@ -529,6 +577,7 @@ namespace EDCHOST21
             {
                 CarA.mLastOneSecondPos = CarA.mPos;
                 CarB.mLastOneSecondPos = CarB.mPos;
+                Debug.WriteLine("Update CarPos A位置 x {0}, y {1}, B位置 x {2}, y {3}", CarA.mPos.x, CarA.mPos.y, CarB.mPos.x, CarB.mPos.y);
             }
         }
 
@@ -553,12 +602,14 @@ namespace EDCHOST21
                                 mFlood.dot1 = new Dot(MAZE_SHORT_BORDER_CM + i * MAZE_CROSS_DIST_CM - 15,
                             MAZE_CROSS_DIST_CM + j * MAZE_CROSS_DIST_CM - 15);
                                 mFlood.num = 1;
+                                Debug.WriteLine("A 设置了泄洪口 1，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                             }
                             if (mFlood.num == 1)
                             {
                                 mFlood.dot2 = new Dot(MAZE_SHORT_BORDER_CM + i * MAZE_CROSS_DIST_CM - 15,
                                                             MAZE_CROSS_DIST_CM + j * MAZE_CROSS_DIST_CM - 15);
                                 mFlood.num = 2;
+                                Debug.WriteLine("A 设置了泄洪口 2，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                             }
                         }
 
@@ -586,12 +637,14 @@ namespace EDCHOST21
                                 mFlood.dot1 = new Dot(MAZE_SHORT_BORDER_CM + i * MAZE_CROSS_DIST_CM - 15,
                             MAZE_CROSS_DIST_CM + j * MAZE_CROSS_DIST_CM - 15);
                                 mFlood.num = 1;
+                                Debug.WriteLine("B 设置了泄洪口 1，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                             }
                             if (mFlood.num == 1)
                             {
                                 mFlood.dot2 = new Dot(MAZE_SHORT_BORDER_CM + i * MAZE_CROSS_DIST_CM - 15,
                                                             MAZE_CROSS_DIST_CM + j * MAZE_CROSS_DIST_CM - 15);
                                 mFlood.num = 2;
+                                Debug.WriteLine("B 设置了泄洪口 2，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                             }
                         }
 
