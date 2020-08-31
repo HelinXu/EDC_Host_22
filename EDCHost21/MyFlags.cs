@@ -14,9 +14,16 @@ namespace EDCHOST21
 {
     public class MyFlags
     {
-        public bool showMask;    // 调试颜色识别
-        public bool running;     // 比赛是否正在进行
-        public bool calibrated;  // 地图是否被校准
+        // 调试颜色识别
+        public bool showMask;
+        // 比赛是否正在进行
+        public bool running;
+        // 地图是否被校准
+        // 只有校正后才能准确实现logicMap与showMap，camMap间的坐标转换
+        // camMap和showMap坐标的对应始终是准确的，但它们与logicMap的顶点不一定重合
+        // 因此需要手动在showMap上选中场地的4个顶点以校正
+        public bool calibrated;  
+        
         public bool videomode;
         public int clickCount;   // 画面被点击的次数
 
@@ -51,23 +58,8 @@ namespace EDCHOST21
         // 在场上的小车是否在迷宫中
         public bool IsInMaze;
 
-        // 以下的坐标都是逻辑坐标
-        // 当前小车的坐标
-        public Point2i logicCarA;
-        public Point2i logicCarB;
 
-        // 防汛物资的坐标
-        public Point2i[] logicPkgs;
 
-        // 人员起始坐标和待运输的位置坐标
-        public Point2i logicPsgStart;
-        public Point2i logicPsgEnd;
-
-        // 目前场上被困人员的状况（同一时间场上最多1个被困人员）
-        public PassengerState psgState;
-
-        // 比赛状态：未开始、正常进行、暂停、结束
-        public GameState gameState;
 
         public void Init()
         {
@@ -79,14 +71,7 @@ namespace EDCHOST21
             // 初始化色彩识别参数
             configs = new LocConfigs();
 
-            // 初始化物资和小车的位置
-            logicPkgs = new Point2i[0];
-            logicCarA = new Point2i();
-            logicCarB = new Point2i();
 
-            // 初始化人员位置
-            logicPsgStart = new Point2i();
-            logicPsgEnd = new Point2i();
 
             // 设置3张地图的大小
             // 以下数据待定，根据实际设备确定

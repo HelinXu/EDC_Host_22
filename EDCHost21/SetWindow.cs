@@ -173,7 +173,7 @@ namespace EDCHOST21
                 _tracker.capture.Open((int)nudCapture.Value);
                 _tracker.flags.cameraSize.Width = _tracker.capture.FrameWidth;
                 _tracker.flags.cameraSize.Height = _tracker.capture.FrameHeight;
-                _tracker.cc = new CoordinateConverter(_tracker.flags);
+                _tracker.coordCvt = new CoordinateConverter(_tracker.flags);
             }
         }
 

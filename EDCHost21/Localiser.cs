@@ -26,6 +26,19 @@ namespace EDCHOST21
             centres2 = new List<Point2i>();
         }
 
+        public List<Point2i> GetCentres(Camp cmp)
+        {
+            List<Point2i> centres;
+            switch (cmp)
+            {
+                case Camp.A: centres = new List<Point2i>(centres1); break;
+                case Camp.B: centres = new List<Point2i>(centres2); break;
+                default: centres = new List<Point2i>(); break;
+            }
+            return centres;
+        }
+
+
         // 根据计算得到的中心点集，返回定位到的小车 showMap 坐标
         // 若在相机拍摄的图中没有发现某小车，则该车的坐标返回(-1, -1)
         public void GetCarLocations(out Point2i pt1, out Point2i pt2)
@@ -33,14 +46,12 @@ namespace EDCHOST21
             if (centres1.Count != 0)
             {
                 pt1 = centres1[0];
-                centres1.Clear();
             }
             else pt1 = new Point2i(-1, -1);
 
             if (centres2.Count != 0)
             {
                 pt2 = centres2[0];
-                centres2.Clear();
             }
             else pt2 = new Point2i(-1, -1);
         }
@@ -52,6 +63,12 @@ namespace EDCHOST21
             if (mat == null || mat.Empty()) return;
             // 如果没有指定定位小车的标准，则返回
             if (localiseFlags == null) return;
+
+            centres1.Clear();
+            centres2.Clear();
+
+            // 为了后面Scalar函数中参数写起来方便
+            MyFlags.LocConfigs configs = localiseFlags.configs;
 
             // 解释：
             // MatType的组成方式：CV_(位数）+（数据类型）+ C（通道数）
@@ -71,8 +88,6 @@ namespace EDCHOST21
                 // 颜色空间转化：将图片从RGB格式转化为HSV格式
                 // hue色调，sat饱和度，value亮度
                 Cv2.CvtColor(mat, hsv, ColorConversionCodes.RGB2HSV);
-                // 为了后面Scalar函数中参数写起来方便
-                MyFlags.LocConfigs configs = localiseFlags.configs;
 
                 // 由定义：typedef struct Scalar { 
                 //            double val[4]; 
@@ -144,7 +159,7 @@ namespace EDCHOST21
                 //小车2
                 foreach (Point2i[] c2 in contours2)
                 {
-                    Point2i centre = new Point2f();
+                    Point2i centre = new Point2i();
                     Moments moments = Cv2.Moments(c2);
                     centre.X = (int)(moments.M10 / moments.M00);
                     centre.Y = (int)(moments.M01 / moments.M00);
@@ -152,23 +167,6 @@ namespace EDCHOST21
                     if (area <= configs.areaLower) continue;
                     centres2.Add(centre);
                 }
-
-
-                // 分别在小车1和小车2的位置上绘制圆圈
-                foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
-                foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
-
-                // 如果比赛已经开始
-                if (localiseFlags.gameState != GameState.UNSTART)
-                {
-                    //在人员起始位置上绘制矩形
-                    int x10 = localiseFlags.logicPsgStart.X - 8;
-                    int y10 = localiseFlags.logicPsgStart.Y - 8;
-                    Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-
-                }
-                //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
-                //Cv2.ImShow("binary", merged);
             }
         }
     }

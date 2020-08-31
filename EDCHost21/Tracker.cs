@@ -8,13 +8,18 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 using Point2i = OpenCvSharp.Point;
+using Cvt = EDCHOST21.MyConvert;
 
 namespace EDCHOST21
 {
     public partial class Tracker : Form
     {
         #region 成员变量的声明
+
+        // 不合理的坐标
+        public static Point2i InvalidPos = new Point2i(-1, -1);
 
         // 比赛所用参数和场上状况
         public MyFlags flags = null;
@@ -27,7 +32,7 @@ namespace EDCHOST21
         // 上一个记录的时间
         private DateTime timeCamPrev;
         // 坐标转换器
-        public CoordinateConverter cc;
+        public CoordinateConverter coordCvt;
         // 定位器
         private Localiser localiser;
 
@@ -39,18 +44,28 @@ namespace EDCHOST21
         private Point2i camCarA;
         // 车B坐标
         private Point2i camCarB;
+        // 物资坐标
+        private Point2i[] camPkgs;
+
+        // 以下坐标均为逻辑坐标
+        private Point2i logicPsgStart;
+        private Point2i logicPsgEnd;
+        private Point2i logicCarA;
+        private Point2i logicCarB;
+        private Point2i[] logicPkgs;
+
+        // 以下均为显示坐标
+        private Point2i showCarA;
+        private Point2i showCarB;
 
         // 游戏逻辑
         private Game game;
         // 视频输出流
         private VideoWriter vw = null;
-
         //是否已经进行了参数设置
         private bool alreadySet;
-
         // 与小车进行蓝牙通讯的端口
         public SerialPort serial1, serial2;
-
         // 可用的端口名称
         public string[] validPorts;
 
@@ -99,7 +114,7 @@ namespace EDCHOST21
             showCornerPts = new Point2f[4];
 
             // 以既有的flags参数初始化坐标转换器
-            cc = new CoordinateConverter(flags);
+            coordCvt = new CoordinateConverter(flags);
 
             // 定位小车位置的类
             localiser = new Localiser();
@@ -108,11 +123,23 @@ namespace EDCHOST21
             timeCamNow = DateTime.Now;
             timeCamPrev = timeCamNow;
 
-            // 人员、小车相机坐标的初始化
+            // 相机坐标初始化
             camPsgStart = new Point2i();
             camPsgEnd = new Point2i();
             camCarA = new Point2i();
             camCarB = new Point2i();
+            camPkgs = new Point2i[0];
+
+            // 逻辑坐标初始化
+            logicPsgStart = new Point2i();
+            logicPsgEnd = new Point2i();
+            logicCarA = new Point2i();
+            logicCarB = new Point2i();
+            logicPkgs = new Point2i[0];
+
+            // 显示坐标初始化
+            showCarA = new Point2i();
+            showCarB = new Point2i();
 
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
@@ -148,7 +175,7 @@ namespace EDCHOST21
                 // 启动计时器，执行给迷宫内的小车定时发送信息的任务
                 timerMsg1s.Start();
             }
-
+            Debug.WriteLine("Tracker Initialize Finished\n");
         }
 
         // 进行界面刷新、读取摄像头图像、与游戏逻辑交互的周期性函数
@@ -157,46 +184,28 @@ namespace EDCHOST21
             // 如果还未进行参数设置，则创建并打开SetWindow窗口，进行参数设置
             if (!alreadySet)
             {
-                lock (flags)
-                {
-                    SetWindow st = new SetWindow(ref flags, ref game, this);
-                    st.Show();
-                }
+                SetWindow st = new SetWindow(ref flags, ref game, this);
+                st.Show();
                 alreadySet = true;
             }
 
             // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
-            CameraReading();
+            VideoProcess();
 
-            // 此段代码可以交给Game完成
             // 保存上一帧的小车位置，以便判断是否逆行
-            game.CarA.mLastPos.x = game.CarA.mPos.x;
-            game.CarA.mLastPos.y = game.CarA.mPos.y;
-            game.CarB.mLastPos.x = game.CarB.mPos.x;
-            game.CarB.mLastPos.y = game.CarB.mPos.y;
+            game.CarA.UpdateLastPos();
+            game.CarB.UpdateLastPos();
 
             // 游戏逻辑端接收图像处理端信息
-            lock (flags)
-            {
-                game.CarA.mPos.x = flags.logicCarA.X;
-                game.CarA.mPos.y = flags.logicCarA.Y;
-                game.CarB.mPos.x = flags.logicCarB.X;
-                game.CarB.mPos.y = flags.logicCarB.Y;
-            }
+            game.CarA.SetPos(Cvt.Point2Dot(logicCarA));
+            game.CarB.SetPos(Cvt.Point2Dot(logicCarB));  
 
             // 更新比赛信息
             game.Update();
 
             // 图像处理端接收游戏逻辑端信息
-            lock (flags)
-            {
-                flags.logicPsgStart.X = game.currentPassenger.Start_Dot.x;
-                flags.logicPsgStart.Y = game.currentPassenger.Start_Dot.y;
-                flags.logicPsgEnd.X = game.currentPassenger.End_Dot.x;
-                flags.logicPsgEnd.Y = game.currentPassenger.End_Dot.y;
-                flags.gameState = game.gameState;
-            }
-            
+            logicPsgStart = Cvt.Dot2Point(game.curPsg.Start_Dot);
+            logicPsgEnd = Cvt.Dot2Point(game.curPsg.End_Dot); 
         }
 
         // 当Tracker被加载时调用此函数
@@ -227,6 +236,7 @@ namespace EDCHOST21
                 fsRead.Close();
             }
         }
+
 
         #region 向小车传送信息
         // 给小车A发送信息
@@ -261,16 +271,9 @@ namespace EDCHOST21
         #region 图像处理与界面显示
 
         // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
-        private void CameraReading()
+        private void VideoProcess()
         {
-            bool control = false;
-
-            lock (flags)
-            {
-                control = flags.running;
-            }
-
-            if (control)
+            if (flags.running)
             {
                 // 多个using连在一起写可能是共用最后一个using的作用域（没查到相关资料）
                 using (Mat videoFrame = new Mat())
@@ -279,47 +282,43 @@ namespace EDCHOST21
                     // 从视频流中读取一帧相机画面videoFrame
                     if (capture.Read(videoFrame))
                     {
-                        lock (flags)
-                        {
-                            // 调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
-                            cc.PeopleFilter(flags);
+                        // 调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
+                        // coordCvt.PeopleFilter(flags);
 
-                            // 调用定位器，进行图像处理，得到小车和小球的位置中心点集
-                            // 第一个形参传入的是指针，所以videoFrame已被修改（画上了红蓝圆点）
-                            localiser.Locate(videoFrame, flags);
-
-                            // 绘制边界点，在鼠标点击的场地的四个边界点上画上绿色小十字
-                            foreach (Point2f pt in cc.ShowToCamera(showCornerPts))
-                            {
-                                Cv2.Line(videoFrame, (int)(pt.X - 3), (int)(pt.Y), 
-                                    (int)(pt.X + 3), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
-                                Cv2.Line(videoFrame, (int)(pt.X), (int)(pt.Y - 3), 
-                                    (int)(pt.X), (int)(pt.Y + 3), new Scalar(0x00, 0xff, 0x98));
-                            }
-                        }
+                        // 调用定位器，进行图像处理，得到小车位置中心点集
+                        // 第一个形参videoFrame传入的是指针，所以videoFrame已被修改（画上了红蓝圆点）
+                        localiser.Locate(videoFrame, flags);
+                        
                         // 调用定位器，得到小车的坐标
                         localiser.GetCarLocations(out camCarA, out camCarB);
 
-                        lock (flags)
-                        {
-                            // 如果画面已经被手工校正
-                            if (flags.calibrated)
-                            {
-                                // 将小车坐标从相机坐标转化成逻辑坐标
-                                Point2f[] car12 = { camCarA, camCarB };
-                                Point2f[] carAB = cc.CameraToLogic(car12);
+                        // 小车的相机坐标数组
+                        Point2f[] camCars = { camCarA, camCarB };
 
-                                // 将小车坐标存储到flags中
-                                flags.logicCarA = carAB[0];
-                                flags.logicCarB = carAB[1];
-                            }
-                            else // 这边没看懂，为什么在图像未被校正的情况下直接赋值？
-                            {
-                                // 直接将小车坐标存储到flags中
-                                flags.logicCarA = camCarA;
-                                flags.logicCarB = camCarB;
-                            }
+                        // 转换成显示坐标数组
+                        // 此转换与只与showMap和camMap有关，不需要图像被校正
+                        Point2f[] showCars = coordCvt.CameraToShow(camCars);
+
+                        showCarA = showCars[0];
+                        showCarB = showCars[1];
+
+                        // 如果画面已经被手工校正，则可以获取小车的逻辑坐标
+                        if (flags.calibrated)
+                        {
+                            // 将小车坐标从相机坐标转化成逻辑坐标
+                            Point2f[] logicCars = coordCvt.CameraToLogic(camCars);
+
+                            logicCarA = logicCars[0];
+                            logicCarB = logicCars[1];
                         }
+                        else  // 否则将小车的坐标设为（-1，-1）
+                        {
+                            logicCarA = InvalidPos;
+                            logicCarB = InvalidPos;
+                        }
+
+                        // 在显示的画面上绘制小车，乘客，物资等对应的图案
+                        PaintPattern(videoFrame, localiser);
 
                         // 处理时间参数
                         timeCamNow = DateTime.Now;
@@ -330,18 +329,57 @@ namespace EDCHOST21
                         // Resize函数的最后一个参数是缩放函数的插值算法
                         // InterpolationFlags.Cubic 表示双三次插值法，放大图像时效果较好，但速度较慢
                         Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Cubic);
+
+                        
+
                         // 更新界面组件的画面显示
                         BeginInvoke(new Action<Image>(UpdateCameraPicture), BitmapConverter.ToBitmap(showFrame));
                         // 输出视频
                         if (flags.videomode == true)
+                        {
                             vw.Write(showFrame);
-                    }
-                    lock (flags)
-                    {
-                        control = flags.running;
+                        }
                     }
                 }
             }
+        }
+
+        // 在图像上绘制图案便于观察
+        public void PaintPattern(Mat mat, Localiser loc)
+        {
+            // 绘制边界点，在鼠标点击的场地的四个边界点上画上绿色小十字
+            foreach (Point2f pt in coordCvt.ShowToCamera(showCornerPts))
+            {
+                Cv2.Line(mat, (int)(pt.X - 3), (int)(pt.Y),
+                    (int)(pt.X + 3), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
+                Cv2.Line(mat, (int)(pt.X), (int)(pt.Y - 3),
+                    (int)(pt.X), (int)(pt.Y + 3), new Scalar(0x00, 0xff, 0x98));
+            }
+
+            // Cv2.Circle(mat, 50, 50, 15, new Scalar(0x3c, 0x14, 0xdc), -1);
+
+            //Debug.WriteLine("{0}\n", loc.GetCentres(Camp.A).Count());
+
+            // 在小车1的位置上绘制红色实心圆
+            foreach (Point2i c1 in loc.GetCentres(Camp.A))
+                Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
+
+            //Point2f[] camCentCarB = loc.GetCentres(Camp.B).ToArray();
+            // 在小车2的位置上绘制蓝色实心圆
+            foreach (Point2i c2 in loc.GetCentres(Camp.B))
+                Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
+
+            // 在人员起始位置上绘制矩形
+            // 如果人员存在
+            if (logicPsgStart != InvalidPos)
+            {
+                int x10 = logicPsgStart.X - 8;
+                int y10 = logicPsgStart.Y - 8;
+                Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+            }
+
+            //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
+            //Cv2.ImShow("binary", merged);
         }
 
         // 更新UI界面上的显示图像
@@ -450,7 +488,7 @@ namespace EDCHOST21
                 showCornerPts[idx].Y = yMouse;
                 if (idx == 3)
                 {
-                    cc.UpdateCorners(showCornerPts, flags);
+                    coordCvt.UpdateCorners(showCornerPts, flags);
                     MessageBox.Show(
                           $"边界点设置完成\n"
                         + $"0: {showCornerPts[0].X, 5}, {showCornerPts[0].Y, 5}\t"

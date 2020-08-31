@@ -166,6 +166,7 @@ namespace EDCHOST21
 
         #endregion
 
+/*
         // 将flags中人员的起始位置从逻辑坐标转换为显示坐标
         public void PeopleFilter(MyFlags flags)
         {
@@ -178,6 +179,6 @@ namespace EDCHOST21
 
             // 计算被困人员在画面地图上的坐标
             flags.logicPsgStart = res[0];
-        }
+        }*/
     }
 }

@@ -89,7 +89,7 @@
   <ItemGroup>
     <Compile Include="CoordinateConverter.cs" />
     <Compile Include="Dot.cs" />
-    <Compile Include="General.cs" />
+    <Compile Include="MyConvert.cs" />
     <Compile Include="Labyrinth.cs" />
     <Compile Include="Car.cs" />
     <Compile Include="Game.cs" />

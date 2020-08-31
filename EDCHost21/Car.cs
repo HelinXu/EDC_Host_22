@@ -9,7 +9,7 @@ namespace EDCHOST21
     //队名
     public enum Camp
     {
-        NONE = 0, CMP_A, CMP_B
+        NONE = 0, A, B
     };
     public class Car //选手的车
     {
@@ -55,6 +55,16 @@ namespace EDCHOST21
             mWrongDirCount = 0;
             mFoulCount = 0; //xhl 0824 添加
         }
+        public void UpdateLastPos()
+        {
+            mLastPos = mPos;
+        }
+
+        public void SetPos(Dot pos)
+        {
+            mPos = pos;
+        }
+
         public void AddFloodPunish() //犯规
         {
             mCrossFloodCount++;

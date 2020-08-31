@@ -30,10 +30,11 @@ namespace EDCHOST21
         public const int PKG_NUM_perGROUP = 6;       //场上每次刷新package物资的个数
         public GameStage gameStage;//比赛阶段
         public Camp UpperCamp; //当前半场需完成“上半场”任务的一方
-        public GameState gameState;//比赛状态
+        public GameState gameState;//比赛状态        
+        public PassengerState psgState; // 目前场上被困人员的状况（同一时间场上最多1个被困人员）
         public Car CarA, CarB;//定义小车
-        public Passenger currentPassenger;//当前被运载的乘客
-        public Package[] currentPackageList;//当前场上的物资列表
+        public Passenger curPsg;//当前被运载的乘客
+        public Package[] currentPkgList;//当前场上的物资列表
         public PassengerGenerator psgGenerator;//仅用来生成乘客序列
         public PackageGenerator pkgGenerator; //仅用来生成物资序列
         public int mPackageGroupCount;//用于记录现在的Package是第几波
@@ -49,14 +50,15 @@ namespace EDCHOST21
             if (gameStage == GameStage.FIRST_1)
             {
 
-                UpperCamp = Camp.CMP_A;
-                CarA = new Car(Camp.CMP_A, 0);
-                CarB = new Car(Camp.CMP_B, 1);
+                UpperCamp = Camp.A;
+                CarA = new Car(Camp.A, 0);
+                CarB = new Car(Camp.B, 1);
                 gameState = GameState.UNSTART;
+                psgState = PassengerState.TRAPPED;
                 psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
                 pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 4);
-                currentPackageList = new Package[PKG_NUM_perGROUP];
-                currentPassenger = new Passenger(new Dot(), new Dot()); //?
+                currentPkgList = new Package[PKG_NUM_perGROUP];
+                curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
                 mFlood = new Flood(0);
                 mPackageGroupCount = 0;
                 mLastWrongDirTime = -10;
@@ -64,14 +66,15 @@ namespace EDCHOST21
             else
             {
                 //@TODO
-                UpperCamp = Camp.CMP_A;
-                CarA = new Car(Camp.CMP_A, 0);
-                CarB = new Car(Camp.CMP_B, 1);
+                UpperCamp = Camp.A;
+                CarA = new Car(Camp.A, 0);
+                CarB = new Car(Camp.B, 1);
                 gameState = GameState.UNSTART;
+                psgState = PassengerState.TRAPPED;
                 psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
                 pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 4);
-                currentPackageList = new Package[PKG_NUM_perGROUP];
-                currentPassenger = new Passenger(new Dot(), new Dot()); //?
+                currentPkgList = new Package[PKG_NUM_perGROUP];
+                curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
                 mFlood = new Flood(0);
                 mPackageGroupCount = 0;
                 mLastWrongDirTime = -10;
@@ -88,11 +91,11 @@ namespace EDCHOST21
             {
                 for (int i = 0; i < PKG_NUM_perGROUP; i++)
                 {
-                    currentPackageList[i].mPos
+                    currentPkgList[i].mPos
                         = pkgGenerator.
                         GetPackage(i + PKG_NUM_perGROUP * mPackageGroupCount).
                         GetDot();
-                    currentPackageList[i].IsPicked = 0;
+                    currentPkgList[i].IsPicked = 0;
                 }
                 mPackageGroupCount++;
             }
@@ -146,7 +149,7 @@ namespace EDCHOST21
         //下面为更新乘客信息函数
         public void UpdatePassenger()//更新乘客信息
         {
-            currentPassenger = psgGenerator.Next();
+            curPsg = psgGenerator.Next();
         }
 
         public void CheckNextStage()//从上半场更换到下半场函数
@@ -168,7 +171,7 @@ namespace EDCHOST21
                     gameState = GameState.UNSTART;
                     if (gameStage == GameStage.FIRST_2)
                     {
-                        UpperCamp = Camp.CMP_B;//上半场转换
+                        UpperCamp = Camp.B;//上半场转换
                         psgGenerator.ResetIndex();//Passenger的索引复位
                         if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
                         {
@@ -185,7 +188,7 @@ namespace EDCHOST21
         //下面四个为接口
         public void CheckCarAGetPassenger()//小车A接到了乘客
         {
-            if (GetDistance(CarA.mPos, currentPassenger.Start_Dot)
+            if (GetDistance(CarA.mPos, curPsg.Start_Dot)
                 <= COINCIDE_ERR_DIST_CM
                 && CarA.mIsWithPassenger == 0)
             {
@@ -195,7 +198,7 @@ namespace EDCHOST21
         }
         public void CheckCarBGetPassenger()//小车B接到了乘客
         {
-            if (GetDistance(CarB.mPos, currentPassenger.Start_Dot)
+            if (GetDistance(CarB.mPos, curPsg.Start_Dot)
                 <= COINCIDE_ERR_DIST_CM
                 && CarB.mIsWithPassenger == 0)
             {
@@ -205,7 +208,7 @@ namespace EDCHOST21
         public void CheckCarATransPassenger()//小车A成功运送了乘客
         {
 
-            if (GetDistance(CarA.mPos, currentPassenger.End_Dot)
+            if (GetDistance(CarA.mPos, curPsg.End_Dot)
                 <= COINCIDE_ERR_DIST_CM
                 && CarA.mIsWithPassenger == 1)
             {
@@ -216,7 +219,7 @@ namespace EDCHOST21
         }
         public void CheckCarBTransPassenger()//小车A成功运送了乘客
         {
-            if (GetDistance(CarB.mPos, currentPassenger.End_Dot)
+            if (GetDistance(CarB.mPos, curPsg.End_Dot)
                 <= COINCIDE_ERR_DIST_CM
                 && CarB.mIsWithPassenger == 1)
             {
@@ -232,12 +235,12 @@ namespace EDCHOST21
 
             for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
-                if (GetDistance(CarA.mPos, currentPackageList[i].mPos)
+                if (GetDistance(CarA.mPos, currentPkgList[i].mPos)
                     <= COINCIDE_ERR_DIST_CM
-                    && currentPackageList[i].IsPicked == 0)
+                    && currentPkgList[i].IsPicked == 0)
                 {
                     CarA.AddPickPkgCount();
-                    currentPackageList[i].IsPicked = 1;
+                    currentPkgList[i].IsPicked = 1;
                 }
             }
 
@@ -246,12 +249,12 @@ namespace EDCHOST21
         {
             for (int i = 0; i < PKG_NUM_perGROUP; i++)
             {
-                if (GetDistance(CarB.mPos, currentPackageList[i].mPos)
+                if (GetDistance(CarB.mPos, currentPkgList[i].mPos)
                     <= COINCIDE_ERR_DIST_CM
-                    && currentPackageList[i].IsPicked == 0)
+                    && currentPkgList[i].IsPicked == 0)
                 {
                     CarB.AddPickPkgCount();
-                    currentPackageList[i].IsPicked = 1;
+                    currentPkgList[i].IsPicked = 1;
                 }
 
             }
@@ -491,6 +494,7 @@ namespace EDCHOST21
             mPrevTime = GetCurrentTime();
         }
         #endregion
+
         //0.1s
         public void Update()
         {
@@ -663,24 +667,24 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)mFlood.dot1.y;
             message[messageCnt++] = (byte)mFlood.dot2.x;
             message[messageCnt++] = (byte)mFlood.dot2.y;
-            message[messageCnt++] = (byte)currentPassenger.Start_Dot.x;
-            message[messageCnt++] = (byte)currentPassenger.Start_Dot.x;
-            message[messageCnt++] = (byte)currentPassenger.End_Dot.x;
-            message[messageCnt++] = (byte)currentPassenger.End_Dot.x;
-            message[messageCnt++] = (byte)(((byte)currentPackageList[0].IsPicked << 7) | ((byte)currentPackageList[1].IsPicked << 6) | ((byte)currentPackageList[2].IsPicked << 5)
-                | ((byte)currentPackageList[3].IsPicked << 4) | ((byte)currentPackageList[4].IsPicked << 3) | ((byte)currentPackageList[5].IsPicked << 2) | ((byte)CarA.mIsInMaze << 1));
-            message[messageCnt++] = (byte)currentPackageList[0].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[0].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[1].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[1].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[2].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[2].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[3].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[3].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[4].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[4].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[5].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[5].mPos.y;
+            message[messageCnt++] = (byte)curPsg.Start_Dot.x;
+            message[messageCnt++] = (byte)curPsg.Start_Dot.x;
+            message[messageCnt++] = (byte)curPsg.End_Dot.x;
+            message[messageCnt++] = (byte)curPsg.End_Dot.x;
+            message[messageCnt++] = (byte)(((byte)currentPkgList[0].IsPicked << 7) | ((byte)currentPkgList[1].IsPicked << 6) | ((byte)currentPkgList[2].IsPicked << 5)
+                | ((byte)currentPkgList[3].IsPicked << 4) | ((byte)currentPkgList[4].IsPicked << 3) | ((byte)currentPkgList[5].IsPicked << 2) | ((byte)CarA.mIsInMaze << 1));
+            message[messageCnt++] = (byte)currentPkgList[0].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[0].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[1].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[1].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[2].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[2].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[3].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[3].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[4].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[4].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[5].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[5].mPos.y;
             message[messageCnt++] = (byte)(CarA.MyScore >> 8);
             message[messageCnt++] = (byte)CarA.MyScore;
             message[messageCnt++] = (byte)CarA.mRescueCount;
@@ -766,23 +770,23 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)mFlood.dot1.y;
             message[messageCnt++] = (byte)mFlood.dot2.x;
             message[messageCnt++] = (byte)mFlood.dot2.y;
-            message[messageCnt++] = (byte)currentPassenger.Start_Dot.x;
-            message[messageCnt++] = (byte)currentPassenger.Start_Dot.x;
-            message[messageCnt++] = (byte)currentPassenger.End_Dot.x;
-            message[messageCnt++] = (byte)currentPassenger.End_Dot.x;
-            message[messageCnt++] = (byte)(((byte)currentPackageList[0].IsPicked << 7) | ((byte)currentPackageList[1].IsPicked << 6) | ((byte)currentPackageList[2].IsPicked << 5) | ((byte)currentPackageList[3].IsPicked << 4) | ((byte)currentPackageList[4].IsPicked << 3) | ((byte)currentPackageList[5].IsPicked << 2) | ((byte)CarB.mIsInMaze << 1));
-            message[messageCnt++] = (byte)currentPackageList[0].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[0].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[1].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[1].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[2].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[2].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[3].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[3].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[4].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[4].mPos.y;
-            message[messageCnt++] = (byte)currentPackageList[5].mPos.x;
-            message[messageCnt++] = (byte)currentPackageList[5].mPos.y;
+            message[messageCnt++] = (byte)curPsg.Start_Dot.x;
+            message[messageCnt++] = (byte)curPsg.Start_Dot.x;
+            message[messageCnt++] = (byte)curPsg.End_Dot.x;
+            message[messageCnt++] = (byte)curPsg.End_Dot.x;
+            message[messageCnt++] = (byte)(((byte)currentPkgList[0].IsPicked << 7) | ((byte)currentPkgList[1].IsPicked << 6) | ((byte)currentPkgList[2].IsPicked << 5) | ((byte)currentPkgList[3].IsPicked << 4) | ((byte)currentPkgList[4].IsPicked << 3) | ((byte)currentPkgList[5].IsPicked << 2) | ((byte)CarB.mIsInMaze << 1));
+            message[messageCnt++] = (byte)currentPkgList[0].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[0].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[1].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[1].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[2].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[2].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[3].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[3].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[4].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[4].mPos.y;
+            message[messageCnt++] = (byte)currentPkgList[5].mPos.x;
+            message[messageCnt++] = (byte)currentPkgList[5].mPos.y;
             message[messageCnt++] = (byte)(CarB.MyScore >> 8);
             message[messageCnt++] = (byte)CarB.MyScore;
             message[messageCnt++] = (byte)CarB.mRescueCount;

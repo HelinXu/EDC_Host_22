@@ -17,7 +17,7 @@
             {
                 components.Dispose();
                 capture.Dispose();
-                cc.Dispose();
+                coordCvt.Dispose();
             }
             base.Dispose(disposing);
         }
