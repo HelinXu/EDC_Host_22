@@ -160,7 +160,7 @@ namespace EDCHOST21
                 capture.ConvertRgb = true;
 
                 // 设置计时器timer100ms的触发间隔：75ms
-                timer.Interval = 75;
+                timer.Interval = 100; //xhl改成了100
                 // 计时器事件开始：间隔75ms执行Flush
                 timer.Start();
                 // Cv2.NamedWindow("binary");
@@ -560,7 +560,7 @@ namespace EDCHOST21
         private void buttonPause_Click(object sender, EventArgs e)
         {
             // to add something...
-
+            game.Pause();
             buttonPause.Enabled = false;
             buttonEnd.Enabled = true;
             buttonStart.Enabled = true;
@@ -651,7 +651,7 @@ namespace EDCHOST21
         // 比赛结束（待完善）
         private void buttonEnd_Click(object sender, EventArgs e)
         {
-            //game.End();
+            //game.
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
             buttonEnd.Enabled = false;
