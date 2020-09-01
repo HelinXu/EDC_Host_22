@@ -433,8 +433,9 @@ namespace EDCHOST21
                 Dot StartDot = game.mLabyrinth.mpWallList[i].w1;
                 Dot EndDot = game.mLabyrinth.mpWallList[i].w2;
                 Cv2.Line(mat, StartDot.x, StartDot.y, EndDot.x, EndDot.y, new Scalar(0x00, 0x00, 0x00), 5);
-                Debug.WriteLine("Has created one wall.");
+                
             }
+            Debug.WriteLine("Has created Laby.");
             //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
             //Cv2.ImShow("binary", merged);
         }
