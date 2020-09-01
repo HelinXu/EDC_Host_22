@@ -115,7 +115,7 @@ namespace EDCHOST21
         //该方法用于返回系统现在的时间。开发者：xhl
         public int GetCurrentTime()
         {
-            System.DateTime currentTime = new System.DateTime();
+            System.DateTime currentTime = System.DateTime.Now;
             int time = currentTime.Hour * 3600000 + currentTime.Minute * 60000 + currentTime.Second * 1000;
             Debug.WriteLine("H, M, S: {0}, {1}, {2}", currentTime.Hour, currentTime.Minute, currentTime.Second);
             Debug.WriteLine("GetCurrentTime，Time = {0}", time); 
