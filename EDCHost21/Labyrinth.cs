@@ -13,14 +13,13 @@ namespace EDCHOST21
 
         public Labyrinth(int iNum, Wall[] iList)
         {
+            mWallNum = iNum;
+            mpWallList = new Wall[iNum];
             for (int i = 0; i < iNum; i++)
             {
-
+                mpWallList[i] = new Wall(iList[i]);
             }
         }
 
-        public void AddWall(Wall NewWall)
-        {
-        }
     }
 }

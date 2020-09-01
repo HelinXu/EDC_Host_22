@@ -15,5 +15,10 @@ namespace EDCHOST21
             w1 = iw1;
             w2 = iw2;
         }
+        public Wall(Wall aWall)
+        {
+            w1 = aWall.w1;
+            w2 = aWall.w2;
+        }
     }
 }
