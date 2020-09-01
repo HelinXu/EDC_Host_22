@@ -38,7 +38,6 @@
             this.nudSat1L = new System.Windows.Forms.NumericUpDown();
             this.lblSat1L = new System.Windows.Forms.Label();
             this.nudHue2H = new System.Windows.Forms.NumericUpDown();
-            this.lblHue2H = new System.Windows.Forms.Label();
             this.nudHue2L = new System.Windows.Forms.NumericUpDown();
             this.lblHue2L = new System.Windows.Forms.Label();
             this.nudHue1H = new System.Windows.Forms.NumericUpDown();
@@ -47,12 +46,6 @@
             this.lblHue1L = new System.Windows.Forms.Label();
             this.button_ConfigSave = new System.Windows.Forms.Button();
             this.button_ConfigLoad = new System.Windows.Forms.Button();
-            this.nudHue0H = new System.Windows.Forms.NumericUpDown();
-            this.lblHue0H = new System.Windows.Forms.Label();
-            this.nudHue0L = new System.Windows.Forms.NumericUpDown();
-            this.lblHue0L = new System.Windows.Forms.Label();
-            this.nudSat0L = new System.Windows.Forms.NumericUpDown();
-            this.lblSat0L = new System.Windows.Forms.Label();
             this.cbPorts1 = new System.Windows.Forms.ComboBox();
             this.lblPort1 = new System.Windows.Forms.Label();
             this.lblCapture = new System.Windows.Forms.Label();
@@ -62,6 +55,14 @@
             this.lblBaudRate = new System.Windows.Forms.Label();
             this.lblPort2 = new System.Windows.Forms.Label();
             this.cbPorts2 = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat2L)).BeginInit();
@@ -70,9 +71,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudHue2L)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHue1H)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHue1L)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudHue0H)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudHue0L)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSat0L)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCapture)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaudRate)).BeginInit();
             this.SuspendLayout();
@@ -81,7 +79,7 @@
             // 
             this.checkBox_DebugMode.AutoSize = true;
             this.checkBox_DebugMode.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.checkBox_DebugMode.Location = new System.Drawing.Point(509, 286);
+            this.checkBox_DebugMode.Location = new System.Drawing.Point(294, 262);
             this.checkBox_DebugMode.Name = "checkBox_DebugMode";
             this.checkBox_DebugMode.Size = new System.Drawing.Size(91, 24);
             this.checkBox_DebugMode.TabIndex = 74;
@@ -92,7 +90,7 @@
             // nudAreaL
             // 
             this.nudAreaL.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudAreaL.Location = new System.Drawing.Point(302, 233);
+            this.nudAreaL.Location = new System.Drawing.Point(542, 49);
             this.nudAreaL.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -107,16 +105,16 @@
             // 
             this.lblAreaL.AutoSize = true;
             this.lblAreaL.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblAreaL.Location = new System.Drawing.Point(237, 233);
+            this.lblAreaL.Location = new System.Drawing.Point(439, 51);
             this.lblAreaL.Name = "lblAreaL";
-            this.lblAreaL.Size = new System.Drawing.Size(55, 20);
+            this.lblAreaL.Size = new System.Drawing.Size(103, 20);
             this.lblAreaL.TabIndex = 89;
-            this.lblAreaL.Text = "AreaL:";
+            this.lblAreaL.Text = "噪点识别阈值:";
             // 
             // nudValueL
             // 
             this.nudValueL.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudValueL.Location = new System.Drawing.Point(302, 183);
+            this.nudValueL.Location = new System.Drawing.Point(340, 49);
             this.nudValueL.Maximum = new decimal(new int[] {
             255,
             0,
@@ -131,7 +129,7 @@
             // 
             this.lblValueL.AutoSize = true;
             this.lblValueL.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblValueL.Location = new System.Drawing.Point(237, 183);
+            this.lblValueL.Location = new System.Drawing.Point(275, 51);
             this.lblValueL.Name = "lblValueL";
             this.lblValueL.Size = new System.Drawing.Size(61, 20);
             this.lblValueL.TabIndex = 87;
@@ -140,7 +138,7 @@
             // nudSat2L
             // 
             this.nudSat2L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudSat2L.Location = new System.Drawing.Point(302, 133);
+            this.nudSat2L.Location = new System.Drawing.Point(60, 256);
             this.nudSat2L.Maximum = new decimal(new int[] {
             255,
             0,
@@ -155,16 +153,16 @@
             // 
             this.lblSat2L.AutoSize = true;
             this.lblSat2L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblSat2L.Location = new System.Drawing.Point(237, 133);
+            this.lblSat2L.Location = new System.Drawing.Point(13, 256);
             this.lblSat2L.Name = "lblSat2L";
-            this.lblSat2L.Size = new System.Drawing.Size(53, 20);
+            this.lblSat2L.Size = new System.Drawing.Size(36, 20);
             this.lblSat2L.TabIndex = 85;
-            this.lblSat2L.Text = "Sat2L:";
+            this.lblSat2L.Text = "Sat:";
             // 
             // nudSat1L
             // 
             this.nudSat1L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudSat1L.Location = new System.Drawing.Point(302, 83);
+            this.nudSat1L.Location = new System.Drawing.Point(61, 88);
             this.nudSat1L.Maximum = new decimal(new int[] {
             255,
             0,
@@ -179,16 +177,16 @@
             // 
             this.lblSat1L.AutoSize = true;
             this.lblSat1L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblSat1L.Location = new System.Drawing.Point(237, 83);
+            this.lblSat1L.Location = new System.Drawing.Point(13, 88);
             this.lblSat1L.Name = "lblSat1L";
-            this.lblSat1L.Size = new System.Drawing.Size(53, 20);
+            this.lblSat1L.Size = new System.Drawing.Size(36, 20);
             this.lblSat1L.TabIndex = 83;
-            this.lblSat1L.Text = "Sat1L:";
+            this.lblSat1L.Text = "Sat:";
             // 
             // nudHue2H
             // 
             this.nudHue2H.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudHue2H.Location = new System.Drawing.Point(105, 283);
+            this.nudHue2H.Location = new System.Drawing.Point(180, 212);
             this.nudHue2H.Maximum = new decimal(new int[] {
             180,
             0,
@@ -199,20 +197,10 @@
             this.nudHue2H.TabIndex = 82;
             this.nudHue2H.ValueChanged += new System.EventHandler(this.nudHue2H_ValueChanged);
             // 
-            // lblHue2H
-            // 
-            this.lblHue2H.AutoSize = true;
-            this.lblHue2H.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblHue2H.Location = new System.Drawing.Point(40, 283);
-            this.lblHue2H.Name = "lblHue2H";
-            this.lblHue2H.Size = new System.Drawing.Size(64, 20);
-            this.lblHue2H.TabIndex = 81;
-            this.lblHue2H.Text = "Hue2H:";
-            // 
             // nudHue2L
             // 
             this.nudHue2L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudHue2L.Location = new System.Drawing.Point(105, 233);
+            this.nudHue2L.Location = new System.Drawing.Point(60, 212);
             this.nudHue2L.Maximum = new decimal(new int[] {
             180,
             0,
@@ -227,16 +215,16 @@
             // 
             this.lblHue2L.AutoSize = true;
             this.lblHue2L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblHue2L.Location = new System.Drawing.Point(40, 233);
+            this.lblHue2L.Location = new System.Drawing.Point(13, 214);
             this.lblHue2L.Name = "lblHue2L";
-            this.lblHue2L.Size = new System.Drawing.Size(60, 20);
+            this.lblHue2L.Size = new System.Drawing.Size(43, 20);
             this.lblHue2L.TabIndex = 79;
-            this.lblHue2L.Text = "Hue2L:";
+            this.lblHue2L.Text = "Hue:";
             // 
             // nudHue1H
             // 
             this.nudHue1H.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudHue1H.Location = new System.Drawing.Point(105, 183);
+            this.nudHue1H.Location = new System.Drawing.Point(180, 48);
             this.nudHue1H.Maximum = new decimal(new int[] {
             180,
             0,
@@ -251,16 +239,16 @@
             // 
             this.lblHue1H.AutoSize = true;
             this.lblHue1H.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblHue1H.Location = new System.Drawing.Point(40, 183);
+            this.lblHue1H.Location = new System.Drawing.Point(12, 48);
             this.lblHue1H.Name = "lblHue1H";
-            this.lblHue1H.Size = new System.Drawing.Size(64, 20);
+            this.lblHue1H.Size = new System.Drawing.Size(43, 20);
             this.lblHue1H.TabIndex = 77;
-            this.lblHue1H.Text = "Hue1H:";
+            this.lblHue1H.Text = "Hue:";
             // 
             // nudHue1L
             // 
             this.nudHue1L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudHue1L.Location = new System.Drawing.Point(105, 133);
+            this.nudHue1L.Location = new System.Drawing.Point(61, 48);
             this.nudHue1L.Maximum = new decimal(new int[] {
             180,
             0,
@@ -274,19 +262,19 @@
             // lblHue1L
             // 
             this.lblHue1L.AutoSize = true;
-            this.lblHue1L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblHue1L.Location = new System.Drawing.Point(40, 133);
+            this.lblHue1L.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lblHue1L.Location = new System.Drawing.Point(7, 14);
             this.lblHue1L.Name = "lblHue1L";
-            this.lblHue1L.Size = new System.Drawing.Size(60, 20);
+            this.lblHue1L.Size = new System.Drawing.Size(59, 20);
             this.lblHue1L.TabIndex = 75;
-            this.lblHue1L.Text = "Hue1L:";
+            this.lblHue1L.Text = "小车1";
             // 
             // button_ConfigSave
             // 
             this.button_ConfigSave.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_ConfigSave.Location = new System.Drawing.Point(442, 34);
+            this.button_ConfigSave.Location = new System.Drawing.Point(470, 207);
             this.button_ConfigSave.Name = "button_ConfigSave";
-            this.button_ConfigSave.Size = new System.Drawing.Size(67, 35);
+            this.button_ConfigSave.Size = new System.Drawing.Size(130, 35);
             this.button_ConfigSave.TabIndex = 91;
             this.button_ConfigSave.Text = "保存";
             this.button_ConfigSave.UseVisualStyleBackColor = true;
@@ -295,91 +283,19 @@
             // button_ConfigLoad
             // 
             this.button_ConfigLoad.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_ConfigLoad.Location = new System.Drawing.Point(533, 34);
+            this.button_ConfigLoad.Location = new System.Drawing.Point(470, 262);
             this.button_ConfigLoad.Name = "button_ConfigLoad";
-            this.button_ConfigLoad.Size = new System.Drawing.Size(67, 35);
+            this.button_ConfigLoad.Size = new System.Drawing.Size(130, 35);
             this.button_ConfigLoad.TabIndex = 92;
             this.button_ConfigLoad.Text = "读取";
             this.button_ConfigLoad.UseVisualStyleBackColor = true;
             this.button_ConfigLoad.Click += new System.EventHandler(this.button_ConfigLoad_Click);
             // 
-            // nudHue0H
-            // 
-            this.nudHue0H.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudHue0H.Location = new System.Drawing.Point(105, 84);
-            this.nudHue0H.Maximum = new decimal(new int[] {
-            180,
-            0,
-            0,
-            0});
-            this.nudHue0H.Name = "nudHue0H";
-            this.nudHue0H.Size = new System.Drawing.Size(75, 27);
-            this.nudHue0H.TabIndex = 96;
-            this.nudHue0H.ValueChanged += new System.EventHandler(this.nudHue0H_ValueChanged);
-            // 
-            // lblHue0H
-            // 
-            this.lblHue0H.AutoSize = true;
-            this.lblHue0H.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblHue0H.Location = new System.Drawing.Point(40, 84);
-            this.lblHue0H.Name = "lblHue0H";
-            this.lblHue0H.Size = new System.Drawing.Size(64, 20);
-            this.lblHue0H.TabIndex = 95;
-            this.lblHue0H.Text = "Hue0H:";
-            // 
-            // nudHue0L
-            // 
-            this.nudHue0L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudHue0L.Location = new System.Drawing.Point(105, 34);
-            this.nudHue0L.Maximum = new decimal(new int[] {
-            180,
-            0,
-            0,
-            0});
-            this.nudHue0L.Name = "nudHue0L";
-            this.nudHue0L.Size = new System.Drawing.Size(75, 27);
-            this.nudHue0L.TabIndex = 94;
-            this.nudHue0L.ValueChanged += new System.EventHandler(this.nudHue0L_ValueChanged);
-            // 
-            // lblHue0L
-            // 
-            this.lblHue0L.AutoSize = true;
-            this.lblHue0L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblHue0L.Location = new System.Drawing.Point(40, 34);
-            this.lblHue0L.Name = "lblHue0L";
-            this.lblHue0L.Size = new System.Drawing.Size(60, 20);
-            this.lblHue0L.TabIndex = 93;
-            this.lblHue0L.Text = "Hue0L:";
-            // 
-            // nudSat0L
-            // 
-            this.nudSat0L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudSat0L.Location = new System.Drawing.Point(302, 34);
-            this.nudSat0L.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.nudSat0L.Name = "nudSat0L";
-            this.nudSat0L.Size = new System.Drawing.Size(75, 27);
-            this.nudSat0L.TabIndex = 98;
-            this.nudSat0L.ValueChanged += new System.EventHandler(this.nudSat0L_ValueChanged);
-            // 
-            // lblSat0L
-            // 
-            this.lblSat0L.AutoSize = true;
-            this.lblSat0L.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblSat0L.Location = new System.Drawing.Point(237, 34);
-            this.lblSat0L.Name = "lblSat0L";
-            this.lblSat0L.Size = new System.Drawing.Size(53, 20);
-            this.lblSat0L.TabIndex = 97;
-            this.lblSat0L.Text = "Sat0L:";
-            // 
             // cbPorts1
             // 
             this.cbPorts1.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.cbPorts1.FormattingEnabled = true;
-            this.cbPorts1.Location = new System.Drawing.Point(525, 82);
+            this.cbPorts1.Location = new System.Drawing.Point(340, 103);
             this.cbPorts1.Name = "cbPorts1";
             this.cbPorts1.Size = new System.Drawing.Size(75, 28);
             this.cbPorts1.TabIndex = 99;
@@ -389,7 +305,7 @@
             // 
             this.lblPort1.AutoSize = true;
             this.lblPort1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblPort1.Location = new System.Drawing.Point(438, 82);
+            this.lblPort1.Location = new System.Drawing.Point(276, 103);
             this.lblPort1.Name = "lblPort1";
             this.lblPort1.Size = new System.Drawing.Size(53, 20);
             this.lblPort1.TabIndex = 100;
@@ -399,16 +315,16 @@
             // 
             this.lblCapture.AutoSize = true;
             this.lblCapture.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblCapture.Location = new System.Drawing.Point(438, 231);
+            this.lblCapture.Location = new System.Drawing.Point(439, 162);
             this.lblCapture.Name = "lblCapture";
-            this.lblCapture.Size = new System.Drawing.Size(71, 20);
+            this.lblCapture.Size = new System.Drawing.Size(99, 20);
             this.lblCapture.TabIndex = 102;
-            this.lblCapture.Text = "Capture:";
+            this.lblCapture.Text = "摄像头选择：";
             // 
             // nudCapture
             // 
             this.nudCapture.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudCapture.Location = new System.Drawing.Point(525, 231);
+            this.nudCapture.Location = new System.Drawing.Point(542, 160);
             this.nudCapture.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -423,7 +339,7 @@
             // 
             this.checkBox_ShowMask.AutoSize = true;
             this.checkBox_ShowMask.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.checkBox_ShowMask.Location = new System.Drawing.Point(256, 286);
+            this.checkBox_ShowMask.Location = new System.Drawing.Point(294, 212);
             this.checkBox_ShowMask.Name = "checkBox_ShowMask";
             this.checkBox_ShowMask.Size = new System.Drawing.Size(121, 24);
             this.checkBox_ShowMask.TabIndex = 104;
@@ -434,7 +350,7 @@
             // nudBaudRate
             // 
             this.nudBaudRate.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudBaudRate.Location = new System.Drawing.Point(525, 183);
+            this.nudBaudRate.Location = new System.Drawing.Point(542, 106);
             this.nudBaudRate.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -459,7 +375,7 @@
             // 
             this.lblBaudRate.AutoSize = true;
             this.lblBaudRate.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblBaudRate.Location = new System.Drawing.Point(438, 183);
+            this.lblBaudRate.Location = new System.Drawing.Point(439, 106);
             this.lblBaudRate.Name = "lblBaudRate";
             this.lblBaudRate.Size = new System.Drawing.Size(82, 20);
             this.lblBaudRate.TabIndex = 105;
@@ -469,7 +385,7 @@
             // 
             this.lblPort2.AutoSize = true;
             this.lblPort2.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblPort2.Location = new System.Drawing.Point(438, 132);
+            this.lblPort2.Location = new System.Drawing.Point(276, 159);
             this.lblPort2.Name = "lblPort2";
             this.lblPort2.Size = new System.Drawing.Size(53, 20);
             this.lblPort2.TabIndex = 108;
@@ -479,17 +395,105 @@
             // 
             this.cbPorts2.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.cbPorts2.FormattingEnabled = true;
-            this.cbPorts2.Location = new System.Drawing.Point(525, 132);
+            this.cbPorts2.Location = new System.Drawing.Point(340, 159);
             this.cbPorts2.Name = "cbPorts2";
             this.cbPorts2.Size = new System.Drawing.Size(75, 28);
             this.cbPorts2.TabIndex = 107;
             this.cbPorts2.TextChanged += new System.EventHandler(this.cbPorts2_TextChanged);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("宋体", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label1.Location = new System.Drawing.Point(146, 60);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(22, 24);
+            this.label1.TabIndex = 109;
+            this.label1.Text = "~";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("宋体", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label2.Location = new System.Drawing.Point(146, 98);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(22, 24);
+            this.label2.TabIndex = 110;
+            this.label2.Text = "~";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label3.Location = new System.Drawing.Point(7, 165);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(59, 20);
+            this.label3.TabIndex = 111;
+            this.label3.Text = "小车2";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("宋体", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label4.Location = new System.Drawing.Point(146, 223);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(22, 24);
+            this.label4.TabIndex = 112;
+            this.label4.Text = "~";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("宋体", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label5.Location = new System.Drawing.Point(176, 89);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(46, 24);
+            this.label5.TabIndex = 113;
+            this.label5.Text = "255";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("宋体", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label6.Location = new System.Drawing.Point(176, 259);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(46, 24);
+            this.label6.TabIndex = 114;
+            this.label6.Text = "255";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("宋体", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label7.Location = new System.Drawing.Point(146, 268);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(22, 24);
+            this.label7.TabIndex = 115;
+            this.label7.Text = "~";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label8.Location = new System.Drawing.Point(277, 15);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(89, 20);
+            this.label8.TabIndex = 116;
+            this.label8.Text = "全局变量";
+            // 
             // SetWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(645, 345);
+            this.ClientSize = new System.Drawing.Size(636, 331);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lblPort2);
             this.Controls.Add(this.cbPorts2);
             this.Controls.Add(this.nudBaudRate);
@@ -499,12 +503,6 @@
             this.Controls.Add(this.lblCapture);
             this.Controls.Add(this.lblPort1);
             this.Controls.Add(this.cbPorts1);
-            this.Controls.Add(this.nudSat0L);
-            this.Controls.Add(this.lblSat0L);
-            this.Controls.Add(this.nudHue0H);
-            this.Controls.Add(this.lblHue0H);
-            this.Controls.Add(this.nudHue0L);
-            this.Controls.Add(this.lblHue0L);
             this.Controls.Add(this.button_ConfigLoad);
             this.Controls.Add(this.button_ConfigSave);
             this.Controls.Add(this.nudAreaL);
@@ -516,7 +514,6 @@
             this.Controls.Add(this.nudSat1L);
             this.Controls.Add(this.lblSat1L);
             this.Controls.Add(this.nudHue2H);
-            this.Controls.Add(this.lblHue2H);
             this.Controls.Add(this.nudHue2L);
             this.Controls.Add(this.lblHue2L);
             this.Controls.Add(this.nudHue1H);
@@ -535,9 +532,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudHue2L)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHue1H)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHue1L)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudHue0H)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudHue0L)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSat0L)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCapture)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaudRate)).EndInit();
             this.ResumeLayout(false);
@@ -557,7 +551,6 @@
         private System.Windows.Forms.NumericUpDown nudSat1L;
         private System.Windows.Forms.Label lblSat1L;
         private System.Windows.Forms.NumericUpDown nudHue2H;
-        private System.Windows.Forms.Label lblHue2H;
         private System.Windows.Forms.NumericUpDown nudHue2L;
         private System.Windows.Forms.Label lblHue2L;
         private System.Windows.Forms.NumericUpDown nudHue1H;
@@ -566,12 +559,6 @@
         private System.Windows.Forms.Label lblHue1L;
         private System.Windows.Forms.Button button_ConfigSave;
         private System.Windows.Forms.Button button_ConfigLoad;
-        private System.Windows.Forms.NumericUpDown nudHue0H;
-        private System.Windows.Forms.Label lblHue0H;
-        private System.Windows.Forms.NumericUpDown nudHue0L;
-        private System.Windows.Forms.Label lblHue0L;
-        private System.Windows.Forms.NumericUpDown nudSat0L;
-        private System.Windows.Forms.Label lblSat0L;
         private System.Windows.Forms.ComboBox cbPorts1;
         private System.Windows.Forms.Label lblPort1;
         private System.Windows.Forms.Label lblCapture;
@@ -581,5 +568,13 @@
         private System.Windows.Forms.Label lblBaudRate;
         private System.Windows.Forms.Label lblPort2;
         private System.Windows.Forms.ComboBox cbPorts2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
     }
 }

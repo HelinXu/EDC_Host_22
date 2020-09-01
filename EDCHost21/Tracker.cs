@@ -221,17 +221,14 @@ namespace EDCHOST21
                 string myStr = System.Text.Encoding.UTF8.GetString(heByte);
                 string[] str = myStr.Split(' ');
 
-                flags.configs.hue0Lower = Convert.ToInt32(str[0]);
-                flags.configs.hue0Upper = Convert.ToInt32(str[1]);
-                flags.configs.hue1Lower = Convert.ToInt32(str[2]);
-                flags.configs.hue1Upper = Convert.ToInt32(str[3]);
-                flags.configs.hue2Lower = Convert.ToInt32(str[4]);
-                flags.configs.hue2Upper = Convert.ToInt32(str[5]);
-                flags.configs.saturation0Lower = Convert.ToInt32(str[6]);
-                flags.configs.saturation1Lower = Convert.ToInt32(str[7]);
-                flags.configs.saturation2Lower = Convert.ToInt32(str[8]);
-                flags.configs.valueLower = Convert.ToInt32(str[9]);
-                flags.configs.areaLower = Convert.ToInt32(str[10]);
+                flags.configs.hue1Lower = Convert.ToInt32(str[0]);
+                flags.configs.hue1Upper = Convert.ToInt32(str[1]);
+                flags.configs.hue2Lower = Convert.ToInt32(str[2]);
+                flags.configs.hue2Upper = Convert.ToInt32(str[3]);
+                flags.configs.saturation1Lower = Convert.ToInt32(str[4]);
+                flags.configs.saturation2Lower = Convert.ToInt32(str[5]);
+                flags.configs.valueLower = Convert.ToInt32(str[6]);
+                flags.configs.areaLower = Convert.ToInt32(str[7]);
 
                 fsRead.Close();
             }
@@ -381,7 +378,6 @@ namespace EDCHOST21
                 int y10 = logicPsgStart.Y - 8;
                 Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
             }*/
-            //绘图    可考虑放置到一个方法中  cxy
             //绘制小车
             //car1 深蓝色 圆  半径10
             //car2 纯红色 圆  半径10

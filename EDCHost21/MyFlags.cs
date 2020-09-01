@@ -31,13 +31,10 @@ namespace EDCHOST21
         // HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
         public struct LocConfigs
         {
-            public int hue0Lower;
-            public int hue0Upper;
             public int hue1Lower;
             public int hue1Upper;
             public int hue2Lower;
             public int hue2Upper;
-            public int saturation0Lower;
             public int saturation1Lower;
             public int saturation2Lower;
             public int valueLower;
