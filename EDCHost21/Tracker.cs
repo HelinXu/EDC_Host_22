@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using Point2i = OpenCvSharp.Point;
 using Cvt = EDCHOST21.MyConvert;
+using System.Runtime.InteropServices;
 
 namespace EDCHOST21
 {
@@ -386,7 +387,7 @@ namespace EDCHOST21
 
             //绘制人员起始或终点位置， 并在当前位置和目标位置连线
             //目标点 绿色 正方形  边长16
-            //连线 浅绿 线长 3
+            //连线 浅绿 线宽 3
             if (game.gameState != GameState.UNSTART)
             {
                 if (game.UpperCamp == Camp.A)
@@ -426,6 +427,14 @@ namespace EDCHOST21
 
             }
 
+            //绘制迷宫障碍物
+            for(int i = 0; i < game.mLabyrinth.mWallNum; i++)
+            {
+                Dot StartDot = game.mLabyrinth.mpWallList[i].w1;
+                Dot EndDot = game.mLabyrinth.mpWallList[i].w2;
+                Cv2.Line(mat, StartDot.x, StartDot.y, EndDot.x, EndDot.y, new Scalar(0x00, 0x00, 0x00), 5);
+                Debug.WriteLine("Has created one wall.");
+            }
             //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
             //Cv2.ImShow("binary", merged);
         }

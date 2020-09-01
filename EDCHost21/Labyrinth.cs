@@ -26,6 +26,7 @@ namespace EDCHOST21
         //Laby. 构造函数 从文本读取
         public Labyrinth(TextReader reader)
         {
+            mWallNum = 16;
             mpWallList = new Wall[16];
             for (int i = 0; i < 16; i++)
             {
