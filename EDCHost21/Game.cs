@@ -64,6 +64,7 @@ namespace EDCHOST21
                 mFlood = new Flood(0);
                 mPackageGroupCount = 0;
                 mLastWrongDirTime = -10;
+                mLabyrinth = new Labyrinth(File.OpenText("../../laby.txt"));
                 Debug.WriteLine("Game构造函数FIRST_1执行完毕");
             }
             else
