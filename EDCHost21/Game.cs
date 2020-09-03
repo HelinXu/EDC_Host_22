@@ -61,7 +61,7 @@ namespace EDCHOST21
                 psgState = PassengerState.TRAPPED;
                 psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
                 pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 4);
-                currentPkgList = new Package[PKG_NUM_perGROUP];
+                //currentPkgList = new Package[PKG_NUM_perGROUP];
                 curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
                 mFlood = new Flood(0);
                 mPackageGroupCount = 0;
@@ -106,11 +106,12 @@ namespace EDCHOST21
             {
                 for (int i = 0; i < PKG_NUM_perGROUP; i++)
                 {
-                    currentPkgList[i].mPos
-                        = pkgGenerator.
+                    
+                    currentPkgList[i]
+                        = new Package(pkgGenerator.
                         GetPackage(i + PKG_NUM_perGROUP * mPackageGroupCount).
-                        GetDot();
-                    currentPkgList[i].IsPicked = 0;
+                        GetDot());
+                    //currentPkgList[i].IsPicked = 0;
                 }
                 mPackageGroupCount++;
                 Debug.WriteLine("UpdatePackage被触发，并执行完毕");
@@ -186,9 +187,10 @@ namespace EDCHOST21
             if (gameStage == GameStage.FIRST_1
                 || gameStage == GameStage.LATTER_1)
             {
-                if (mGameTime >= 60000)
+                if (mGameTime >= 600)
                 {
                     gameState = GameState.UNSTART;
+                    gameStage++;
                     Debug.WriteLine("成功进入下一个stage");
                     UpdatePassenger();
                 }
@@ -210,10 +212,12 @@ namespace EDCHOST21
                         }
                         CarA.mTaskState = 1;//交换A和B的任务
                         CarB.mTaskState = 0;
+                        gameStage++;
                         Debug.WriteLine("上下半场转换成功");
                     }
                 }
             }
+           
         }
 
         //下面四个为接口
@@ -610,7 +614,6 @@ namespace EDCHOST21
             {
                 UpdateGameTime();
                 UpdatePackage();
-                CheckNextStage();
                 if (gameStage == GameStage.FIRST_1 || gameStage == GameStage.LATTER_2)
                 {
                     JudgeAIsInMaze();
@@ -633,6 +636,7 @@ namespace EDCHOST21
                     CheckCarBWrongDirection();
                     Debug.WriteLine("0.1 Update！");
                 }
+                CheckNextStage();
             }
         }
 
@@ -732,6 +736,7 @@ namespace EDCHOST21
                 gameState = GameState.NORMAL;
                 mGameTime = 0;
                 mPrevTime = GetCurrentTime();
+                Debug.WriteLine("start");
             }
         }
 

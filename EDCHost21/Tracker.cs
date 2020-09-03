@@ -425,7 +425,7 @@ namespace EDCHOST21
             //绘制迷宫障碍物
             for(int i = 0; i < game.mLabyrinth.mWallNum; i++)
             {
-                Debug.WriteLine("1");
+                //Debug.WriteLine("1");
                 Dot StartDot = game.mLabyrinth.mpWallList[i].w1;
                 Dot EndDot = game.mLabyrinth.mpWallList[i].w2;
 
@@ -666,7 +666,8 @@ namespace EDCHOST21
         private void buttonNextStage_Click(object sender, EventArgs e)
         {
             game.CheckNextStage();
-            buttonStart.Enabled = true;
+            game.Start();
+            //buttonStart.Enabled = true;
             buttonPause.Enabled = false;
             buttonNextStage.Enabled = false;
         }
