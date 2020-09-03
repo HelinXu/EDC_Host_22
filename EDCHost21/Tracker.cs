@@ -424,14 +424,14 @@ namespace EDCHOST21
             //绘制迷宫障碍物
             for(int i = 0; i < game.mLabyrinth.mWallNum; i++)
             {
-                
+                Debug.WriteLine("1");
                 Dot StartDot = game.mLabyrinth.mpWallList[i].w1;
                 Dot EndDot = game.mLabyrinth.mpWallList[i].w2;
-
-                Point2f[] logicDots = new Point2f[] { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
-
+                Debug.WriteLine("2");
+                Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+                Debug.WriteLine("3");
                 Point2f[] showDots = coordCvt.LogicToShow(logicDots);
-
+                Debug.WriteLine("4");
                 Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y, 
                     (int)showDots[1].X, (int)showDots[1].Y, 
                     new Scalar(0x00, 0x00, 0x00), 5);
