@@ -315,10 +315,6 @@ namespace EDCHOST21
                             logicCarB = InvalidPos;
                         }
 
-
-
-
-
                         // 在显示的画面上绘制小车，乘客，物资等对应的图案
                         PaintPattern(videoFrame, localiser);
 
@@ -331,8 +327,6 @@ namespace EDCHOST21
                         // Resize函数的最后一个参数是缩放函数的插值算法
                         // InterpolationFlags.Cubic 表示双三次插值法，放大图像时效果较好，但速度较慢
                         Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Cubic);
-
-                        
 
                         // 更新界面组件的画面显示
                         BeginInvoke(new Action<Image>(UpdateCameraPicture), BitmapConverter.ToBitmap(showFrame));
@@ -430,9 +424,17 @@ namespace EDCHOST21
             //绘制迷宫障碍物
             for(int i = 0; i < game.mLabyrinth.mWallNum; i++)
             {
+                
                 Dot StartDot = game.mLabyrinth.mpWallList[i].w1;
                 Dot EndDot = game.mLabyrinth.mpWallList[i].w2;
-                Cv2.Line(mat, StartDot.x, StartDot.y, EndDot.x, EndDot.y, new Scalar(0x00, 0x00, 0x00), 5);
+
+                Point2f[] logicDots = new Point2f[] { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+
+                Point2f[] showDots = coordCvt.LogicToShow(logicDots);
+
+                Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y, 
+                    (int)showDots[1].X, (int)showDots[1].Y, 
+                    new Scalar(0x00, 0x00, 0x00), 5);
                 
             }
             Debug.WriteLine("Has created Laby.");
