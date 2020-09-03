@@ -60,8 +60,8 @@ namespace EDCHOST21
                 gameState = GameState.UNSTART;
                 psgState = PassengerState.TRAPPED;
                 psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
-                pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 4);
-                //currentPkgList = new Package[PKG_NUM_perGROUP];
+                pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 5);
+                currentPkgList = new Package[PKG_NUM_perGROUP];
                 curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
                 mFlood = new Flood(0);
                 mPackageGroupCount = 0;
@@ -79,7 +79,7 @@ namespace EDCHOST21
                 gameState = GameState.UNSTART;
                 psgState = PassengerState.TRAPPED;
                 psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
-                pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 4);
+                pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 5);
                 currentPkgList = new Package[PKG_NUM_perGROUP];
                 curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
                 mFlood = new Flood(0);
@@ -106,12 +106,10 @@ namespace EDCHOST21
             {
                 for (int i = 0; i < PKG_NUM_perGROUP; i++)
                 {
-                    
+
                     currentPkgList[i]
-                        = new Package(pkgGenerator.
-                        GetPackage(i + PKG_NUM_perGROUP * mPackageGroupCount).
-                        GetDot());
-                    //currentPkgList[i].IsPicked = 0;
+                        = pkgGenerator.
+                        GetPackage(i + PKG_NUM_perGROUP * mPackageGroupCount);
                 }
                 mPackageGroupCount++;
                 Debug.WriteLine("UpdatePackage被触发，并执行完毕");
@@ -264,8 +262,9 @@ namespace EDCHOST21
                 CarA.SwitchPassengerState();
                 CarA.AddRescueCount();
                 Debug.WriteLine("A车送达了乘客，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
+                UpdatePassenger();
             }
-            UpdatePassenger();
+            
         }
         public void CheckCarBTransPassenger()//小车B成功运送了乘客
         {
@@ -280,8 +279,9 @@ namespace EDCHOST21
                 CarB.SwitchPassengerState();
                 CarB.AddRescueCount();
                 Debug.WriteLine("B车送达了乘客，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
+                UpdatePassenger();
             }
-            UpdatePassenger();
+            
         }
 
         //下面是两个关于包裹的接口
@@ -519,7 +519,7 @@ namespace EDCHOST21
             if (CarA.mLastPos.x < MAZE_SHORT_BORDER_CM && CarA.mPos.x < MAZE_SHORT_BORDER_CM
                 && CarA.mLastPos.y > MAZE_SHORT_BORDER_CM && CarA.mLastPos.y < MAZE_LONG_BORDER_CM
                 && CarA.mPos.y > MAZE_SHORT_BORDER_CM && CarA.mPos.y < MAZE_LONG_BORDER_CM
-                && CarA.mPos.y > CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50000)
+                && CarA.mPos.y > CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 5000)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -529,7 +529,7 @@ namespace EDCHOST21
                 && CarA.mLastPos.y > MAZE_SHORT_BORDER_CM
                 && CarA.mLastPos.y < MAZE_LONG_BORDER_CM && CarA.mPos.y > MAZE_SHORT_BORDER_CM
                 && CarA.mPos.y < MAZE_LONG_BORDER_CM && CarA.mPos.y < CarA.mLastPos.y 
-                && mGameTime - mLastWrongDirTime > 50000)
+                && mGameTime - mLastWrongDirTime > 5000)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -538,7 +538,7 @@ namespace EDCHOST21
             if (CarA.mLastPos.y < MAZE_SHORT_BORDER_CM && CarA.mPos.y < MAZE_SHORT_BORDER_CM
                 && CarA.mLastPos.x > MAZE_SHORT_BORDER_CM && CarA.mLastPos.x < MAZE_LONG_BORDER_CM
                 && CarA.mPos.x > MAZE_SHORT_BORDER_CM && CarA.mPos.x < MAZE_LONG_BORDER_CM
-                && CarA.mPos.x < CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 50000)
+                && CarA.mPos.x < CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 5000)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -548,7 +548,7 @@ namespace EDCHOST21
                 && CarA.mLastPos.x > MAZE_SHORT_BORDER_CM
                 && CarA.mLastPos.x < MAZE_LONG_BORDER_CM && CarA.mPos.x > MAZE_SHORT_BORDER_CM
                 && CarA.mPos.x < MAZE_LONG_BORDER_CM && CarA.mPos.x > CarA.mLastPos.x 
-                && mGameTime - mLastWrongDirTime > 50000)
+                && mGameTime - mLastWrongDirTime > 5000)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -560,7 +560,7 @@ namespace EDCHOST21
             if (CarB.mLastPos.x < MAZE_SHORT_BORDER_CM && CarB.mPos.x < MAZE_SHORT_BORDER_CM
                 && CarB.mLastPos.y > MAZE_SHORT_BORDER_CM && CarB.mLastPos.y < MAZE_LONG_BORDER_CM
                 && CarB.mPos.y > MAZE_SHORT_BORDER_CM && CarB.mPos.y < MAZE_LONG_BORDER_CM
-                && CarB.mPos.y > CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50000)
+                && CarB.mPos.y > CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 5000)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -569,7 +569,7 @@ namespace EDCHOST21
             if (CarB.mLastPos.x > MAZE_LONG_BORDER_CM && CarB.mPos.x > MAZE_LONG_BORDER_CM
                 && CarB.mLastPos.y > MAZE_SHORT_BORDER_CM && CarB.mLastPos.y < MAZE_LONG_BORDER_CM
                 && CarB.mPos.y > MAZE_SHORT_BORDER_CM && CarB.mPos.y < MAZE_LONG_BORDER_CM
-                && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50000)
+                && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 5000)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -578,7 +578,7 @@ namespace EDCHOST21
             if (CarB.mLastPos.y < MAZE_SHORT_BORDER_CM && CarB.mPos.y < MAZE_SHORT_BORDER_CM
                 && CarB.mLastPos.x > MAZE_SHORT_BORDER_CM && CarB.mLastPos.x < MAZE_LONG_BORDER_CM
                 && CarB.mPos.x > MAZE_SHORT_BORDER_CM && CarB.mPos.x < MAZE_LONG_BORDER_CM
-                && CarB.mPos.x < CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50000)
+                && CarB.mPos.x < CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 5000)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -587,7 +587,7 @@ namespace EDCHOST21
             if (CarB.mLastPos.y > MAZE_LONG_BORDER_CM && CarB.mPos.y > MAZE_LONG_BORDER_CM
                 && CarB.mLastPos.x > MAZE_SHORT_BORDER_CM && CarB.mLastPos.x < MAZE_LONG_BORDER_CM
                 && CarB.mPos.x > MAZE_SHORT_BORDER_CM && CarB.mPos.x < MAZE_LONG_BORDER_CM
-                && CarB.mPos.x > CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50000)
+                && CarB.mPos.x > CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 5000)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
