@@ -123,8 +123,8 @@ namespace EDCHOST21
         {
             System.DateTime currentTime = System.DateTime.Now;
             int time = currentTime.Hour * 3600000 + currentTime.Minute * 60000 + currentTime.Second * 1000;
-            Debug.WriteLine("H, M, S: {0}, {1}, {2}", currentTime.Hour, currentTime.Minute, currentTime.Second);
-            Debug.WriteLine("GetCurrentTime，Time = {0}", time); 
+            //Debug.WriteLine("H, M, S: {0}, {1}, {2}", currentTime.Hour, currentTime.Minute, currentTime.Second);
+            //Debug.WriteLine("GetCurrentTime，Time = {0}", time); 
             return time;
         }
 
@@ -138,18 +138,18 @@ namespace EDCHOST21
         //这个函数可能放到dot里面更好
         public void JudgeAIsInMaze()//确定点是否在迷宫内
         {
-            Debug.WriteLine("开始执行JudgeAIsInMaze");
+            //Debug.WriteLine("开始执行JudgeAIsInMaze");
             if (CarA.mPos.x >= MAZE_SHORT_BORDER_CM
                 && CarA.mPos.x <= MAZE_LONG_BORDER_CM
                 && CarA.mPos.y >= MAZE_SHORT_BORDER_CM
                 && CarA.mPos.y <= MAZE_LONG_BORDER_CM)
             {
-                Debug.WriteLine("A 在 Maze 中");
+                //Debug.WriteLine("A 在 Maze 中");
                 CarA.mIsInMaze = 1;
             }
             else
             {
-                Debug.WriteLine("A 不在 Maze 中");
+                //Debug.WriteLine("A 不在 Maze 中");
                 CarA.mIsInMaze = 0;
             }
         }
@@ -189,6 +189,7 @@ namespace EDCHOST21
                 if (mGameTime >= 60000)
                 {
                     gameState = GameState.UNSTART;
+                    Debug.WriteLine("成功进入下一个stage");
                     UpdatePassenger();
                 }
             }

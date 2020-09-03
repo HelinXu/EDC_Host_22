@@ -144,7 +144,7 @@ namespace EDCHOST21
 
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
-            buttonEnd.Enabled = false;
+            buttonNextStage.Enabled = false;
 
             validPorts = SerialPort.GetPortNames();
             alreadySet = false;
@@ -382,7 +382,8 @@ namespace EDCHOST21
             //绘制人员起始或终点位置， 并在当前位置和目标位置连线
             //目标点 绿色 正方形  边长16
             //连线 浅绿 线宽 3
-            if (game.gameState != GameState.UNSTART)
+            if (game.gameState == GameState.NORMAL 
+                && (game.gameStage == GameStage.FIRST_2 || game.gameStage == GameStage.LATTER_2))
             {
                 if (game.UpperCamp == Camp.A)
                 {
@@ -397,7 +398,7 @@ namespace EDCHOST21
                     {
                         int x10 = logicPsgEnd.X - 8;
                         int y10 = logicPsgEnd.Y - 8;
-                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
                         Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                 }
@@ -414,7 +415,7 @@ namespace EDCHOST21
                     {
                         int x10 = logicPsgEnd.X - 8;
                         int y10 = logicPsgEnd.Y - 8;
-                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
                         Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                 }
@@ -439,7 +440,7 @@ namespace EDCHOST21
                         new Scalar(0x00, 0x00, 0x00), 5);
                 }
             }
-            Debug.WriteLine("Has created Laby.");
+            //Debug.WriteLine("Has created Laby.");
             //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
             //Cv2.ImShow("binary", merged);
         }
@@ -566,7 +567,7 @@ namespace EDCHOST21
         {
             game.Start();
             buttonPause.Enabled = true;
-            buttonEnd.Enabled = true;
+            buttonNextStage.Enabled = true;
             buttonStart.Enabled = false;
         }
 
@@ -576,7 +577,7 @@ namespace EDCHOST21
             // to add something...
             game.Pause();
             buttonPause.Enabled = false;
-            buttonEnd.Enabled = true;
+            buttonNextStage.Enabled = true;
             buttonStart.Enabled = true;
         }
 
@@ -586,7 +587,7 @@ namespace EDCHOST21
             lock (game) { game = new Game(); }
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
-            buttonEnd.Enabled = false;
+            buttonNextStage.Enabled = false;
             label_CarA.Text = "A车";
             label_CarB.Text = "B车";
         }
@@ -632,7 +633,7 @@ namespace EDCHOST21
             //if (game.state == GameState.End)
             game.Continue();
             buttonPause.Enabled = false;
-            buttonEnd.Enabled = true;
+            buttonNextStage.Enabled = true;
             buttonStart.Enabled = true;
         }
 
@@ -663,12 +664,12 @@ namespace EDCHOST21
         }
 
         // 比赛结束（待完善）
-        private void buttonEnd_Click(object sender, EventArgs e)
+        private void buttonNextStage_Click(object sender, EventArgs e)
         {
-            //game.
+            game.CheckNextStage();
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
-            buttonEnd.Enabled = false;
+            buttonNextStage.Enabled = false;
         }
 
         #endregion
