@@ -20,12 +20,14 @@ namespace EDCHOST21
     public class Game
     {
         public bool DebugMode;                       //调试模式，最大回合数 = 1,000,000
-        public const int MAX_SIZE_CM = 280;          //地图大小
+        public const int MAX_SIZE_CM = 254;          //地图大小
         public const int MAZE_CROSS_NUM = 6;         //迷宫由几条线交叉而成
         public const int MAZE_CROSS_DIST_CM = 30;    //间隔的长度
-        public const int MAZE_SHORT_BORDER_CM = 35;  //迷宫最短的靠边距离
+        public const int MAZE_SHORT_BORDER_CM = 32;  //迷宫最短的靠边距离
         public const int MAZE_LONG_BORDER_CM = MAZE_SHORT_BORDER_CM
-                                             + MAZE_CROSS_DIST_CM * MAZE_CROSS_NUM;
+                                             + MAZE_CROSS_DIST_CM * (MAZE_CROSS_NUM - 1)
+                                             + MAZE_SIDE_BORDER_CM * 2;
+        public const int MAZE_SIDE_BORDER_CM = 20; 
         //迷宫最长的靠边距离
         public const double COINCIDE_ERR_DIST_CM = 10;  //判定小车到达某点允许的最大误差距离
         public const int PKG_NUM_perGROUP = 6;       //场上每次刷新package物资的个数
@@ -509,25 +511,39 @@ namespace EDCHOST21
         //逆行自动判断//目前为思路两次逆行之间间隔时间判断为5s，这5s之间的逆行忽略不计
         public void CheckCarAWrongDirection()
         {
-            if (CarA.mLastPos.x < 30 && CarA.mPos.x < 30 && CarA.mLastPos.y > 30 && CarA.mLastPos.y < 220 && CarA.mPos.y > 30 && CarA.mPos.y < 220 && CarA.mPos.y > CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
+            if (CarA.mLastPos.x < MAZE_SHORT_BORDER_CM && CarA.mPos.x < MAZE_SHORT_BORDER_CM
+                && CarA.mLastPos.y > MAZE_SHORT_BORDER_CM && CarA.mLastPos.y < MAZE_LONG_BORDER_CM
+                && CarA.mPos.y > MAZE_SHORT_BORDER_CM && CarA.mPos.y < MAZE_LONG_BORDER_CM
+                && CarA.mPos.y > CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50000)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
-            if (CarA.mLastPos.x > 220 && CarA.mPos.x > 220 && CarA.mLastPos.y > 30 && CarA.mLastPos.y < 220 && CarA.mPos.y > 30 && CarA.mPos.y < 220 && CarA.mPos.y < CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
+            if (CarA.mLastPos.x > MAZE_LONG_BORDER_CM && CarA.mPos.x > MAZE_LONG_BORDER_CM
+                && CarA.mLastPos.y > MAZE_SHORT_BORDER_CM
+                && CarA.mLastPos.y < MAZE_LONG_BORDER_CM && CarA.mPos.y > MAZE_SHORT_BORDER_CM
+                && CarA.mPos.y < MAZE_LONG_BORDER_CM && CarA.mPos.y < CarA.mLastPos.y 
+                && mGameTime - mLastWrongDirTime > 50000)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
-            if (CarA.mLastPos.y < 30 && CarA.mPos.y < 30 && CarA.mLastPos.x > 30 && CarA.mLastPos.x < 220 && CarA.mPos.x > 30 && CarA.mPos.x < 220 && CarA.mPos.x < CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
+            if (CarA.mLastPos.y < MAZE_SHORT_BORDER_CM && CarA.mPos.y < MAZE_SHORT_BORDER_CM
+                && CarA.mLastPos.x > MAZE_SHORT_BORDER_CM && CarA.mLastPos.x < MAZE_LONG_BORDER_CM
+                && CarA.mPos.x > MAZE_SHORT_BORDER_CM && CarA.mPos.x < MAZE_LONG_BORDER_CM
+                && CarA.mPos.x < CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 50000)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
-            if (CarA.mLastPos.y > 220 && CarA.mPos.y > 220 && CarA.mLastPos.x > 30 && CarA.mLastPos.x < 220 && CarA.mPos.x > 30 && CarA.mPos.x < 220 && CarA.mPos.x > CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
+            if (CarA.mLastPos.y > MAZE_LONG_BORDER_CM && CarA.mPos.y > MAZE_LONG_BORDER_CM
+                && CarA.mLastPos.x > MAZE_SHORT_BORDER_CM
+                && CarA.mLastPos.x < MAZE_LONG_BORDER_CM && CarA.mPos.x > MAZE_SHORT_BORDER_CM
+                && CarA.mPos.x < MAZE_LONG_BORDER_CM && CarA.mPos.x > CarA.mLastPos.x 
+                && mGameTime - mLastWrongDirTime > 50000)
             {
                 CarA.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
@@ -536,25 +552,37 @@ namespace EDCHOST21
         }
         public void CheckCarBWrongDirection()
         {
-            if (CarB.mLastPos.x < 30 && CarB.mPos.x < 30 && CarB.mLastPos.y > 30 && CarB.mLastPos.y < 220 && CarB.mPos.y > 30 && CarB.mPos.y < 220 && CarB.mPos.y > CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
+            if (CarB.mLastPos.x < MAZE_SHORT_BORDER_CM && CarB.mPos.x < MAZE_SHORT_BORDER_CM
+                && CarB.mLastPos.y > MAZE_SHORT_BORDER_CM && CarB.mLastPos.y < MAZE_LONG_BORDER_CM
+                && CarB.mPos.y > MAZE_SHORT_BORDER_CM && CarB.mPos.y < MAZE_LONG_BORDER_CM
+                && CarB.mPos.y > CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50000)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
-            if (CarB.mLastPos.x > 220 && CarB.mPos.x > 220 && CarB.mLastPos.y > 30 && CarB.mLastPos.y < 220 && CarB.mPos.y > 30 && CarB.mPos.y < 220 && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50)
+            if (CarB.mLastPos.x > MAZE_LONG_BORDER_CM && CarB.mPos.x > MAZE_LONG_BORDER_CM
+                && CarB.mLastPos.y > MAZE_SHORT_BORDER_CM && CarB.mLastPos.y < MAZE_LONG_BORDER_CM
+                && CarB.mPos.y > MAZE_SHORT_BORDER_CM && CarB.mPos.y < MAZE_LONG_BORDER_CM
+                && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 50000)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
-            if (CarB.mLastPos.y < 30 && CarB.mPos.y < 30 && CarB.mLastPos.x > 30 && CarB.mLastPos.x < 220 && CarB.mPos.x > 30 && CarB.mPos.x < 220 && CarB.mPos.x < CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
+            if (CarB.mLastPos.y < MAZE_SHORT_BORDER_CM && CarB.mPos.y < MAZE_SHORT_BORDER_CM
+                && CarB.mLastPos.x > MAZE_SHORT_BORDER_CM && CarB.mLastPos.x < MAZE_LONG_BORDER_CM
+                && CarB.mPos.x > MAZE_SHORT_BORDER_CM && CarB.mPos.x < MAZE_LONG_BORDER_CM
+                && CarB.mPos.x < CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50000)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
-            if (CarB.mLastPos.y > 220 && CarB.mPos.y > 220 && CarB.mLastPos.x > 30 && CarB.mLastPos.x < 220 && CarB.mPos.x > 30 && CarB.mPos.x < 220 && CarB.mPos.x > CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50)
+            if (CarB.mLastPos.y > MAZE_LONG_BORDER_CM && CarB.mPos.y > MAZE_LONG_BORDER_CM
+                && CarB.mLastPos.x > MAZE_SHORT_BORDER_CM && CarB.mLastPos.x < MAZE_LONG_BORDER_CM
+                && CarB.mPos.x > MAZE_SHORT_BORDER_CM && CarB.mPos.x < MAZE_LONG_BORDER_CM
+                && CarB.mPos.x > CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 50000)
             {
                 CarB.AddFoulCount();
                 mLastWrongDirTime = mGameTime;
