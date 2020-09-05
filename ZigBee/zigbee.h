@@ -14,12 +14,11 @@ zigbee.h
     struct ObstacleInfo Obstacle[16];
     通过接口获取数据
 **********************************/
-#ifndef V0_5_H_INCLUDED
-#define V0_5_H_INCLUDED
-//#include "stm32f1xx_hal.h"
+#ifndef ZIGBEE_H
+#define ZIGBEE_H
+#include "stm32f1xx_hal.h"
 #define INVALID_ARG -1
-#define ZIGBEE_MESSAGE_LENTH 40
-#include<stdint.h>
+#define ZIGBEE_MESSAGE_LENTH 98
 
 struct Position
 {
