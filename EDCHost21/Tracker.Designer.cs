@@ -58,12 +58,18 @@
             this.label_GameCount = new System.Windows.Forms.Label();
             this.label_GameStage = new System.Windows.Forms.Label();
             this.time = new System.Windows.Forms.Label();
+            this.AWrongDirectionNum = new System.Windows.Forms.Label();
+            this.BWrongDirectionNum = new System.Windows.Forms.Label();
+            this.AWall = new System.Windows.Forms.Label();
+            this.BWall = new System.Windows.Forms.Label();
+            this.AFlood = new System.Windows.Forms.Label();
+            this.BFlood = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
             // pbCamera
             // 
-            this.pbCamera.Location = new System.Drawing.Point(284, 104);
+            this.pbCamera.Location = new System.Drawing.Point(276, 167);
             this.pbCamera.Margin = new System.Windows.Forms.Padding(2);
             this.pbCamera.Name = "pbCamera";
             this.pbCamera.Size = new System.Drawing.Size(960, 720);
@@ -240,7 +246,7 @@
             this.button_AFoul.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_AFoul.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.button_AFoul.ForeColor = System.Drawing.Color.Red;
-            this.button_AFoul.Location = new System.Drawing.Point(31, 350);
+            this.button_AFoul.Location = new System.Drawing.Point(41, 380);
             this.button_AFoul.Margin = new System.Windows.Forms.Padding(2);
             this.button_AFoul.Name = "button_AFoul";
             this.button_AFoul.Size = new System.Drawing.Size(128, 58);
@@ -287,7 +293,7 @@
             // 
             this.label_AFoulNum.Font = new System.Drawing.Font("微软雅黑", 24F);
             this.label_AFoulNum.ForeColor = System.Drawing.Color.Red;
-            this.label_AFoulNum.Location = new System.Drawing.Point(173, 359);
+            this.label_AFoulNum.Location = new System.Drawing.Point(173, 388);
             this.label_AFoulNum.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label_AFoulNum.Name = "label_AFoulNum";
             this.label_AFoulNum.Size = new System.Drawing.Size(78, 40);
@@ -372,11 +378,71 @@
             // 
             this.time.AutoSize = true;
             this.time.Font = new System.Drawing.Font("宋体", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.time.Location = new System.Drawing.Point(1343, 202);
+            this.time.Location = new System.Drawing.Point(700, 104);
             this.time.Name = "time";
             this.time.Size = new System.Drawing.Size(123, 35);
             this.time.TabIndex = 108;
             this.time.Text = "label2";
+            // 
+            // AWrongDirectionNum
+            // 
+            this.AWrongDirectionNum.AutoSize = true;
+            this.AWrongDirectionNum.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.AWrongDirectionNum.Location = new System.Drawing.Point(-2, 167);
+            this.AWrongDirectionNum.Name = "AWrongDirectionNum";
+            this.AWrongDirectionNum.Size = new System.Drawing.Size(82, 24);
+            this.AWrongDirectionNum.TabIndex = 110;
+            this.AWrongDirectionNum.Text = "label2";
+            // 
+            // BWrongDirectionNum
+            // 
+            this.BWrongDirectionNum.AutoSize = true;
+            this.BWrongDirectionNum.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.BWrongDirectionNum.Location = new System.Drawing.Point(1306, 167);
+            this.BWrongDirectionNum.Name = "BWrongDirectionNum";
+            this.BWrongDirectionNum.Size = new System.Drawing.Size(82, 24);
+            this.BWrongDirectionNum.TabIndex = 112;
+            this.BWrongDirectionNum.Text = "label2";
+            // 
+            // AWall
+            // 
+            this.AWall.AutoSize = true;
+            this.AWall.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.AWall.Location = new System.Drawing.Point(-2, 225);
+            this.AWall.Name = "AWall";
+            this.AWall.Size = new System.Drawing.Size(82, 24);
+            this.AWall.TabIndex = 113;
+            this.AWall.Text = "label2";
+            // 
+            // BWall
+            // 
+            this.BWall.AutoSize = true;
+            this.BWall.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.BWall.Location = new System.Drawing.Point(1306, 225);
+            this.BWall.Name = "BWall";
+            this.BWall.Size = new System.Drawing.Size(82, 24);
+            this.BWall.TabIndex = 114;
+            this.BWall.Text = "label3";
+            // 
+            // AFlood
+            // 
+            this.AFlood.AutoSize = true;
+            this.AFlood.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.AFlood.Location = new System.Drawing.Point(-2, 279);
+            this.AFlood.Name = "AFlood";
+            this.AFlood.Size = new System.Drawing.Size(82, 24);
+            this.AFlood.TabIndex = 115;
+            this.AFlood.Text = "label2";
+            // 
+            // BFlood
+            // 
+            this.BFlood.AutoSize = true;
+            this.BFlood.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.BFlood.Location = new System.Drawing.Point(1306, 291);
+            this.BFlood.Name = "BFlood";
+            this.BFlood.Size = new System.Drawing.Size(82, 24);
+            this.BFlood.TabIndex = 116;
+            this.BFlood.Text = "label2";
             // 
             // Tracker
             // 
@@ -384,6 +450,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1561, 816);
+            this.Controls.Add(this.BFlood);
+            this.Controls.Add(this.AFlood);
+            this.Controls.Add(this.BWall);
+            this.Controls.Add(this.AWall);
+            this.Controls.Add(this.BWrongDirectionNum);
+            this.Controls.Add(this.AWrongDirectionNum);
             this.Controls.Add(this.time);
             this.Controls.Add(this.label_GameStage);
             this.Controls.Add(this.label_GameCount);
@@ -449,6 +521,12 @@
         private System.Windows.Forms.Label label_GameCount;
         private System.Windows.Forms.Label label_GameStage;
         private System.Windows.Forms.Label time;
+        private System.Windows.Forms.Label AWrongDirectionNum;
+        private System.Windows.Forms.Label BWrongDirectionNum;
+        private System.Windows.Forms.Label AWall;
+        private System.Windows.Forms.Label BWall;
+        private System.Windows.Forms.Label AFlood;
+        private System.Windows.Forms.Label BFlood;
     }
 }
 

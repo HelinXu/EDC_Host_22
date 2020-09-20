@@ -55,6 +55,9 @@ namespace EDCHOST21
         private Point2i logicCarB;
         private Point2i[] logicPkgs;
 
+        //以下为物资的坐标显示
+        private int[] PkgsWhetherPicked;
+
         // 以下均为显示坐标
         private Point2i showCarA;
         private Point2i showCarB;
@@ -136,7 +139,9 @@ namespace EDCHOST21
             logicPsgEnd = new Point2i();
             logicCarA = new Point2i();
             logicCarB = new Point2i();
-            logicPkgs = new Point2i[0];
+            logicPkgs = new Point2i[6];
+            //物资信息初始化
+            PkgsWhetherPicked = new int[6];
 
             // 显示坐标初始化
             showCarA = new Point2i();
@@ -201,7 +206,19 @@ namespace EDCHOST21
 
             // 图像处理端接收游戏逻辑端信息
             logicPsgStart = Cvt.Dot2Point(game.curPsg.Start_Dot);
-            logicPsgEnd = Cvt.Dot2Point(game.curPsg.End_Dot); 
+            logicPsgEnd = Cvt.Dot2Point(game.curPsg.End_Dot);
+            logicPkgs[0] = Cvt.Dot2Point(game.currentPkgList[0].mPos);
+            logicPkgs[1] = Cvt.Dot2Point(game.currentPkgList[1].mPos);
+            logicPkgs[2] = Cvt.Dot2Point(game.currentPkgList[2].mPos);
+            logicPkgs[3] = Cvt.Dot2Point(game.currentPkgList[3].mPos);
+            logicPkgs[4] = Cvt.Dot2Point(game.currentPkgList[4].mPos);
+            logicPkgs[5] = Cvt.Dot2Point(game.currentPkgList[5].mPos);
+            PkgsWhetherPicked[0] = game.currentPkgList[0].IsPicked;
+            PkgsWhetherPicked[1] = game.currentPkgList[1].IsPicked;
+            PkgsWhetherPicked[2] = game.currentPkgList[2].IsPicked;
+            PkgsWhetherPicked[3] = game.currentPkgList[3].IsPicked;
+            PkgsWhetherPicked[4] = game.currentPkgList[4].IsPicked;
+            PkgsWhetherPicked[5] = game.currentPkgList[5].IsPicked;
         }
 
         // 当Tracker被加载时调用此函数
@@ -382,36 +399,69 @@ namespace EDCHOST21
             {
                 if (game.UpperCamp == Camp.A)
                 {
+
+                    Dot StartDot = game.curPsg.Start_Dot;
+                    Dot EndDot = game.curPsg.End_Dot;
+
+                    Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+                    Point2f[] showDots = coordCvt.LogicToShow(logicDots);
+
                     if (game.CarB.mIsWithPassenger == 0)
                     {
-                        int x10 = logicPsgStart.X - 8;
-                        int y10 = logicPsgStart.Y - 8;
+                        
+                        int x10 = (int)showDots[0].X;
+                        int y10 = (int)showDots[0].Y;
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
                         Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                     else
                     {
-                        int x10 = logicPsgEnd.X - 8;
-                        int y10 = logicPsgEnd.Y - 8;
+                        int x10 = (int)showDots[1].X;
+                        int y10 = (int)showDots[1].Y;
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
                         Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                 }
                 else if (game.UpperCamp == Camp.B)
                 {
+                    Dot StartDot = game.curPsg.Start_Dot;
+                    Dot EndDot = game.curPsg.End_Dot;
+
+                    Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+                    Point2f[] showDots = coordCvt.LogicToShow(logicDots);
                     if (game.CarA.mIsWithPassenger == 0)
                     {
-                        int x10 = logicPsgStart.X - 8;
-                        int y10 = logicPsgStart.Y - 8;
+                        int x10 = (int)showDots[0].X;
+                        int y10 = (int)showDots[0].Y;
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
                         Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                     else
                     {
-                        int x10 = logicPsgEnd.X - 8;
-                        int y10 = logicPsgEnd.Y - 8;
+                        int x10 = (int)showDots[1].X;
+                        int y10 = (int)showDots[1].Y;
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
                         Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                    }
+                }
+
+                //绘制物资
+                for(int i=0;i<6;i++)
+                {
+                    Dot Dot1 = game.currentPkgList[0].mPos;
+                    Dot Dot2 = game.currentPkgList[1].mPos;
+                    Dot Dot3 = game.currentPkgList[2].mPos;
+                    Dot Dot4 = game.currentPkgList[3].mPos;
+                    Dot Dot5 = game.currentPkgList[4].mPos;
+                    Dot Dot6 = game.currentPkgList[5].mPos;
+
+                    Point2f[] logicDots = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5), Cvt.Dot2Point(Dot6) };
+                    Point2f[] showDots = coordCvt.LogicToShow(logicDots);
+                    if (PkgsWhetherPicked[i]==0)
+                    {
+                        int x = (int)showDots[i].X;
+                        int y = (int)showDots[i].Y;
+                        Cv2.Circle(mat, x, y, 10, new Scalar(0x00, 0x00, 0xff),-1);
                     }
                 }
 
@@ -480,6 +530,16 @@ namespace EDCHOST21
 
             //比赛时间信息
             time.Text = $"比赛时间： ({game.mGameTime/1000})\n";
+            //犯规次数显示
+            AWrongDirectionNum.Text = $"A逆行数　　{game.CarA.mWrongDirCount}\n";
+            BWrongDirectionNum.Text = $"B逆行数　　{game.CarB.mWrongDirCount}\n";
+
+            AWall.Text = $"A撞到虚拟障碍物数　　{game.CarA.mCrossWallCount}\n";
+            BWall.Text = $"B撞到虚拟障碍物数　　{game.CarB.mCrossWallCount}\n";
+
+            AFlood.Text = $"A撞到隔离区数　　{game.CarA.mCrossFloodCount}\n";
+            BFlood.Text = $"B撞到隔离区数　　{game.CarB.mCrossFloodCount}\n";
+
         }
 
         #endregion
@@ -633,7 +693,6 @@ namespace EDCHOST21
         // A车记1次犯规
         private void button_AFoul_Click(object sender, EventArgs e)
         {
-            game.CarA.mFoulCount++;
             game.CarA.AddFoulCount();
 
             if (game.FoulTimeFS != null)
@@ -646,7 +705,6 @@ namespace EDCHOST21
         // B车记1次犯规
         private void button_BFoul_Click(object sender, EventArgs e)
         {
-            game.CarB.mFoulCount++;
             game.CarB.AddFoulCount();
 
             if (game.FoulTimeFS != null)
@@ -670,13 +728,6 @@ namespace EDCHOST21
             // 如果B车在场地内且在迷宫外
             SendCarBMessage();
         }
-
-
-
-
-
-
-
 
 
 

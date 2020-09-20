@@ -167,7 +167,7 @@ namespace EDCHOST21
             if (gameStage == GameStage.FIRST_1
                 || gameStage == GameStage.LATTER_1)
             {
-                if (mGameTime >= 60000)
+                if (mGameTime >= 6000)
                 {
                     gameState = GameState.UNSTART;
                     gameStage++;
@@ -503,7 +503,7 @@ namespace EDCHOST21
                 && CarA.mPos.y > MAZE_SHORT_BORDER_CM && CarA.mPos.y < MAZE_LONG_BORDER_CM
                 && CarA.mPos.y > CarA.mLastPos.y && mGameTime - mLastWrongDirTime > 5000)
             {
-                CarA.AddFoulCount();
+                CarA.AddWrongDirection();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
@@ -513,7 +513,7 @@ namespace EDCHOST21
                 && CarA.mPos.y < MAZE_LONG_BORDER_CM && CarA.mPos.y < CarA.mLastPos.y 
                 && mGameTime - mLastWrongDirTime > 5000)
             {
-                CarA.AddFoulCount();
+                CarA.AddWrongDirection();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
@@ -522,7 +522,7 @@ namespace EDCHOST21
                 && CarA.mPos.x > MAZE_SHORT_BORDER_CM && CarA.mPos.x < MAZE_LONG_BORDER_CM
                 && CarA.mPos.x < CarA.mLastPos.x && mGameTime - mLastWrongDirTime > 5000)
             {
-                CarA.AddFoulCount();
+                CarA.AddWrongDirection();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
@@ -532,7 +532,7 @@ namespace EDCHOST21
                 && CarA.mPos.x < MAZE_LONG_BORDER_CM && CarA.mPos.x > CarA.mLastPos.x 
                 && mGameTime - mLastWrongDirTime > 5000)
             {
-                CarA.AddFoulCount();
+                CarA.AddWrongDirection();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("A车逆行！第{0}次", CarA.mWrongDirCount);
             }
@@ -544,7 +544,7 @@ namespace EDCHOST21
                 && CarB.mPos.y > MAZE_SHORT_BORDER_CM && CarB.mPos.y < MAZE_LONG_BORDER_CM
                 && CarB.mPos.y > CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 5000)
             {
-                CarB.AddFoulCount();
+                CarB.AddWrongDirection();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
@@ -553,7 +553,7 @@ namespace EDCHOST21
                 && CarB.mPos.y > MAZE_SHORT_BORDER_CM && CarB.mPos.y < MAZE_LONG_BORDER_CM
                 && CarB.mPos.y < CarB.mLastPos.y && mGameTime - mLastWrongDirTime > 5000)
             {
-                CarB.AddFoulCount();
+                CarB.AddWrongDirection();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
@@ -562,7 +562,7 @@ namespace EDCHOST21
                 && CarB.mPos.x > MAZE_SHORT_BORDER_CM && CarB.mPos.x < MAZE_LONG_BORDER_CM
                 && CarB.mPos.x < CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 5000)
             {
-                CarB.AddFoulCount();
+                CarB.AddWrongDirection();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
@@ -571,7 +571,7 @@ namespace EDCHOST21
                 && CarB.mPos.x > MAZE_SHORT_BORDER_CM && CarB.mPos.x < MAZE_LONG_BORDER_CM
                 && CarB.mPos.x > CarB.mLastPos.x && mGameTime - mLastWrongDirTime > 5000)
             {
-                CarB.AddFoulCount();
+                CarB.AddWrongDirection();
                 mLastWrongDirTime = mGameTime;
                 Debug.WriteLine("B车逆行！第{0}次", CarB.mWrongDirCount);
             }
@@ -778,18 +778,6 @@ namespace EDCHOST21
         public void Reset()
         {
             //Game = new Game();
-        }
-        //犯规键对应的函数
-        public void AddFoul()
-        {
-            if (gameStage == GameStage.FIRST_2 || gameStage == GameStage.LATTER_1)
-            {
-                CarB.mFoulCount++;
-            }
-            else
-            {
-                CarA.mFoulCount++;
-            }
         }
         #endregion
         public byte[] PackCarAMessage()//已更新到最新通信协议
