@@ -41,6 +41,7 @@ struct CarInfo
     uint8_t transport;         //小车上是否有人
     uint8_t transportnum;      //小车运送人的个数
     uint8_t area;    //小车所在的区域
+    uint8_t WhetherRightPos;//小车这次位置信息是否是正确的，1是正确的，0是不正确的.
 };
 struct PassengerInfo
 {
@@ -90,6 +91,7 @@ struct Position getFloodpos(int FloodNo);     //泄洪口位置
 uint16_t getCarposX();		    //小车x坐标
 uint16_t getCarposY();			//小车y坐标
 struct Position getCarpos();	//小车位置
+uint16_t getCarWhetherRightPos();//小车这次位置信息是否是正确的
 uint16_t getPackageposX(int PackNo);		    //物资x坐标
 uint16_t getPackageposY(int PackNo);			//物资y坐标
 uint16_t getPackagewhetherpicked(int PackNo);   //物资是否已被收集

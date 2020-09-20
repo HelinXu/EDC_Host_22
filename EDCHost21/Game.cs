@@ -48,47 +48,29 @@ namespace EDCHOST21
         public int mLastWrongDirTime;
         public FileStream FoulTimeFS;
 
-        public Game(GameStage gameStage = GameStage.FIRST_1)//构造一个新的Game类 默认为CampA是先上半场上一阶段进行
+        public Game()//构造一个新的Game类 默认为CampA是先上半场上一阶段进行
         {
             Debug.WriteLine("开始执行Game构造函数");
-            if (gameStage == GameStage.FIRST_1)
+            gameStage = GameStage.FIRST_1;
+            UpperCamp = Camp.A;
+            CarA = new Car(Camp.A, 0);
+            CarB = new Car(Camp.B, 1);
+            gameState = GameState.UNSTART;
+            psgState = PassengerState.TRAPPED;
+            psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
+            pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 5);
+            currentPkgList = new Package[PKG_NUM_perGROUP];
+            for (int i = 0;i<PKG_NUM_perGROUP;i++)
             {
-
-                UpperCamp = Camp.A;
-                CarA = new Car(Camp.A, 0);
-                CarB = new Car(Camp.B, 1);
-                gameState = GameState.UNSTART;
-                psgState = PassengerState.TRAPPED;
-                psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
-                pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 5);
-                currentPkgList = new Package[PKG_NUM_perGROUP];
-                curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
-                mFlood = new Flood(0);
-                mPackageGroupCount = 0;
-                mLastWrongDirTime = -10;
-                //下面的迷宫构造的文件路径需要修改
-                mLabyrinth = new Labyrinth(File.OpenText("../../laby.txt"));
-                Debug.WriteLine("Game构造函数FIRST_1执行完毕");
+                currentPkgList[i] = new Package();
             }
-            else
-            {
-                //@TODO
-                UpperCamp = Camp.A;
-                CarA = new Car(Camp.A, 0);
-                CarB = new Car(Camp.B, 1);
-                gameState = GameState.UNSTART;
-                psgState = PassengerState.TRAPPED;
-                psgGenerator = new PassengerGenerator(100);//上下半场将都用这一个索引
-                pkgGenerator = new PackageGenerator(PKG_NUM_perGROUP * 5);
-                currentPkgList = new Package[PKG_NUM_perGROUP];
-                curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
-                mFlood = new Flood(0);
-                mPackageGroupCount = 0;
-                mLastWrongDirTime = -10;
-                //下面的迷宫构造的文件路径需要修改
-                mLabyrinth = new Labyrinth(File.OpenText("../../laby.txt"));
-                Debug.WriteLine("Game构造函数FIRST_2执行完毕");
-            }
+            curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
+            mFlood = new Flood(0);
+            mPackageGroupCount = 0;
+            mLastWrongDirTime = -10;
+            //下面的迷宫构造的文件路径需要修改
+            mLabyrinth = new Labyrinth(File.OpenText("../../laby.txt"));
+            Debug.WriteLine("Game构造函数FIRST_1执行完毕");
         }
         #region
         //每到半点自动更新Package信息函数,8.29已更新
@@ -185,7 +167,7 @@ namespace EDCHOST21
             if (gameStage == GameStage.FIRST_1
                 || gameStage == GameStage.LATTER_1)
             {
-                if (mGameTime >= 600)
+                if (mGameTime >= 60000)
                 {
                     gameState = GameState.UNSTART;
                     gameStage++;
@@ -607,6 +589,40 @@ namespace EDCHOST21
         }
         #endregion
 
+        public void UpdateCarATransmPos()
+        {
+            if(gameState == GameState.NORMAL)
+            {
+                if(CarA.mIsInMaze==0||CarA.mRightPosCount==9)
+                {
+                    CarA.mTransPos = CarA.mPos;
+                    CarA.mRightPosCount = 0;
+                    CarA.mRightPos = 1;
+                }
+                if(CarA.mIsInMaze==1 && CarA.mRightPosCount!=9)
+                {
+                    CarA.mRightPosCount++;
+                    CarA.mRightPos = 0;
+                }
+            }
+        }
+        public void UpdateCarBTransmPos()
+        {
+            if (gameState == GameState.NORMAL)
+            {
+                if (CarB.mIsInMaze == 0 || CarB.mRightPosCount == 9)
+                {
+                    CarB.mTransPos = CarB.mPos;
+                    CarB.mRightPosCount = 0;
+                    CarB.mRightPos = 1;
+                }
+                if (CarB.mIsInMaze == 1 && CarB.mRightPosCount != 9)
+                {
+                    CarB.mRightPosCount++;
+                    CarB.mRightPos = 0;
+                }
+            }
+        }
         //0.1s
         public void Update()
         {
@@ -637,6 +653,8 @@ namespace EDCHOST21
                     Debug.WriteLine("0.1 Update！");
                 }
                 CheckNextStage();
+                UpdateCarATransmPos();
+                UpdateCarBTransmPos();
             }
         }
 
@@ -776,23 +794,23 @@ namespace EDCHOST21
         #endregion
         public byte[] PackCarAMessage()//已更新到最新通信协议
         {
-            byte[] message = new byte[102]; //上位机传递多少信息
+            byte[] message = new byte[98]; //上位机传递多少信息
             int messageCnt = 0;
             message[messageCnt++] = (byte)(mGameTime >> 8);
             message[messageCnt++] = (byte)mGameTime;
             message[messageCnt++] = (byte)(((byte)gameState << 6) | ((byte)CarA.mTaskState << 5 | ((byte)CarA.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x03)));
-            message[messageCnt++] = (byte)CarA.mPos.x;
-            message[messageCnt++] = (byte)CarA.mPos.y;
+            message[messageCnt++] = (byte)CarA.mTransPos.x;
+            message[messageCnt++] = (byte)CarA.mTransPos.y;
             message[messageCnt++] = (byte)mFlood.dot1.x;
             message[messageCnt++] = (byte)mFlood.dot1.y;
             message[messageCnt++] = (byte)mFlood.dot2.x;
             message[messageCnt++] = (byte)mFlood.dot2.y;
             message[messageCnt++] = (byte)curPsg.Start_Dot.x;
-            message[messageCnt++] = (byte)curPsg.Start_Dot.x;
+            message[messageCnt++] = (byte)curPsg.Start_Dot.y;
             message[messageCnt++] = (byte)curPsg.End_Dot.x;
-            message[messageCnt++] = (byte)curPsg.End_Dot.x;
+            message[messageCnt++] = (byte)curPsg.End_Dot.y;
             message[messageCnt++] = (byte)(((byte)currentPkgList[0].IsPicked << 7) | ((byte)currentPkgList[1].IsPicked << 6) | ((byte)currentPkgList[2].IsPicked << 5)
-                | ((byte)currentPkgList[3].IsPicked << 4) | ((byte)currentPkgList[4].IsPicked << 3) | ((byte)currentPkgList[5].IsPicked << 2) | ((byte)CarA.mIsInMaze << 1));
+                | ((byte)currentPkgList[3].IsPicked << 4) | ((byte)currentPkgList[4].IsPicked << 3) | ((byte)currentPkgList[5].IsPicked << 2) | ((byte)CarA.mIsInMaze << 1) | ((byte)CarA.mRightPos));
             message[messageCnt++] = (byte)currentPkgList[0].mPos.x;
             message[messageCnt++] = (byte)currentPkgList[0].mPos.y;
             message[messageCnt++] = (byte)currentPkgList[1].mPos.x;
@@ -879,13 +897,13 @@ namespace EDCHOST21
         }
         public byte[] PackCarBMessage()//已更新到最新通信协议
         {
-            byte[] message = new byte[102]; //上位机传递多少信息
+            byte[] message = new byte[98]; //上位机传递多少信息
             int messageCnt = 0;
             message[messageCnt++] = (byte)(mGameTime >> 8);
             message[messageCnt++] = (byte)mGameTime;
             message[messageCnt++] = (byte)(((byte)gameState << 6) | ((byte)CarB.mTaskState << 5) | ((byte)CarB.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x03));
-            message[messageCnt++] = (byte)CarB.mPos.x;
-            message[messageCnt++] = (byte)CarB.mPos.y;
+            message[messageCnt++] = (byte)CarB.mTransPos.x;
+            message[messageCnt++] = (byte)CarB.mTransPos.y;
             message[messageCnt++] = (byte)mFlood.dot1.x;
             message[messageCnt++] = (byte)mFlood.dot1.y;
             message[messageCnt++] = (byte)mFlood.dot2.x;
@@ -894,7 +912,8 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)curPsg.Start_Dot.x;
             message[messageCnt++] = (byte)curPsg.End_Dot.x;
             message[messageCnt++] = (byte)curPsg.End_Dot.x;
-            message[messageCnt++] = (byte)(((byte)currentPkgList[0].IsPicked << 7) | ((byte)currentPkgList[1].IsPicked << 6) | ((byte)currentPkgList[2].IsPicked << 5) | ((byte)currentPkgList[3].IsPicked << 4) | ((byte)currentPkgList[4].IsPicked << 3) | ((byte)currentPkgList[5].IsPicked << 2) | ((byte)CarB.mIsInMaze << 1));
+            message[messageCnt++] = (byte)(((byte)currentPkgList[0].IsPicked << 7) | ((byte)currentPkgList[1].IsPicked << 6) | ((byte)currentPkgList[2].IsPicked << 5) 
+                | ((byte)currentPkgList[3].IsPicked << 4) | ((byte)currentPkgList[4].IsPicked << 3) | ((byte)currentPkgList[5].IsPicked << 2) | ((byte)CarB.mIsInMaze << 1)|((byte)CarB.mRightPos));
             message[messageCnt++] = (byte)currentPkgList[0].mPos.x;
             message[messageCnt++] = (byte)currentPkgList[0].mPos.y;
             message[messageCnt++] = (byte)currentPkgList[1].mPos.x;

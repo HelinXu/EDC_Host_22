@@ -37,7 +37,7 @@ void zigbeeMessageRecord(void)
 				zigbeeReceive[i] = zigbeeMessage[index];
 				index = receiveIndexAdd(index, 1);
 			}
-			DecodeAll();
+			Decode();
 		}
 		else
 		{
@@ -120,17 +120,22 @@ struct Position getFloodpos(int FloodNo)
 }
 uint16_t getCarposX()
 {
-		return (uint16_t)Car[CarNo].pos.X;
+		return (uint16_t)Car.pos.X;
 
 }
 uint16_t getCarposY()
 {
-		return (uint16_t)Car[CarNo].pos.Y;
+		return (uint16_t)Car.pos.Y;
 }
 struct Position getCarpos()
 {
-		return Car[CarNo].pos;
+		return Car.pos;
 }
+uint16_t getCarWhetherRightPos()
+{
+    return (uint16_t)Car.WhetherRightPos;
+}
+
 uint16_t getPackageposX(int PackNo)
 {
     if (PackNo != 0 && PackNo != 1 && PackNo != 2 && PackNo != 3 && PackNo != 4 && PackNo != 5)
@@ -222,6 +227,7 @@ void DecodeCarInfo()
     Car.transport=(zigbeeReceive[2] & 0x08>>3);
     Car.transportnum=(zigbeeReceive[32]);
     Car.area=(zigbeeReceive[15] & 0x02>>1);
+    Car.WhetherRightPos = (zigbeeReceive[15] & 0x01);
 }
 
 void DecodePassengerInfo()
@@ -345,11 +351,10 @@ void DecodeObstacle()
     Obstacle[15].posB.Y=(zigbeeReceive[95]);
 
 }
-void DecodeAll()
+void Decode()
 {
 	DecodeBasicInfo();
-	DecodeCarAInfo();
-	DecodeCarBInfo();
+	DecodeCarInfo();
 	DecodePassengerInfo();
 	DecodePackageAInfo();
 	DecodePackageBInfo();

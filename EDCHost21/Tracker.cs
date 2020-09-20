@@ -144,7 +144,7 @@ namespace EDCHOST21
 
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
-            buttonNextStage.Enabled = false;
+            button_Continue.Enabled = false;
 
             validPorts = SerialPort.GetPortNames();
             alreadySet = false;
@@ -160,11 +160,6 @@ namespace EDCHOST21
                 capture.FrameHeight = flags.cameraSize.Height;
                 capture.ConvertRgb = true;
 
-                // 设置计时器timer100ms的触发间隔：75ms
-                timer.Interval = 100; //xhl改成了100
-                // 计时器事件开始：间隔75ms执行Flush
-                timer.Start();
-                // Cv2.NamedWindow("binary");
 
                 // 设置定时器的触发间隔为 100ms
                 timerMsg100ms.Interval = 100;
@@ -461,10 +456,10 @@ namespace EDCHOST21
             labelBScore.Text = $"{game.CarB.MyScore}";
 
             // 上半场或下半场
-            label_GameCount.Text = (game.gameStage == GameStage.FIRST_1 || game.gameStage == GameStage.LATTER_1) ? "上半场" : "下半场";
+            label_GameCount.Text = (game.gameStage == GameStage.FIRST_1 || game.gameStage == GameStage.FIRST_2) ? "上半场" : "下半场";
 
             // 阶段一或阶段二
-            label_GameStage.Text = (game.gameStage == GameStage.FIRST_2 || game.gameStage == GameStage.LATTER_2) ? "阶段一" : "阶段二";
+            label_GameStage.Text = (game.gameStage == GameStage.FIRST_1 || game.gameStage == GameStage.LATTER_1) ? "阶段一" : "阶段二";
 
             // A,B车犯规的次数
             label_AFoulNum.Text = $"{game.CarA.mFoulCount}";
@@ -482,6 +477,9 @@ namespace EDCHOST21
             label_Debug.Text =
                 $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\n" +
                 $"B车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
+
+            //比赛时间信息
+            time.Text = $"比赛时间： ({game.mGameTime/1000})\n";
         }
 
         #endregion
@@ -496,7 +494,8 @@ namespace EDCHOST21
             {
                 flags.End();
             }
-            timer.Stop();
+            timerMsg100ms.Stop();
+            timerMsg1s.Stop();
             //threadCamera.Join();
             capture.Release();
             if (serial1 != null && serial1.IsOpen)
@@ -566,8 +565,6 @@ namespace EDCHOST21
         {
             game.Start();
             buttonPause.Enabled = true;
-            buttonNextStage.Enabled = true;
-            buttonStart.Enabled = false;
         }
 
         // 比赛暂停（待完善）
@@ -576,8 +573,7 @@ namespace EDCHOST21
             // to add something...
             game.Pause();
             buttonPause.Enabled = false;
-            buttonNextStage.Enabled = true;
-            buttonStart.Enabled = true;
+            button_Continue.Enabled = true;
         }
 
         // 比赛重新开始
@@ -585,8 +581,8 @@ namespace EDCHOST21
         {
             lock (game) { game = new Game(); }
             buttonStart.Enabled = true;
+            button_Continue.Enabled = false;
             buttonPause.Enabled = false;
-            buttonNextStage.Enabled = false;
             label_CarA.Text = "A车";
             label_CarB.Text = "B车";
         }
@@ -626,14 +622,12 @@ namespace EDCHOST21
             }
         }
 
-        // 开始下半场比赛
+        // 继续比赛
         private void button_Continue_Click(object sender, EventArgs e)
         {
             //if (game.state == GameState.End)
             game.Continue();
-            buttonPause.Enabled = false;
-            buttonNextStage.Enabled = true;
-            buttonStart.Enabled = true;
+            buttonPause.Enabled = true;
         }
 
         // A车记1次犯规
@@ -662,56 +656,36 @@ namespace EDCHOST21
             }
         }
 
-        // 比赛结束（待完善）
-        private void buttonNextStage_Click(object sender, EventArgs e)
-        {
-            game.CheckNextStage();
-            game.Start();
-            //buttonStart.Enabled = true;
-            buttonPause.Enabled = false;
-            buttonNextStage.Enabled = false;
-        }
 
         #endregion
 
 
         #region 由定时器控制的函数
-        //计时器事件：执行Flush
-        private void timer_Tick(object sender, EventArgs e)
-        {
-            Flush();
-        }
-
-        //计时器事件，每100ms触发一次，向在迷宫外的小车发送信息
+        //计时器事件，每100ms触发一次，向小车发送信息
         private void timerMsg100ms_Tick(object sender, EventArgs e)
         {
+            Flush();
             // 如果A车在场地内且在迷宫外
-            if (game.CarA.mIsInField == 1 && game.CarA.mIsInMaze == 0)
-            {
-                SendCarAMessage();
-            }
+            SendCarAMessage();
             // 如果B车在场地内且在迷宫外
-            if (game.CarB.mIsInField == 1 && game.CarB.mIsInMaze == 0)
-            {
-                SendCarBMessage();
-            }
+            SendCarBMessage();
         }
+
+
+
+
+
+
+
+
+
+
 
         //计时器事件，每1s触发一次，向在迷宫内的小车发送信息
         private void timerMsg1s_Tick(object sender, EventArgs e)
         {
             game.UpdateCarLastOneSecondPos();
             game.SetFlood();
-            // 如果A车在场地内且在迷宫内
-            if (game.CarA.mIsInField == 1 && game.CarA.mIsInMaze == 1)
-            {
-                SendCarAMessage();
-            }
-            // 如果B车在场地内且在迷宫内
-            if (game.CarB.mIsInField == 1 && game.CarB.mIsInMaze == 1)
-            {
-                SendCarBMessage();
-            }
         }
         #endregion
 

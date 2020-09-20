@@ -24,8 +24,9 @@ namespace EDCHOST21
         public Dot mPos;
         public Dot mLastPos;
         public Dot mLastOneSecondPos;
-        public Camp MyCamp { get; set; }  //A or B get、set直接两个封装好的函数
-        public int MyScore { get; set; }  //得分
+        public Dot mTransPos;
+        public Camp MyCamp;               //A or B get、set直接两个封装好的函数
+        public int MyScore;               //得分
         public int mPkgCount;             //小车成功收集物资个数
         public int mTaskState;            //小车任务 0为上半场任务，1为下半场任务
         public int mIsWithPassenger;      //小车上是否载人 0未载人 1载人
@@ -36,6 +37,8 @@ namespace EDCHOST21
         public int mCrossWallCount;       //小车经过虚拟障碍的次数
         public int mWrongDirCount;        //小车逆行次数
         public int mFoulCount;            //犯规摁键次数
+        public int mRightPos;             //小车现在的位置信息是否是正确的，0为不正确的，1为正确的
+        public int mRightPosCount;        //用于记录小车位置是否该正确了
 
 
         public Car(Camp c, int task)
@@ -44,6 +47,7 @@ namespace EDCHOST21
             mPos = new Dot(0, 0);
             mLastPos = new Dot(0, 0);
             mLastOneSecondPos = new Dot(0, 0);
+            mTransPos = new Dot(0, 0);
             MyScore = 0;
             mPkgCount = 0;
             mTaskState = task;
@@ -54,6 +58,8 @@ namespace EDCHOST21
             mCrossWallCount = 0;
             mWrongDirCount = 0;
             mFoulCount = 0; //xhl 0824 添加
+            mRightPos = 1;
+            mRightPosCount = 0;
         }
         public void UpdateLastPos()
         {

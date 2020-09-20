@@ -21,7 +21,10 @@ namespace EDCHOST21
         {
             return mPos;
         }
-        //本条不知是否有用
-        //public Package() : this(new Dot(0, 0), 0) { }
+        public Package()
+        {
+            mPos = new Dot(0, 0);
+            IsPicked = 0;
+        }
     }
 }
