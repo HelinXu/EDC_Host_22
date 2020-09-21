@@ -54,16 +54,14 @@
             this.label_AMessage = new System.Windows.Forms.Label();
             this.label_Debug = new System.Windows.Forms.Label();
             this.timerMsg100ms = new System.Windows.Forms.Timer(this.components);
-            this.timerMsg1s = new System.Windows.Forms.Timer(this.components);
             this.label_GameCount = new System.Windows.Forms.Label();
             this.label_GameStage = new System.Windows.Forms.Label();
             this.time = new System.Windows.Forms.Label();
-            this.AWrongDirectionNum = new System.Windows.Forms.Label();
-            this.BWrongDirectionNum = new System.Windows.Forms.Label();
             this.AWall = new System.Windows.Forms.Label();
             this.BWall = new System.Windows.Forms.Label();
             this.AFlood = new System.Windows.Forms.Label();
             this.BFlood = new System.Windows.Forms.Label();
+            this.SetFlood = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
@@ -351,10 +349,6 @@
             // 
             this.timerMsg100ms.Tick += new System.EventHandler(this.timerMsg100ms_Tick);
             // 
-            // timerMsg1s
-            // 
-            this.timerMsg1s.Tick += new System.EventHandler(this.timerMsg1s_Tick);
-            // 
             // label_GameCount
             // 
             this.label_GameCount.Font = new System.Drawing.Font("宋体", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -384,31 +378,11 @@
             this.time.TabIndex = 108;
             this.time.Text = "label2";
             // 
-            // AWrongDirectionNum
-            // 
-            this.AWrongDirectionNum.AutoSize = true;
-            this.AWrongDirectionNum.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.AWrongDirectionNum.Location = new System.Drawing.Point(-2, 167);
-            this.AWrongDirectionNum.Name = "AWrongDirectionNum";
-            this.AWrongDirectionNum.Size = new System.Drawing.Size(82, 24);
-            this.AWrongDirectionNum.TabIndex = 110;
-            this.AWrongDirectionNum.Text = "label2";
-            // 
-            // BWrongDirectionNum
-            // 
-            this.BWrongDirectionNum.AutoSize = true;
-            this.BWrongDirectionNum.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.BWrongDirectionNum.Location = new System.Drawing.Point(1306, 167);
-            this.BWrongDirectionNum.Name = "BWrongDirectionNum";
-            this.BWrongDirectionNum.Size = new System.Drawing.Size(82, 24);
-            this.BWrongDirectionNum.TabIndex = 112;
-            this.BWrongDirectionNum.Text = "label2";
-            // 
             // AWall
             // 
             this.AWall.AutoSize = true;
             this.AWall.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.AWall.Location = new System.Drawing.Point(-2, 225);
+            this.AWall.Location = new System.Drawing.Point(-2, 178);
             this.AWall.Name = "AWall";
             this.AWall.Size = new System.Drawing.Size(82, 24);
             this.AWall.TabIndex = 113;
@@ -418,7 +392,7 @@
             // 
             this.BWall.AutoSize = true;
             this.BWall.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.BWall.Location = new System.Drawing.Point(1306, 225);
+            this.BWall.Location = new System.Drawing.Point(1306, 178);
             this.BWall.Name = "BWall";
             this.BWall.Size = new System.Drawing.Size(82, 24);
             this.BWall.TabIndex = 114;
@@ -444,18 +418,31 @@
             this.BFlood.TabIndex = 116;
             this.BFlood.Text = "label2";
             // 
+            // SetFlood
+            // 
+            this.SetFlood.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SetFlood.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
+            this.SetFlood.ForeColor = System.Drawing.Color.Green;
+            this.SetFlood.Location = new System.Drawing.Point(1310, 756);
+            this.SetFlood.Margin = new System.Windows.Forms.Padding(2);
+            this.SetFlood.Name = "SetFlood";
+            this.SetFlood.Size = new System.Drawing.Size(133, 49);
+            this.SetFlood.TabIndex = 117;
+            this.SetFlood.Text = "SetFlood";
+            this.SetFlood.UseVisualStyleBackColor = true;
+            this.SetFlood.Click += new System.EventHandler(this.SetFlood_Click);
+            // 
             // Tracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1561, 816);
+            this.Controls.Add(this.SetFlood);
             this.Controls.Add(this.BFlood);
             this.Controls.Add(this.AFlood);
             this.Controls.Add(this.BWall);
             this.Controls.Add(this.AWall);
-            this.Controls.Add(this.BWrongDirectionNum);
-            this.Controls.Add(this.AWrongDirectionNum);
             this.Controls.Add(this.time);
             this.Controls.Add(this.label_GameStage);
             this.Controls.Add(this.label_GameCount);
@@ -517,16 +504,14 @@
         private System.Windows.Forms.Label label_AMessage;
         private System.Windows.Forms.Label label_Debug;
         private System.Windows.Forms.Timer timerMsg100ms;
-        private System.Windows.Forms.Timer timerMsg1s;
         private System.Windows.Forms.Label label_GameCount;
         private System.Windows.Forms.Label label_GameStage;
         private System.Windows.Forms.Label time;
-        private System.Windows.Forms.Label AWrongDirectionNum;
-        private System.Windows.Forms.Label BWrongDirectionNum;
         private System.Windows.Forms.Label AWall;
         private System.Windows.Forms.Label BWall;
         private System.Windows.Forms.Label AFlood;
         private System.Windows.Forms.Label BFlood;
+        private System.Windows.Forms.Button SetFlood;
     }
 }
 

@@ -171,10 +171,7 @@ namespace EDCHOST21
                 // 启动计时器，执行给迷宫外的小车定时发信息的任务
                 timerMsg100ms.Start();
 
-                // 设置定时器的触发间隔为 1s
-                timerMsg1s.Interval = 1000;
-                // 启动计时器，执行给迷宫内的小车定时发送信息的任务
-                timerMsg1s.Start();
+                
             }
             Debug.WriteLine("Tracker Initialize Finished\n");
         }
@@ -257,7 +254,7 @@ namespace EDCHOST21
 
             // 通过串口1发送给A车
             if (serial1 != null && serial1.IsOpen)
-                serial1.Write(Message, 0, 102);
+                serial1.Write(Message, 0, 72);
             ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
         }
@@ -270,7 +267,7 @@ namespace EDCHOST21
 
             // 通过串口2发送给B车
             if (serial2 != null && serial2.IsOpen)
-                serial2.Write(Message, 0, 102);
+                serial2.Write(Message, 0, 72);
 
             ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
@@ -689,7 +686,6 @@ namespace EDCHOST21
             game.Continue();
             buttonPause.Enabled = true;
         }
-
         // A车记1次犯规
         private void button_AFoul_Click(object sender, EventArgs e)
         {
@@ -727,6 +723,11 @@ namespace EDCHOST21
             SendCarAMessage();
             // 如果B车在场地内且在迷宫外
             SendCarBMessage();
+        }
+
+        private void SetFlood_Click(object sender, EventArgs e)
+        {
+            game.SetFlood();
         }
 
 

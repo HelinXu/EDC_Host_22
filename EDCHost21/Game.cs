@@ -26,9 +26,8 @@ namespace EDCHOST21
         public const int MAZE_SHORT_BORDER_CM = 32;  //迷宫最短的靠边距离
         public const int MAZE_LONG_BORDER_CM = MAZE_SHORT_BORDER_CM
                                              + MAZE_CROSS_DIST_CM * (MAZE_CROSS_NUM - 1)
-                                             + MAZE_SIDE_BORDER_CM * 2;
-        public const int MAZE_SIDE_BORDER_CM = 20; 
-        //迷宫最长的靠边距离
+                                             + MAZE_SIDE_BORDER_CM * 2;//迷宫最长的靠边距离
+        public const int MAZE_SIDE_BORDER_CM = 20;         
         public const double COINCIDE_ERR_DIST_CM = 10;  //判定小车到达某点允许的最大误差距离
         public const int PKG_NUM_perGROUP = 6;       //场上每次刷新package物资的个数
         public GameStage gameStage;//比赛阶段
@@ -113,6 +112,140 @@ namespace EDCHOST21
         {
             return Math.Sqrt((A.x - B.x) * (A.x - B.x)
                 + (A.y - B.y) * (A.y - B.y));
+        }
+        public void SetFloodArea()
+        {
+            int i, j;
+            if(mFlood.num==0)
+            {
+                for(i=0;i<6;i++)
+                {
+                    for(j=0;j<6;j++)
+                    {
+                        Dot judge = new Dot(MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * i, MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * j);
+                        if(gameStage==GameStage.FIRST_1)
+                        {
+                            if(GetDistance(judge,CarA.mPos)<=COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot1 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                        if (gameStage == GameStage.LATTER_1)
+                        {
+                            if (GetDistance(judge, CarB.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot1 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                    }
+                }
+            }
+            if (mFlood.num == 1)
+            {
+                for (i = 0; i < 6; i++)
+                {
+                    for (j = 0; j < 6; j++)
+                    {
+                        Dot judge = new Dot(MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * i, MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * j);
+                        if (gameStage == GameStage.FIRST_1)
+                        {
+                            if (GetDistance(judge, CarA.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot2 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                        if (gameStage == GameStage.LATTER_1)
+                        {
+                            if (GetDistance(judge, CarB.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot2 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                    }
+                }
+            }
+            if (mFlood.num == 2)
+            {
+                for (i = 0; i < 6; i++)
+                {
+                    for (j = 0; j < 6; j++)
+                    {
+                        Dot judge = new Dot(MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * i, MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * j);
+                        if (gameStage == GameStage.FIRST_1)
+                        {
+                            if (GetDistance(judge, CarA.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot3 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                        if (gameStage == GameStage.LATTER_1)
+                        {
+                            if (GetDistance(judge, CarB.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot3 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                    }
+                }
+            }
+            if (mFlood.num == 3)
+            {
+                for (i = 0; i < 6; i++)
+                {
+                    for (j = 0; j < 6; j++)
+                    {
+                        Dot judge = new Dot(MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * i, MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * j);
+                        if (gameStage == GameStage.FIRST_1)
+                        {
+                            if (GetDistance(judge, CarA.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot4 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                        if (gameStage == GameStage.LATTER_1)
+                        {
+                            if (GetDistance(judge, CarB.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot4 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                    }
+                }
+            }
+            if (mFlood.num == 4)
+            {
+                for (i = 0; i < 6; i++)
+                {
+                    for (j = 0; j < 6; j++)
+                    {
+                        Dot judge = new Dot(MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * i, MAZE_SIDE_BORDER_CM + MAZE_SHORT_BORDER_CM + MAZE_CROSS_DIST_CM * j);
+                        if (gameStage == GameStage.FIRST_1)
+                        {
+                            if (GetDistance(judge, CarA.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot5 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                        if (gameStage == GameStage.LATTER_1)
+                        {
+                            if (GetDistance(judge, CarB.mPos) <= COINCIDE_ERR_DIST_CM)
+                            {
+                                mFlood.dot5 = judge;
+                                mFlood.num++;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -638,7 +771,7 @@ namespace EDCHOST21
                     CheckCarAonFlood();
                     CheckCarAonObstacle();
                     CheckCarATransPassenger();
-                    CheckCarAWrongDirection();
+                    //CheckCarAWrongDirection();
                     Debug.WriteLine("0.1 Update！");
                 }
                 else
@@ -649,7 +782,7 @@ namespace EDCHOST21
                     CheckCarBonFlood();
                     CheckCarBonObstacle();
                     CheckCarBTransPassenger();
-                    CheckCarBWrongDirection();
+                    //CheckCarBWrongDirection();
                     Debug.WriteLine("0.1 Update！");
                 }
                 CheckNextStage();
@@ -782,17 +915,23 @@ namespace EDCHOST21
         #endregion
         public byte[] PackCarAMessage()//已更新到最新通信协议
         {
-            byte[] message = new byte[98]; //上位机传递多少信息
+            byte[] message = new byte[72]; //上位机传递多少信息
             int messageCnt = 0;
             message[messageCnt++] = (byte)(mGameTime >> 8);
             message[messageCnt++] = (byte)mGameTime;
-            message[messageCnt++] = (byte)(((byte)gameState << 6) | ((byte)CarA.mTaskState << 5 | ((byte)CarA.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x03)));
+            message[messageCnt++] = (byte)(((byte)gameState << 6) | ((byte)CarA.mTaskState << 5 | ((byte)CarA.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x07)));
             message[messageCnt++] = (byte)CarA.mTransPos.x;
             message[messageCnt++] = (byte)CarA.mTransPos.y;
             message[messageCnt++] = (byte)mFlood.dot1.x;
             message[messageCnt++] = (byte)mFlood.dot1.y;
             message[messageCnt++] = (byte)mFlood.dot2.x;
             message[messageCnt++] = (byte)mFlood.dot2.y;
+            message[messageCnt++] = (byte)mFlood.dot3.x;
+            message[messageCnt++] = (byte)mFlood.dot3.y;
+            message[messageCnt++] = (byte)mFlood.dot4.x;
+            message[messageCnt++] = (byte)mFlood.dot4.y;
+            message[messageCnt++] = (byte)mFlood.dot5.x;
+            message[messageCnt++] = (byte)mFlood.dot5.y;
             message[messageCnt++] = (byte)curPsg.Start_Dot.x;
             message[messageCnt++] = (byte)curPsg.Start_Dot.y;
             message[messageCnt++] = (byte)curPsg.End_Dot.x;
@@ -847,55 +986,29 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w1.y;
             message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w2.x;
             message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w2.y;
             message[messageCnt++] = 0x0D;
             message[messageCnt++] = 0x0A;
             return message;
         }
         public byte[] PackCarBMessage()//已更新到最新通信协议
         {
-            byte[] message = new byte[98]; //上位机传递多少信息
+            byte[] message = new byte[72]; //上位机传递多少信息
             int messageCnt = 0;
             message[messageCnt++] = (byte)(mGameTime >> 8);
             message[messageCnt++] = (byte)mGameTime;
-            message[messageCnt++] = (byte)(((byte)gameState << 6) | ((byte)CarB.mTaskState << 5) | ((byte)CarB.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x03));
+            message[messageCnt++] = (byte)(((byte)gameState << 6) | ((byte)CarB.mTaskState << 5) | ((byte)CarB.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x07));
             message[messageCnt++] = (byte)CarB.mTransPos.x;
             message[messageCnt++] = (byte)CarB.mTransPos.y;
             message[messageCnt++] = (byte)mFlood.dot1.x;
             message[messageCnt++] = (byte)mFlood.dot1.y;
             message[messageCnt++] = (byte)mFlood.dot2.x;
             message[messageCnt++] = (byte)mFlood.dot2.y;
+            message[messageCnt++] = (byte)mFlood.dot3.x;
+            message[messageCnt++] = (byte)mFlood.dot3.y;
+            message[messageCnt++] = (byte)mFlood.dot4.x;
+            message[messageCnt++] = (byte)mFlood.dot4.y;
+            message[messageCnt++] = (byte)mFlood.dot5.x;
+            message[messageCnt++] = (byte)mFlood.dot5.y;
             message[messageCnt++] = (byte)curPsg.Start_Dot.x;
             message[messageCnt++] = (byte)curPsg.Start_Dot.x;
             message[messageCnt++] = (byte)curPsg.End_Dot.x;
@@ -950,38 +1063,6 @@ namespace EDCHOST21
             message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w1.y;
             message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w2.x;
             message[messageCnt++] = (byte)mLabyrinth.mpWallList[7].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[8].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[9].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[10].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[11].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[12].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[13].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[14].w2.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w1.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w1.y;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w2.x;
-            message[messageCnt++] = (byte)mLabyrinth.mpWallList[15].w2.y;
             message[messageCnt++] = 0x0D;
             message[messageCnt++] = 0x0A;
             return message;
