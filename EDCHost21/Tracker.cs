@@ -400,21 +400,21 @@ namespace EDCHOST21
                     Dot StartDot = game.curPsg.Start_Dot;
                     Dot EndDot = game.curPsg.End_Dot;
 
-                    Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
-                    Point2f[] showDots = coordCvt.LogicToShow(logicDots);
+                    Point2f[] logicDots1 = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+                    Point2f[] showDots1 = coordCvt.LogicToShow(logicDots1);
 
                     if (game.CarB.mIsWithPassenger == 0)
                     {
                         
-                        int x10 = (int)showDots[0].X;
-                        int y10 = (int)showDots[0].Y;
+                        int x10 = (int)showDots1[0].X;
+                        int y10 = (int)showDots1[0].Y;
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
                         Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                     else
                     {
-                        int x10 = (int)showDots[1].X;
-                        int y10 = (int)showDots[1].Y;
+                        int x10 = (int)showDots1[1].X;
+                        int y10 = (int)showDots1[1].Y;
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
                         Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
@@ -424,36 +424,37 @@ namespace EDCHOST21
                     Dot StartDot = game.curPsg.Start_Dot;
                     Dot EndDot = game.curPsg.End_Dot;
 
-                    Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
-                    Point2f[] showDots = coordCvt.LogicToShow(logicDots);
+                    Point2f[] logicDots1 = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+                    Point2f[] showDots1 = coordCvt.LogicToShow(logicDots1);
                     if (game.CarA.mIsWithPassenger == 0)
                     {
-                        int x10 = (int)showDots[0].X;
-                        int y10 = (int)showDots[0].Y;
+                        int x10 = (int)showDots1[0].X;
+                        int y10 = (int)showDots1[0].Y;
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
                         Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                     else
                     {
-                        int x10 = (int)showDots[1].X;
-                        int y10 = (int)showDots[1].Y;
+                        int x10 = (int)showDots1[1].X;
+                        int y10 = (int)showDots1[1].Y;
                         Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
                         Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                     }
                 }
 
                 //绘制物资
+                Dot Dot1 = game.currentPkgList[0].mPos;
+                Dot Dot2 = game.currentPkgList[1].mPos;
+                Dot Dot3 = game.currentPkgList[2].mPos;
+                Dot Dot4 = game.currentPkgList[3].mPos;
+                Dot Dot5 = game.currentPkgList[4].mPos;
+                Dot Dot6 = game.currentPkgList[5].mPos;
+
+                Point2f[] logicDots = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5), Cvt.Dot2Point(Dot6) };
+                Point2f[] showDots = coordCvt.LogicToShow(logicDots);
                 for(int i=0;i<6;i++)
                 {
-                    Dot Dot1 = game.currentPkgList[0].mPos;
-                    Dot Dot2 = game.currentPkgList[1].mPos;
-                    Dot Dot3 = game.currentPkgList[2].mPos;
-                    Dot Dot4 = game.currentPkgList[3].mPos;
-                    Dot Dot5 = game.currentPkgList[4].mPos;
-                    Dot Dot6 = game.currentPkgList[5].mPos;
-
-                    Point2f[] logicDots = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5), Cvt.Dot2Point(Dot6) };
-                    Point2f[] showDots = coordCvt.LogicToShow(logicDots);
+                    
                     if (PkgsWhetherPicked[i]==0)
                     {
                         int x = (int)showDots[i].X;
@@ -461,6 +462,24 @@ namespace EDCHOST21
                         Cv2.Circle(mat, x, y, 10, new Scalar(0x00, 0x00, 0xff),-1);
                     }
                 }
+                //绘制泄洪口
+                Dot1 = game.mFlood.dot1;
+                Dot2 = game.mFlood.dot2;
+                Dot3 = game.mFlood.dot3;
+                Dot4 = game.mFlood.dot4;
+                Dot5 = game.mFlood.dot5;
+
+                Point2f[] logicDots2 = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5) };
+                Point2f[] showDots2 = coordCvt.LogicToShow(logicDots2);
+                for (int i = 0; i < game.mFlood.num; i++)
+                {
+
+                    int x = (int)showDots2[i].X;
+                    int y = (int)showDots2[i].Y;
+                    Cv2.Circle(mat, x, y, 10, new Scalar(0xff, 0xff, 0x00, -1));
+                }
+
+
 
             }
 
@@ -527,9 +546,6 @@ namespace EDCHOST21
 
             //比赛时间信息
             time.Text = $"比赛时间： ({game.mGameTime/1000})\n";
-            //犯规次数显示
-            AWrongDirectionNum.Text = $"A逆行数　　{game.CarA.mWrongDirCount}\n";
-            BWrongDirectionNum.Text = $"B逆行数　　{game.CarB.mWrongDirCount}\n";
 
             AWall.Text = $"A撞到虚拟障碍物数　　{game.CarA.mCrossWallCount}\n";
             BWall.Text = $"B撞到虚拟障碍物数　　{game.CarB.mCrossWallCount}\n";
@@ -552,7 +568,6 @@ namespace EDCHOST21
                 flags.End();
             }
             timerMsg100ms.Stop();
-            timerMsg1s.Stop();
             //threadCamera.Join();
             capture.Release();
             if (serial1 != null && serial1.IsOpen)

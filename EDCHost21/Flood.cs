@@ -15,7 +15,7 @@ namespace EDCHOST21
         public Dot dot4;//泄洪口4的位置信息
         public Dot dot5;//泄洪口5的位置信息
         public void ResetIndex() { num = 0; }//num复位
-        public Flood(int Num) { num = Num; dot1 = new Dot(0, 0); dot2 = new Dot(0, 0); }//构造函数
+        public Flood(int Num) { num = Num; dot1 = new Dot(0, 0); dot2 = new Dot(0, 0); dot3 = new Dot(0, 0); dot4 = new Dot(0, 0); dot5 = new Dot(0, 0); }//构造函数
 
         //
     }

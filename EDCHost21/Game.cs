@@ -441,7 +441,7 @@ namespace EDCHOST21
 
         public void CheckCarAonObstacle()//小车A到达了障碍上              
         {
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 8; i++)
             {
                 if (mLabyrinth.mpWallList[i].w1.x
                     == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
@@ -502,7 +502,7 @@ namespace EDCHOST21
         }
         public void CheckCarBonObstacle()//小车B到达了障碍上               
         {
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 8; i++)
             {
                 if (mLabyrinth.mpWallList[i].w1.x
                     == mLabyrinth.mpWallList[i].w2.x)//障碍的两个点的横坐标相同
