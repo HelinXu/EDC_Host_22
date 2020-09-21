@@ -18,7 +18,7 @@ zigbee.h
 #define ZIGBEE_H
 #include "stm32f1xx_hal.h"
 #define INVALID_ARG -1
-#define ZIGBEE_MESSAGE_LENTH 98
+#define ZIGBEE_MESSAGE_LENTH 72
 
 struct Position
 {

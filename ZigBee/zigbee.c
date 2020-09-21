@@ -221,134 +221,82 @@ void DecodeCarInfo()
 {
     Car.pos.X=(zigbeeReceive[3]);
     Car.pos.Y=(zigbeeReceive[4]);
-    Car.score=(zigbeeReceive[28]<<8)+zigbeeReceive[29];
-    Car.picknum=zigbeeReceive[34];
+    Car.score=(zigbeeReceive[34]<<8)+zigbeeReceive[35];
+    Car.picknum=zigbeeReceive[37];
     Car.task=(zigbeeReceive[2] & 0x20>>5);
     Car.transport=(zigbeeReceive[2] & 0x08>>3);
-    Car.transportnum=(zigbeeReceive[32]);
-    Car.area=(zigbeeReceive[15] & 0x02>>1);
-    Car.WhetherRightPos = (zigbeeReceive[15] & 0x01);
+    Car.transportnum=(zigbeeReceive[36]);
+    Car.area=(zigbeeReceive[21] & 0x02>>1);
+    Car.WhetherRightPos = (zigbeeReceive[21] & 0x01);
 }
 
 void DecodePassengerInfo()
 {
-    Passenger.startpos.X=(zigbeeReceive[11]);
-    Passenger.startpos.Y=(zigbeeReceive[12]);
-    Passenger.finalpos.X=(zigbeeReceive[13]);
-    Passenger.finalpos.Y=(zigbeeReceive[14]);
+    Passenger.startpos.X=(zigbeeReceive[17]);
+    Passenger.startpos.Y=(zigbeeReceive[18]);
+    Passenger.finalpos.X=(zigbeeReceive[19]);
+    Passenger.finalpos.Y=(zigbeeReceive[20]);
 }
 void DecodePackageAInfo()
 {
-    Package[0].pos.X=(zigbeeReceive[16]);
-    Package[0].pos.Y=(zigbeeReceive[17]);
-    Package[0].whetherpicked=(zigbeeReceive[15] & 0x80>>7);
+    Package[0].pos.X=(zigbeeReceive[22]);
+    Package[0].pos.Y=(zigbeeReceive[23]);
+    Package[0].whetherpicked=(zigbeeReceive[21] & 0x80>>7);
 }
 void DecodePackageBInfo()
 {
-    Package[1].pos.X=(zigbeeReceive[18]);
-    Package[1].pos.Y=(zigbeeReceive[19]);
-    Package[0].whetherpicked=(zigbeeReceive[15] & 0x40>>7);
+    Package[1].pos.X=(zigbeeReceive[24]);
+    Package[1].pos.Y=(zigbeeReceive[25]);
+    Package[0].whetherpicked=(zigbeeReceive[21] & 0x40>>7);
 }
 void DecodePackageCInfo()
 {
-    Package[2].pos.X=(zigbeeReceive[20]);
-    Package[2].pos.Y=(zigbeeReceive[21]);
-    Package[0].whetherpicked=(zigbeeReceive[15] & 0x20>>7);
+    Package[2].pos.X=(zigbeeReceive[26]);
+    Package[2].pos.Y=(zigbeeReceive[27]);
+    Package[0].whetherpicked=(zigbeeReceive[21] & 0x20>>7);
 }
 void DecodePackageDInfo()
 {
-    Package[3].pos.X=(zigbeeReceive[22]);
-    Package[3].pos.Y=(zigbeeReceive[23]);
-    Package[0].whetherpicked=(zigbeeReceive[15] & 0x10>>7);
+    Package[3].pos.X=(zigbeeReceive[28]);
+    Package[3].pos.Y=(zigbeeReceive[29]);
+    Package[0].whetherpicked=(zigbeeReceive[21] & 0x10>>7);
 }
 void DecodePackageEInfo()
 {
-    Package[4].pos.X=(zigbeeReceive[24]);
-    Package[4].pos.Y=(zigbeeReceive[25]);
-    Package[0].whetherpicked=(zigbeeReceive[15] & 0x08>>7);
+    Package[4].pos.X=(zigbeeReceive[30]);
+    Package[4].pos.Y=(zigbeeReceive[31]);
+    Package[0].whetherpicked=(zigbeeReceive[21] & 0x08>>7);
 }
 void DecodePackageFInfo()
 {
-    Package[5].pos.X=(zigbeeReceive[26]);
-    Package[5].pos.Y=(zigbeeReceive[27]);
-    Package[0].whetherpicked=(zigbeeReceive[15] & 0x04>>7);
+    Package[5].pos.X=(zigbeeReceive[32]);
+    Package[5].pos.Y=(zigbeeReceive[33]);
+    Package[0].whetherpicked=(zigbeeReceive[21] & 0x04>>7);
 }
-void DecodeFloodAInfo()
+void DecodeFloodInfo()
 {
     Flood[0].pos.X=(zigbeeReceive[7]);
     Flood[0].pos.Y=(zigbeeReceive[8]);
-}
-void DecodeFloodBInfo()
-{
-    Flood[1].pos.X=(zigbeeReceive[9]);
+	Flood[1].pos.X=(zigbeeReceive[9]);
     Flood[1].pos.Y=(zigbeeReceive[10]);
+    Flood[2].pos.X=(zigbeeReceive[11]);
+    Flood[2].pos.Y=(zigbeeReceive[12]);
+    Flood[3].pos.X=(zigbeeReceive[13]);
+    Flood[3].pos.Y=(zigbeeReceive[14]);
+    Flood[4].pos.X=(zigbeeReceive[15]);
+    Flood[4].pos.Y=(zigbeeReceive[16]);
 }
-void DecodeObstacle()
+ DecodeObstacle()
 {
-    Obstacle[0].posA.X=(zigbeeReceive[32]);
-    Obstacle[0].posA.Y=(zigbeeReceive[33]);
-    Obstacle[0].posB.X=(zigbeeReceive[34]);
-    Obstacle[0].posB.Y=(zigbeeReceive[35]);
-    Obstacle[1].posA.X=(zigbeeReceive[36]);
-    Obstacle[1].posA.Y=(zigbeeReceive[37]);
-    Obstacle[1].posB.X=(zigbeeReceive[38]);
-    Obstacle[1].posB.Y=(zigbeeReceive[39]);
-    Obstacle[2].posA.X=(zigbeeReceive[40]);
-    Obstacle[2].posA.Y=(zigbeeReceive[41]);
-    Obstacle[2].posB.X=(zigbeeReceive[42]);
-    Obstacle[2].posB.Y=(zigbeeReceive[43]);
-    Obstacle[3].posA.X=(zigbeeReceive[44]);
-    Obstacle[3].posA.Y=(zigbeeReceive[45]);
-    Obstacle[3].posB.X=(zigbeeReceive[46]);
-    Obstacle[3].posB.Y=(zigbeeReceive[47]);
-    Obstacle[4].posA.X=(zigbeeReceive[48]);
-    Obstacle[4].posA.Y=(zigbeeReceive[49]);
-    Obstacle[4].posB.X=(zigbeeReceive[50]);
-    Obstacle[4].posB.Y=(zigbeeReceive[51]);
-    Obstacle[5].posA.X=(zigbeeReceive[52]);
-    Obstacle[5].posA.Y=(zigbeeReceive[53]);
-    Obstacle[5].posB.X=(zigbeeReceive[54]);
-    Obstacle[5].posB.Y=(zigbeeReceive[55]);
-    Obstacle[6].posA.X=(zigbeeReceive[56]);
-    Obstacle[6].posA.Y=(zigbeeReceive[57]);
-    Obstacle[6].posB.X=(zigbeeReceive[58]);
-    Obstacle[6].posB.Y=(zigbeeReceive[59]);
-    Obstacle[7].posA.X=(zigbeeReceive[60]);
-    Obstacle[7].posA.Y=(zigbeeReceive[61]);
-    Obstacle[7].posB.X=(zigbeeReceive[62]);
-    Obstacle[7].posB.Y=(zigbeeReceive[63]);
-    Obstacle[8].posA.X=(zigbeeReceive[64]);
-    Obstacle[8].posA.Y=(zigbeeReceive[65]);
-    Obstacle[8].posB.X=(zigbeeReceive[66]);
-    Obstacle[8].posB.Y=(zigbeeReceive[67]);
-    Obstacle[9].posA.X=(zigbeeReceive[68]);
-    Obstacle[9].posA.Y=(zigbeeReceive[69]);
-    Obstacle[9].posB.X=(zigbeeReceive[70]);
-    Obstacle[9].posB.Y=(zigbeeReceive[71]);
-    Obstacle[10].posA.X=(zigbeeReceive[72]);
-    Obstacle[10].posA.Y=(zigbeeReceive[73]);
-    Obstacle[10].posB.X=(zigbeeReceive[74]);
-    Obstacle[10].posB.Y=(zigbeeReceive[75]);
-    Obstacle[11].posA.X=(zigbeeReceive[76]);
-    Obstacle[11].posA.Y=(zigbeeReceive[77]);
-    Obstacle[11].posB.X=(zigbeeReceive[78]);
-    Obstacle[11].posB.Y=(zigbeeReceive[79]);
-    Obstacle[12].posA.X=(zigbeeReceive[80]);
-    Obstacle[12].posA.Y=(zigbeeReceive[81]);
-    Obstacle[12].posB.X=(zigbeeReceive[82]);
-    Obstacle[12].posB.Y=(zigbeeReceive[83]);
-    Obstacle[13].posA.X=(zigbeeReceive[84]);
-    Obstacle[13].posA.Y=(zigbeeReceive[85]);
-    Obstacle[13].posB.X=(zigbeeReceive[86]);
-    Obstacle[13].posB.Y=(zigbeeReceive[87]);
-    Obstacle[14].posA.X=(zigbeeReceive[88]);
-    Obstacle[14].posA.Y=(zigbeeReceive[89]);
-    Obstacle[14].posB.X=(zigbeeReceive[90]);
-    Obstacle[14].posB.Y=(zigbeeReceive[91]);
-    Obstacle[15].posA.X=(zigbeeReceive[92]);
-    Obstacle[15].posA.Y=(zigbeeReceive[93]);
-    Obstacle[15].posB.X=(zigbeeReceive[94]);
-    Obstacle[15].posB.Y=(zigbeeReceive[95]);
+    int i;
+    for(i=0;i<8;i++)
+    {
+    	Obstacle[i].posA.X=(zigbeeReceive[38+i*4]);
+        Obstacle[i].posA.Y=(zigbeeReceive[39+i*4]);
+        Obstacle[i].posB.X=(zigbeeReceive[40+i*4]);
+        Obstacle[i].posB.Y=(zigbeeReceive[41+i*4]);
+	}
+
 
 }
 void Decode()
@@ -362,8 +310,7 @@ void Decode()
 	DecodePackageDInfo();
 	DecodePackageEInfo();
 	DecodePackageFInfo();
-	DecodeFloodAInfo();
-	DecodeFloodBInfo();
+	DecodeFloodInfo();
 	DecodeObstacle();
 }
 int receiveIndexMinus(int index_h, int num)
