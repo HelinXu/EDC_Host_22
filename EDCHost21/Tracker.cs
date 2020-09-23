@@ -742,7 +742,7 @@ namespace EDCHOST21
 
         private void SetFlood_Click(object sender, EventArgs e)
         {
-            game.SetFlood();
+            game.SetFloodArea();
         }
 
 
