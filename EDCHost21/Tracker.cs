@@ -408,15 +408,23 @@ namespace EDCHOST21
                         
                         int x10 = (int)showDots1[0].X;
                         int y10 = (int)showDots1[0].Y;
-                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-                        Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        if(camCarB.X>0&&camCarB.Y>0)
+                        {
+                            Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        }
+                        
                     }
                     else
                     {
                         int x10 = (int)showDots1[1].X;
                         int y10 = (int)showDots1[1].Y;
-                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
-                        Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
+                        if(camCarB.X>0&&camCarB.Y>0)
+                        {
+                            Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        }
+                        
                     }
                 }
                 else if (game.UpperCamp == Camp.B)
@@ -430,27 +438,35 @@ namespace EDCHOST21
                     {
                         int x10 = (int)showDots1[0].X;
                         int y10 = (int)showDots1[0].Y;
-                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-                        Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        if(camCarA.X>0&&camCarA.Y>0)
+                        {
+                            Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        }
+                        
                     }
                     else
                     {
                         int x10 = (int)showDots1[1].X;
                         int y10 = (int)showDots1[1].Y;
-                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
-                        Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        Cv2.Rectangle(mat, new Rect(x10-10, y10-10, 20, 20), new Scalar(0x00, 0x00, 0xff), -1);
+                        if(camCarA.X>0&&camCarA.Y>0)
+                        {                        
+                            Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                        }
+
                     }
                 }
 
                 //绘制物资
-                Dot Dot1 = game.currentPkgList[0].mPos;
-                Dot Dot2 = game.currentPkgList[1].mPos;
-                Dot Dot3 = game.currentPkgList[2].mPos;
-                Dot Dot4 = game.currentPkgList[3].mPos;
-                Dot Dot5 = game.currentPkgList[4].mPos;
-                Dot Dot6 = game.currentPkgList[5].mPos;
+                Dot DotA = game.currentPkgList[0].mPos;
+                Dot DotB = game.currentPkgList[1].mPos;
+                Dot DotC = game.currentPkgList[2].mPos;
+                Dot DotD = game.currentPkgList[3].mPos;
+                Dot DotE = game.currentPkgList[4].mPos;
+                Dot DotF = game.currentPkgList[5].mPos;
 
-                Point2f[] logicDots = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5), Cvt.Dot2Point(Dot6) };
+                Point2f[] logicDots = { Cvt.Dot2Point(DotA), Cvt.Dot2Point(DotB), Cvt.Dot2Point(DotC), Cvt.Dot2Point(DotD), Cvt.Dot2Point(DotE), Cvt.Dot2Point(DotF) };
                 Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
                 for(int i=0;i<6;i++)
                 {
@@ -462,25 +478,31 @@ namespace EDCHOST21
                         Cv2.Circle(mat, x, y, 10, new Scalar(0x00, 0xff, 0xff),-1);
                     }
                 }
-                //绘制泄洪口
-                Dot1 = game.mFlood.dot1;
-                Dot2 = game.mFlood.dot2;
-                Dot3 = game.mFlood.dot3;
-                Dot4 = game.mFlood.dot4;
-                Dot5 = game.mFlood.dot5;
+                
 
-                Point2f[] logicDots2 = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5) };
-                Point2f[] showDots2 = coordCvt.LogicToCamera(logicDots2);
-                for (int i = 0; i < game.mFlood.num; i++)
+
+
+            }
+            //绘制泄洪口
+            Dot Dot1 = game.mFlood.dot1;
+            Dot Dot2 = game.mFlood.dot2;
+            Dot Dot3 = game.mFlood.dot3;
+            Dot Dot4 = game.mFlood.dot4;
+            Dot Dot5 = game.mFlood.dot5;
+
+            Point2f[] logicDots2 = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5) };
+           
+            for (int i = 0; i < game.mFlood.num; i++)
+            {
+
+                if(flags.calibrated)
                 {
-
+                    Point2f[] showDots2 = coordCvt.LogicToCamera(logicDots2);
                     int x = (int)showDots2[i].X;
                     int y = (int)showDots2[i].Y;
-                    Cv2.Circle(mat, x, y, 10, new Scalar(0xff, 0xff, 0x00, -1));
+                    Cv2.Circle(mat, x, y, 5, new Scalar(0xff, 0xff, 0x00), -1);
                 }
-
-
-
+                
             }
 
             //绘制迷宫障碍物
