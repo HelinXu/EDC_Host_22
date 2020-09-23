@@ -401,7 +401,7 @@ namespace EDCHOST21
                     Dot EndDot = game.curPsg.End_Dot;
 
                     Point2f[] logicDots1 = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
-                    Point2f[] showDots1 = coordCvt.LogicToShow(logicDots1);
+                    Point2f[] showDots1 = coordCvt.LogicToCamera(logicDots1);
 
                     if (game.CarB.mIsWithPassenger == 0)
                     {
@@ -425,7 +425,7 @@ namespace EDCHOST21
                     Dot EndDot = game.curPsg.End_Dot;
 
                     Point2f[] logicDots1 = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
-                    Point2f[] showDots1 = coordCvt.LogicToShow(logicDots1);
+                    Point2f[] showDots1 = coordCvt.LogicToCamera(logicDots1);
                     if (game.CarA.mIsWithPassenger == 0)
                     {
                         int x10 = (int)showDots1[0].X;
@@ -451,7 +451,7 @@ namespace EDCHOST21
                 Dot Dot6 = game.currentPkgList[5].mPos;
 
                 Point2f[] logicDots = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5), Cvt.Dot2Point(Dot6) };
-                Point2f[] showDots = coordCvt.LogicToShow(logicDots);
+                Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
                 for(int i=0;i<6;i++)
                 {
                     
@@ -459,7 +459,7 @@ namespace EDCHOST21
                     {
                         int x = (int)showDots[i].X;
                         int y = (int)showDots[i].Y;
-                        Cv2.Circle(mat, x, y, 10, new Scalar(0x00, 0x00, 0xff),-1);
+                        Cv2.Circle(mat, x, y, 10, new Scalar(0x00, 0xff, 0xff),-1);
                     }
                 }
                 //绘制泄洪口
@@ -470,7 +470,7 @@ namespace EDCHOST21
                 Dot5 = game.mFlood.dot5;
 
                 Point2f[] logicDots2 = { Cvt.Dot2Point(Dot1), Cvt.Dot2Point(Dot2), Cvt.Dot2Point(Dot3), Cvt.Dot2Point(Dot4), Cvt.Dot2Point(Dot5) };
-                Point2f[] showDots2 = coordCvt.LogicToShow(logicDots2);
+                Point2f[] showDots2 = coordCvt.LogicToCamera(logicDots2);
                 for (int i = 0; i < game.mFlood.num; i++)
                 {
 
@@ -494,7 +494,7 @@ namespace EDCHOST21
                 
                 if (flags.calibrated)
                 {
-                    Point2f[] showDots = coordCvt.LogicToShow(logicDots);
+                    Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
                     Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
                         (int)showDots[1].X, (int)showDots[1].Y,
                         new Scalar(0x00, 0x00, 0x00), 5);

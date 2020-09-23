@@ -94,6 +94,12 @@ namespace EDCHOST21
                 }
                 mPackageGroupCount++;
                 Debug.WriteLine("UpdatePackage被触发，并执行完毕");
+                Debug.WriteLine("第一个物资位置x{0},y{1}", currentPkgList[0].mPos.x, currentPkgList[0].mPos.y);
+                Debug.WriteLine("第二个物资位置x{0},y{1}", currentPkgList[1].mPos.x, currentPkgList[1].mPos.y);
+                Debug.WriteLine("第三个物资位置x{0},y{1}", currentPkgList[2].mPos.x, currentPkgList[2].mPos.y);
+                Debug.WriteLine("第四个物资位置x{0},y{1}", currentPkgList[3].mPos.x, currentPkgList[3].mPos.y);
+                Debug.WriteLine("第五个物资位置x{0},y{1}", currentPkgList[4].mPos.x, currentPkgList[4].mPos.y);
+                Debug.WriteLine("第六个物资位置x{0},y{1}", currentPkgList[5].mPos.x, currentPkgList[5].mPos.y);
             }
 
         }
@@ -291,6 +297,8 @@ namespace EDCHOST21
         {
             Debug.WriteLine("开始执行 Update Passenger");
             curPsg = psgGenerator.Next();
+            Debug.WriteLine("乘客位置x{0},y{1}",curPsg.Start_Dot.x, curPsg.Start_Dot.y);
+            Debug.WriteLine("乘客位置x{0},y{1}", curPsg.End_Dot.x, curPsg.End_Dot.y);
             Debug.WriteLine("Next Passenger 成功更新");
         }
 
@@ -788,6 +796,13 @@ namespace EDCHOST21
                 CheckNextStage();
                 UpdateCarATransmPos();
                 UpdateCarBTransmPos();
+                Debug.WriteLine("小车位置x{0},y{1}", CarB.mPos.x, CarB.mPos.y);
+                Debug.WriteLine("物资1 x{0} y{1}", currentPkgList[0].mPos.x, currentPkgList[0].mPos.y);
+                Debug.WriteLine("物资2 x{0} y{1}", currentPkgList[1].mPos.x, currentPkgList[1].mPos.y);
+                Debug.WriteLine("物资3 x{0} y{1}", currentPkgList[2].mPos.x, currentPkgList[2].mPos.y);
+                Debug.WriteLine("物资4 x{0} y{1}", currentPkgList[3].mPos.x, currentPkgList[3].mPos.y);
+                Debug.WriteLine("物资5 x{0} y{1}", currentPkgList[4].mPos.x, currentPkgList[4].mPos.y);
+                Debug.WriteLine("物资6 x{0} y{1}", currentPkgList[5].mPos.x, currentPkgList[5].mPos.y);
             }
         }
 
