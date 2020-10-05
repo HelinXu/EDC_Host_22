@@ -1,4 +1,4 @@
-﻿namespace EDCHOST21
+﻿namespace EDCHOST22
 {
     partial class Tracker
     {
@@ -470,7 +470,7 @@
             this.Controls.Add(this.pbCamera);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Tracker";
-            this.Text = "EDC21HOST";
+            this.Text = "EDC22HOST";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Tracker_FormClosed);
             this.Load += new System.EventHandler(this.Tracker_Load);

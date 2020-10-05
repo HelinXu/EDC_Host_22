@@ -10,10 +10,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Point2i = OpenCvSharp.Point;
-using Cvt = EDCHOST21.MyConvert;
+using Cvt = EDCHOST22.MyConvert;
 using System.Runtime.InteropServices;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     public partial class Tracker : Form
     {

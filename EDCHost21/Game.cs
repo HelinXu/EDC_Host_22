@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Security.Cryptography;
 using System.Diagnostics;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     // 比赛状况：未开始、正常进行中、暂停、结束
     public enum GameState { UNSTART = 0, NORMAL = 1, PAUSE = 2, END = 3 };

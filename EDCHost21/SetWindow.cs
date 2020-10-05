@@ -11,7 +11,7 @@ using System.IO;
 using System.IO.Ports;
 using OpenCvSharp;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     public partial class SetWindow : Form
     {
