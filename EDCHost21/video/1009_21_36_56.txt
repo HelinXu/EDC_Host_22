@@ -1,0 +1,3 @@
+A -50 @game time 4000 s
+B -50 @game time 6 s
+A -50 @game time 8000 s

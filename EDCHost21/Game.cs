@@ -338,6 +338,9 @@ namespace EDCHOST22
                         {
                             byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
                             FoulTimeFS.Write(data, 0, data.Length);
+                            // 如果不加以下两行的话，数据无法写到文件中
+                            FoulTimeFS.Flush();
+                            //FoulTimeFS.Close();
                         }
                         CarA.mTaskState = 1;//交换A和B的任务
                         CarB.mTaskState = 0;
