@@ -18,7 +18,7 @@ zigbee.h
 #define ZIGBEE_H
 #include "stm32f1xx_hal.h"
 #define INVALID_ARG -1
-#define ZIGBEE_MESSAGE_LENTH 72
+#define ZIGBEE_MESSAGE_LENTH 70
 
 struct Position
 {
@@ -84,7 +84,7 @@ struct Position getPassengerstartpos(void);
 uint16_t getPassengerfinalposX(void);           //人员需到达位置
 uint16_t getPassengerfinalposY(void);
 struct Position getPassengerfinalpos(void);
-uint16_t getGameFlood(void);               //泄洪口开启信息
+uint16_t getGameStop(void);               //汹开启信息
 uint16_t getFloodposX(int FloodNo);			//泄洪口位置X
 uint16_t getFloodposY(int FloodNo);           //泄洪口位置Y
 struct Position getFloodpos(int FloodNo);     //泄洪口位置
@@ -108,4 +108,7 @@ uint16_t getObstacleBposX(int ObstacleNo);          //虚拟障碍Bx坐标
 uint16_t getObstacleBposY(int ObstacleNo);          //虚拟障碍By坐标
 struct Position getObstacleApos(int ObstacleNo);	//虚拟障碍A位置
 struct Position getObstacleBpos(int ObstacleNo);	//虚拟障碍B位置
+void Decode();
+int receiveIndexMinus(int index_h, int num);
+int receiveIndexAdd(int index_h, int num);
 #endif // V0_5_H_INCLUDED

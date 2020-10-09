@@ -254,7 +254,7 @@ namespace EDCHOST21
 
             // 通过串口1发送给A车
             if (serial1 != null && serial1.IsOpen)
-                serial1.Write(Message, 0, 72);
+                serial1.Write(Message, 0, 70);
             ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
         }
