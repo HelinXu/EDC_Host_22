@@ -1,4 +1,4 @@
-﻿namespace EDCHOST21
+﻿namespace EDCHOST22
 {
     partial class Tracker
     {
@@ -98,7 +98,7 @@
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(133, 49);
             this.buttonStart.TabIndex = 27;
-            this.buttonStart.Text = "start";
+            this.buttonStart.Text = "开始";
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
@@ -112,7 +112,7 @@
             this.buttonPause.Name = "buttonPause";
             this.buttonPause.Size = new System.Drawing.Size(133, 49);
             this.buttonPause.TabIndex = 28;
-            this.buttonPause.Text = "pause";
+            this.buttonPause.Text = "暂停";
             this.buttonPause.UseVisualStyleBackColor = true;
             this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
             // 
@@ -151,7 +151,7 @@
             this.button_restart.Name = "button_restart";
             this.button_restart.Size = new System.Drawing.Size(133, 49);
             this.button_restart.TabIndex = 56;
-            this.button_restart.Text = "restart";
+            this.button_restart.Text = "新比赛";
             this.button_restart.UseVisualStyleBackColor = true;
             this.button_restart.Click += new System.EventHandler(this.button_restart_Click);
             // 
@@ -283,7 +283,7 @@
             this.button_Continue.Name = "button_Continue";
             this.button_Continue.Size = new System.Drawing.Size(133, 49);
             this.button_Continue.TabIndex = 91;
-            this.button_Continue.Text = "continue";
+            this.button_Continue.Text = "继续";
             this.button_Continue.UseVisualStyleBackColor = true;
             this.button_Continue.Click += new System.EventHandler(this.button_Continue_Click);
             // 
@@ -428,7 +428,7 @@
             this.SetFlood.Name = "SetFlood";
             this.SetFlood.Size = new System.Drawing.Size(133, 49);
             this.SetFlood.TabIndex = 117;
-            this.SetFlood.Text = "SetFlood";
+            this.SetFlood.Text = "设置隔离区";
             this.SetFlood.UseVisualStyleBackColor = true;
             this.SetFlood.Click += new System.EventHandler(this.SetFlood_Click);
             // 
@@ -470,7 +470,7 @@
             this.Controls.Add(this.pbCamera);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Tracker";
-            this.Text = "EDC21HOST";
+            this.Text = "EDC22HOST";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Tracker_FormClosed);
             this.Load += new System.EventHandler(this.Tracker_Load);

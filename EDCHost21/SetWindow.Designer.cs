@@ -1,4 +1,4 @@
-﻿namespace EDCHOST21
+﻿namespace EDCHOST22
 {
     partial class SetWindow
     {
@@ -522,7 +522,7 @@
             this.Controls.Add(this.lblHue1L);
             this.Controls.Add(this.checkBox_DebugMode);
             this.Name = "SetWindow";
-            this.Text = "SetWindow";
+            this.Text = "设置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SetWindow_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).EndInit();

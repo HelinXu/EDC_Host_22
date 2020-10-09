@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A0091AE9-356D-44C5-A16E-B132116FE600}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>EDCHOST21</RootNamespace>
-    <AssemblyName>EDCHOST21</AssemblyName>
+    <RootNamespace>EDCHOST22</RootNamespace>
+    <AssemblyName>EDCHOST22</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

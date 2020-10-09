@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     //0813xhl把struct改成了class
     public class Dot //点

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     //救援的人员只有起点/终点两个数据Dot。可能需要添加是否到达终点（enum）的状态等。
     public class Passenger//等待救援的人员位置信息

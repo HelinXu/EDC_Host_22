@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EDCHOST21.Properties {
+namespace EDCHOST22.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

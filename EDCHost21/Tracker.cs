@@ -10,10 +10,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Point2i = OpenCvSharp.Point;
-using Cvt = EDCHOST21.MyConvert;
+using Cvt = EDCHOST22.MyConvert;
 using System.Runtime.InteropServices;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     public partial class Tracker : Form
     {
@@ -697,6 +697,8 @@ namespace EDCHOST21
                 }
                 else
                 {
+                    game.FoulTimeFS.Flush();
+                    game.FoulTimeFS.Close();
                     vw.Release();
                     vw = null;
                     flags.videomode = false;
@@ -730,8 +732,11 @@ namespace EDCHOST21
 
             if (game.FoulTimeFS != null)
             {
-                //byte[] data = Encoding.Default.GetBytes($"A -50 {game.Round}\r\n");
-                //game.FoulTimeFS.Write(data, 0, data.Length);
+                byte[] data = Encoding.Default.GetBytes($"A -50 @game time {game.mGameTime/1000} s\r\n");
+                game.FoulTimeFS.Write(data, 0, data.Length);
+                // 如果不加以下两行的话，数据无法写到文件中
+                game.FoulTimeFS.Flush();
+                //game.FoulTimeFS.Close();
             }
         }
 
@@ -742,8 +747,12 @@ namespace EDCHOST21
 
             if (game.FoulTimeFS != null)
             {
-                //byte[] data = Encoding.Default.GetBytes($"B -50 {game.Round}\r\n");
-                //game.FoulTimeFS.Write(data, 0, data.Length);
+                byte[] data = Encoding.Default.GetBytes($"B -50 @game time {game.mGameTime/1000} s\r\n");
+                game.FoulTimeFS.Write(data, 0, data.Length);
+                // 如果不加以下两行的话，数据无法写到文件中
+                game.FoulTimeFS.Flush();
+                
+                //game.FoulTimeFS.Close();
             }
         }
 

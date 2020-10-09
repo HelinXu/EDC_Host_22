@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     //说明（xhl）：1，目前的规则下，生成package应该是读取地图即可生成。同时还要保证上下半场是不变的。
     //2，最终Game需要读取的是PkgList（其中应该包含24个Package），所以Game啥的可以先写起来。（外界要用的是GetPkgDot）

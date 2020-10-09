@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     //Package,物资。
     //包括：位置Dot Pos，是否已经被获取bool

@@ -10,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using Point2i = OpenCvSharp.Point;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     public class MyFlags
     {

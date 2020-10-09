@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Security.Cryptography;
 using System.Diagnostics;
 
-namespace EDCHOST21
+namespace EDCHOST22
 {
     // 比赛状况：未开始、正常进行中、暂停、结束
     public enum GameState { UNSTART = 0, NORMAL = 1, PAUSE = 2, END = 3 };
@@ -338,6 +338,9 @@ namespace EDCHOST21
                         {
                             byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
                             FoulTimeFS.Write(data, 0, data.Length);
+                            // 如果不加以下两行的话，数据无法写到文件中
+                            FoulTimeFS.Flush();
+                            //FoulTimeFS.Close();
                         }
                         CarA.mTaskState = 1;//交换A和B的任务
                         CarB.mTaskState = 0;
