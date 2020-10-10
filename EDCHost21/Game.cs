@@ -1132,7 +1132,8 @@ namespace EDCHOST22
             int messageCnt = 0;
             message[messageCnt++] = (byte)(mGameTime >> 8);
             message[messageCnt++] = (byte)mGameTime;
-            message[messageCnt++] = (byte)( (((byte)gameState << 6) & 0xC0 ) | (((byte)CarA.mTaskState << 5) & 0x20 ) | (((byte)CarA.mIsWithPassenger << 3) & 0x08) | ((byte)mFlood.num & 0x07));
+            message[messageCnt++] = (byte)( (((byte)gameState << 6) & 0xC0 ) | (((byte)CarA.mTaskState << 5) & 0x20 ) | 
+                (((byte)CarA.mIsWithPassenger << 3) & 0x08) | ((byte)mFlood.num & 0x07));
             message[messageCnt++] = (byte)CarA.mTransPos.x;
             message[messageCnt++] = (byte)CarA.mTransPos.y;
             message[messageCnt++] = (byte)mFlood.dot1.x;
@@ -1151,7 +1152,8 @@ namespace EDCHOST22
             message[messageCnt++] = (byte)curPsg.End_Dot.y;
             message[messageCnt++] = (byte)((((byte)currentPkgList[0].IsPicked << 7) & 0x80) | (((byte)currentPkgList[1].IsPicked << 6) & 0x40) 
                 | (((byte)currentPkgList[2].IsPicked << 5) & 0x20)
-                | (((byte)currentPkgList[3].IsPicked << 4) & 0x10) | (((byte)currentPkgList[4].IsPicked << 3) & 0x08) | (((byte)currentPkgList[5].IsPicked << 2)&0x04) | (((byte)CarA.mIsInMaze << 1) & 0x02) | ((byte)CarA.mRightPos & 0x01));
+                | (((byte)currentPkgList[3].IsPicked << 4) & 0x10) | (((byte)currentPkgList[4].IsPicked << 3) & 0x08) |
+                (((byte)currentPkgList[5].IsPicked << 2)&0x04) | (((byte)CarA.mIsInMaze << 1) & 0x02) | ((byte)CarA.mRightPos & 0x01));
             message[messageCnt++] = (byte)currentPkgList[0].mPos.x;
             message[messageCnt++] = (byte)currentPkgList[0].mPos.y;
             message[messageCnt++] = (byte)currentPkgList[1].mPos.x;
@@ -1206,11 +1208,12 @@ namespace EDCHOST22
         }
         public byte[] PackCarBMessage()//已更新到最新通信协议
         {
-            byte[] message = new byte[72]; //上位机传递多少信息
+            byte[] message = new byte[70]; //上位机传递多少信息
             int messageCnt = 0;
             message[messageCnt++] = (byte)(mGameTime >> 8);
             message[messageCnt++] = (byte)mGameTime;
-            message[messageCnt++] = (byte)(((byte)gameState << 6) | ((byte)CarB.mTaskState << 5) | ((byte)CarB.mIsWithPassenger << 3 & 0x08) | ((byte)mFlood.num & 0x07));
+            message[messageCnt++] = (byte)((((byte)gameState << 6) & 0xC0) | (((byte)CarA.mTaskState << 5) & 0x20) |
+                (((byte)CarA.mIsWithPassenger << 3) & 0x08) | ((byte)mFlood.num & 0x07));
             message[messageCnt++] = (byte)CarB.mTransPos.x;
             message[messageCnt++] = (byte)CarB.mTransPos.y;
             message[messageCnt++] = (byte)mFlood.dot1.x;
@@ -1227,8 +1230,10 @@ namespace EDCHOST22
             message[messageCnt++] = (byte)curPsg.Start_Dot.x;
             message[messageCnt++] = (byte)curPsg.End_Dot.x;
             message[messageCnt++] = (byte)curPsg.End_Dot.x;
-            message[messageCnt++] = (byte)(((byte)currentPkgList[0].IsPicked << 7) | ((byte)currentPkgList[1].IsPicked << 6) | ((byte)currentPkgList[2].IsPicked << 5) 
-                | ((byte)currentPkgList[3].IsPicked << 4) | ((byte)currentPkgList[4].IsPicked << 3) | ((byte)currentPkgList[5].IsPicked << 2) | ((byte)CarB.mIsInMaze << 1)|((byte)CarB.mRightPos));
+            message[messageCnt++] = (byte)((((byte)currentPkgList[0].IsPicked << 7) & 0x80) | (((byte)currentPkgList[1].IsPicked << 6) & 0x40)
+                | (((byte)currentPkgList[2].IsPicked << 5) & 0x20)
+                | (((byte)currentPkgList[3].IsPicked << 4) & 0x10) | (((byte)currentPkgList[4].IsPicked << 3) & 0x08) |
+                (((byte)currentPkgList[5].IsPicked << 2) & 0x04) | (((byte)CarA.mIsInMaze << 1) & 0x02) | ((byte)CarA.mRightPos & 0x01));
             message[messageCnt++] = (byte)currentPkgList[0].mPos.x;
             message[messageCnt++] = (byte)currentPkgList[0].mPos.y;
             message[messageCnt++] = (byte)currentPkgList[1].mPos.x;

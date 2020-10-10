@@ -267,7 +267,7 @@ namespace EDCHOST22
 
             // 通过串口2发送给B车
             if (serial2 != null && serial2.IsOpen)
-                serial2.Write(Message, 0, 72);
+                serial2.Write(Message, 0, 70);
 
             ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();

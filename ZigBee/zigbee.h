@@ -7,11 +7,11 @@ zigbee.h
 
 数据说明
     struct BasicInfo Game;储存比赛状态、时间、泄洪口信息
-    struct CarInfo CarInfo[2];//储存车辆信息
+    struct CarInfo CarInfo;//储存车辆信息
     struct PassengerInfo Passenger;//储存人员的信息、位置和送达位置
-    struct PackageInfo Package[6];//储存防汛物资的信息
-    struct StopInfo Stop[2];//储存泄洪口位置信息
-    struct ObstacleInfo Obstacle[16];
+    struct PackageInfo Package[6];//储存物资的信息
+    struct StopInfo Stop[2];//储存隔离点位置信息
+    struct ObstacleInfo Obstacle[8];//储存虚拟障碍物信息
     通过接口获取数据
 **********************************/
 #ifndef ZIGBEE_H
@@ -84,14 +84,14 @@ struct Position getPassengerstartpos(void);
 uint16_t getPassengerfinalposX(void);           //人员需到达位置
 uint16_t getPassengerfinalposY(void);
 struct Position getPassengerfinalpos(void);
-uint16_t getGameStop(void);               //汹开启信息
-uint16_t getFloodposX(int FloodNo);			//泄洪口位置X
-uint16_t getFloodposY(int FloodNo);           //泄洪口位置Y
-struct Position getFloodpos(int FloodNo);     //泄洪口位置
+uint16_t getGameFlood(void);               //隔离点开启信息
+uint16_t getFloodposX(int FloodNo);			//隔离点位置X
+uint16_t getFloodposY(int FloodNo);           //隔离点位置Y
+struct Position getFloodpos(int FloodNo);     //隔离点位置
 uint16_t getCarposX();		    //小车x坐标
 uint16_t getCarposY();			//小车y坐标
 struct Position getCarpos();	//小车位置
-uint16_t getCarWhetherRightPos();//小车这次位置信息是否是正确的
+//uint16_t getCarWhetherRightPos();//小车这次位置信息是否是正确的
 uint16_t getPackageposX(int PackNo);		    //物资x坐标
 uint16_t getPackageposY(int PackNo);			//物资y坐标
 uint16_t getPackagewhetherpicked(int PackNo);   //物资是否已被收集
