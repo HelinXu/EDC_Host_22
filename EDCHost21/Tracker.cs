@@ -365,15 +365,50 @@ namespace EDCHOST22
 
             //Debug.WriteLine("{0}\n", loc.GetCentres(Camp.A).Count());
 
-            // 在小车1的位置上绘制红色实心圆
-            foreach (Point2i c1 in loc.GetCentres(Camp.A))
-                Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
+            //读取图标信息
+            Mat Icon_CarA, Icon_CarB, Icon_Package, Icon_Person, Icon_RedCross, Icon_Zone;
+            Icon_CarA = new Mat(@"icon\\CARA.png", ImreadModes.Color);
+            Icon_CarB = new Mat(@"icon\\CARB.png", ImreadModes.Color);
+            Icon_Package = new Mat(@"icon\\Package.png", ImreadModes.Color);
+            Icon_Person = new Mat(@"icon\\Person.png", ImreadModes.Color);
+            Icon_RedCross = new Mat(@"icon\\RedCross.png", ImreadModes.Color);
+            Icon_Zone = new Mat(@"icon\\Zone.png", ImreadModes.Color);
 
+            Cv2.Resize(Icon_CarA, Icon_CarA, new OpenCvSharp.Size(20,20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_CarB, Icon_CarB, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Package, Icon_Package, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Person, Icon_Person, new OpenCvSharp.Size(16, 16), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_RedCross, Icon_RedCross, new OpenCvSharp.Size(16, 16), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Zone, Icon_Zone, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+
+            // 在小车1的位置上绘制红色实心圆
+
+            foreach (Point2i c1 in loc.GetCentres(Camp.A))
+            {
+                int Tx = c1.X - 10, Ty = c1.Y - 10, Tcol = Icon_CarA.Cols, Trow = Icon_CarA.Rows;
+                if (Tx < 0) Tx = 0;
+                if (Ty < 0) Ty = 0;
+                if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                Mat Pos = new Mat(mat, new Rect(Tx , Ty , Tcol, Trow));
+                Icon_CarA.CopyTo(Pos);
+               // Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
+            }
             //Point2f[] camCentCarB = loc.GetCentres(Camp.B).ToArray();
             // 在小车2的位置上绘制蓝色实心圆
             foreach (Point2i c2 in loc.GetCentres(Camp.B))
-                Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
-/*
+            {
+                int Tx = c2.X - 10, Ty = c2.Y - 10, Tcol = Icon_CarB.Cols, Trow = Icon_CarB.Rows;
+                if (Tx < 0) Tx = 0;
+                if (Ty < 0) Ty = 0;
+                if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                Icon_CarB.CopyTo(Pos);
+                //Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
+            }
+            
+            /*
             // 在人员起始位置上绘制矩形
             // 如果人员存在
             if (logicPsgStart != InvalidPos)
@@ -408,8 +443,18 @@ namespace EDCHOST22
                         
                         int x10 = (int)showDots1[0].X;
                         int y10 = (int)showDots1[0].Y;
-                        Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-                        if(camCarB.X>0&&camCarB.Y>0)
+
+
+                        int Tx = x10 - 8, Ty = y10 - 8, Tcol = Icon_Person.Cols, Trow = Icon_Person.Rows;
+                        if (Tx < 0) Tx = 0;
+                        if (Ty < 0) Ty = 0;
+                        if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                        if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                        Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                        Icon_Person.CopyTo(Pos);
+
+                        //Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        if (camCarB.X>0&&camCarB.Y>0)
                         {
                             Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                         }
@@ -419,8 +464,17 @@ namespace EDCHOST22
                     {
                         int x10 = (int)showDots1[1].X;
                         int y10 = (int)showDots1[1].Y;
-                        Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
-                        if(camCarB.X>0&&camCarB.Y>0)
+
+                        int Tx = x10 - 8, Ty = y10 - 8, Tcol = Icon_RedCross.Cols, Trow = Icon_RedCross.Rows;
+                        if (Tx < 0) Tx = 0;
+                        if (Ty < 0) Ty = 0;
+                        if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                        if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                        Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                        Icon_RedCross.CopyTo(Pos);
+
+                        //Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
+                        if (camCarB.X>0&&camCarB.Y>0)
                         {
                             Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                         }
@@ -438,8 +492,15 @@ namespace EDCHOST22
                     {
                         int x10 = (int)showDots1[0].X;
                         int y10 = (int)showDots1[0].Y;
-                        Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-                        if(camCarA.X>0&&camCarA.Y>0)
+                        int Tx = x10 - 8, Ty = y10 - 8, Tcol = Icon_Person.Cols, Trow = Icon_Person.Rows;
+                        if (Tx < 0) Tx = 0;
+                        if (Ty < 0) Ty = 0;
+                        if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                        if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                        Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                        Icon_Person.CopyTo(Pos);
+                        //Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
+                        if (camCarA.X>0&&camCarA.Y>0)
                         {
                             Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                         }
@@ -449,8 +510,15 @@ namespace EDCHOST22
                     {
                         int x10 = (int)showDots1[1].X;
                         int y10 = (int)showDots1[1].Y;
-                        Cv2.Rectangle(mat, new Rect(x10-10, y10-10, 20, 20), new Scalar(0x00, 0x00, 0xff), -1);
-                        if(camCarA.X>0&&camCarA.Y>0)
+                        int Tx = x10 - 8, Ty = y10 - 8, Tcol = Icon_RedCross.Cols, Trow = Icon_RedCross.Rows;
+                        if (Tx < 0) Tx = 0;
+                        if (Ty < 0) Ty = 0;
+                        if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                        if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                        Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                        Icon_RedCross.CopyTo(Pos);
+                        //Cv2.Rectangle(mat, new Rect(x10-10, y10-10, 20, 20), new Scalar(0x00, 0x00, 0xff), -1);
+                        if (camCarA.X>0&&camCarA.Y>0)
                         {                        
                             Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
                         }
@@ -475,7 +543,14 @@ namespace EDCHOST22
                     {
                         int x = (int)showDots[i].X;
                         int y = (int)showDots[i].Y;
-                        Cv2.Circle(mat, x, y, 10, new Scalar(0x00, 0xff, 0xff),-1);
+                        int Tx = x - 10, Ty = y - 10, Tcol = Icon_Package.Cols, Trow = Icon_Package.Rows;
+                        if (Tx < 0) Tx = 0;
+                        if (Ty < 0) Ty = 0;
+                        if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                        if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                        Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                        Icon_Package.CopyTo(Pos);
+                        //Cv2.Circle(mat, x, y, 10, new Scalar(0x00, 0xff, 0xff),-1);
                     }
                 }
                 
@@ -500,7 +575,14 @@ namespace EDCHOST22
                     Point2f[] showDots2 = coordCvt.LogicToCamera(logicDots2);
                     int x = (int)showDots2[i].X;
                     int y = (int)showDots2[i].Y;
-                    Cv2.Circle(mat, x, y, 5, new Scalar(0xff, 0xff, 0x00), -1);
+                    int Tx = x - 10, Ty = y - 10, Tcol = Icon_Zone.Cols, Trow = Icon_Zone.Rows;
+                    if (Tx < 0) Tx = 0;
+                    if (Ty < 0) Ty = 0;
+                    if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                    if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                    Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                    Icon_Zone.CopyTo(Pos);
+                    //Cv2.Circle(mat, x, y, 5, new Scalar(0xff, 0xff, 0x00), -1);
                 }
                 
             }
