@@ -1130,8 +1130,8 @@ namespace EDCHOST22
         {
             byte[] message = new byte[70]; //上位机传递多少信息
             int messageCnt = 0;
-            message[messageCnt++] = (byte)(mGameTime >> 8);
-            message[messageCnt++] = (byte)mGameTime;
+            message[messageCnt++] = (byte)((mGameTime/1000) >> 8);
+            message[messageCnt++] = (byte)(mGameTime/1000);
             message[messageCnt++] = (byte)( (((byte)gameState << 6) & 0xC0 ) | (((byte)CarA.mTaskState << 5) & 0x20 ) | 
                 (((byte)CarA.mIsWithPassenger << 3) & 0x08) | ((byte)mFlood.num & 0x07));
             message[messageCnt++] = (byte)CarA.mTransPos.x;
@@ -1210,8 +1210,8 @@ namespace EDCHOST22
         {
             byte[] message = new byte[70]; //上位机传递多少信息
             int messageCnt = 0;
-            message[messageCnt++] = (byte)(mGameTime >> 8);
-            message[messageCnt++] = (byte)mGameTime;
+            message[messageCnt++] = (byte)((mGameTime/1000) >> 8);
+            message[messageCnt++] = (byte)(mGameTime/1000);
             message[messageCnt++] = (byte)((((byte)gameState << 6) & 0xC0) | (((byte)CarA.mTaskState << 5) & 0x20) |
                 (((byte)CarA.mIsWithPassenger << 3) & 0x08) | ((byte)mFlood.num & 0x07));
             message[messageCnt++] = (byte)CarB.mTransPos.x;
