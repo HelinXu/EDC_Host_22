@@ -190,7 +190,7 @@
             this.labelBScore.Location = new System.Drawing.Point(808, 12);
             this.labelBScore.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelBScore.Name = "labelBScore";
-            this.labelBScore.Size = new System.Drawing.Size(202, 81);
+            this.labelBScore.Size = new System.Drawing.Size(299, 81);
             this.labelBScore.TabIndex = 52;
             this.labelBScore.Text = "0";
             this.labelBScore.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -200,10 +200,10 @@
             this.labelAScore.BackColor = System.Drawing.Color.Transparent;
             this.labelAScore.Font = new System.Drawing.Font("微软雅黑", 48F);
             this.labelAScore.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.labelAScore.Location = new System.Drawing.Point(523, 12);
+            this.labelAScore.Location = new System.Drawing.Point(433, 12);
             this.labelAScore.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelAScore.Name = "labelAScore";
-            this.labelAScore.Size = new System.Drawing.Size(202, 81);
+            this.labelAScore.Size = new System.Drawing.Size(292, 81);
             this.labelAScore.TabIndex = 51;
             this.labelAScore.Text = "0";
             this.labelAScore.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -267,11 +267,12 @@
             // 
             this.label_BlueBG.BackColor = System.Drawing.Color.DodgerBlue;
             this.label_BlueBG.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label_BlueBG.Location = new System.Drawing.Point(800, 0);
+            this.label_BlueBG.Location = new System.Drawing.Point(791, 0);
             this.label_BlueBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label_BlueBG.Name = "label_BlueBG";
             this.label_BlueBG.Size = new System.Drawing.Size(736, 96);
             this.label_BlueBG.TabIndex = 89;
+            this.label_BlueBG.Click += new System.EventHandler(this.label_BlueBG_Click);
             // 
             // button_Continue
             // 

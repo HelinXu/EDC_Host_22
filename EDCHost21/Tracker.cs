@@ -858,6 +858,11 @@ namespace EDCHOST22
             game.SetFloodArea();
         }
 
+        private void label_BlueBG_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
 
 

@@ -318,6 +318,7 @@ namespace EDCHOST22
                     gameStage++;
                     Debug.WriteLine("成功进入下一个stage");
                     UpdatePassenger();
+                    mLastOnObstacleTime = -10;
                 }
             }
             else
@@ -472,7 +473,10 @@ namespace EDCHOST22
                             && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x + 5
                             && CarA.mPos.y <= mLabyrinth.mpWallList[i].w2.y
                             && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y
-                            && mGameTime-mLastOnObstacleTime>=1000)
+                            && (mLabyrinth.mpWallList[i].w1.x <= CarA.mLastPos.x - 5
+                            || mLabyrinth.mpWallList[i].w1.x >= CarA.mLastPos.x + 5
+                            || CarA.mLastPos.y >= mLabyrinth.mpWallList[i].w2.y
+                            || mLabyrinth.mpWallList[i].w1.y >= CarA.mLastPos.y)&& mGameTime - mLastOnObstacleTime >= 1000)
                         {
                             CarA.AddWallPunish();
                             Debug.WriteLine("A车撞到了竖着的墙，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
@@ -486,7 +490,10 @@ namespace EDCHOST22
                             && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x + 5
                             && CarA.mPos.y <= mLabyrinth.mpWallList[i].w1.y
                             && mLabyrinth.mpWallList[i].w2.y <= CarA.mPos.y
-                            && mGameTime - mLastOnObstacleTime >= 1000)
+                            && (mLabyrinth.mpWallList[i].w1.x <= CarA.mLastPos.x - 5
+                            || mLabyrinth.mpWallList[i].w1.x >= CarA.mLastPos.x + 5
+                            || CarA.mLastPos.y >= mLabyrinth.mpWallList[i].w1.y
+                            || mLabyrinth.mpWallList[i].w2.y >= CarA.mLastPos.y)&& mGameTime-mLastOnObstacleTime>=1000)
                         {
                             CarA.AddWallPunish();
                             Debug.WriteLine("A车撞到了竖着的墙，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
@@ -503,7 +510,10 @@ namespace EDCHOST22
                             && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y + 5
                             && CarA.mPos.x <= mLabyrinth.mpWallList[i].w2.x
                             && mLabyrinth.mpWallList[i].w1.x <= CarA.mPos.x
-                            && mGameTime - mLastOnObstacleTime >= 1000)
+                            && (mLabyrinth.mpWallList[i].w1.y <= CarA.mLastPos.y - 5
+                            || mLabyrinth.mpWallList[i].w1.y >= CarA.mLastPos.y + 5
+                            || CarA.mLastPos.x >= mLabyrinth.mpWallList[i].w2.x
+                            || mLabyrinth.mpWallList[i].w1.x >= CarA.mLastPos.x)&& mGameTime - mLastOnObstacleTime >= 1000)
                         {
                             CarA.AddWallPunish();
                             Debug.WriteLine("A车撞到了横着的墙，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
@@ -517,7 +527,10 @@ namespace EDCHOST22
                             && mLabyrinth.mpWallList[i].w1.y <= CarA.mPos.y + 5
                             && CarA.mPos.x <= mLabyrinth.mpWallList[i].w1.x
                             && mLabyrinth.mpWallList[i].w2.x <= CarA.mPos.x
-                            && mGameTime - mLastOnObstacleTime >= 1000)
+                            && (mLabyrinth.mpWallList[i].w1.y <= CarA.mLastPos.y - 5
+                            || mLabyrinth.mpWallList[i].w1.y >= CarA.mLastPos.y + 5
+                            || CarA.mLastPos.x >= mLabyrinth.mpWallList[i].w1.x
+                            || mLabyrinth.mpWallList[i].w2.x >= CarA.mLastPos.x)&& mGameTime - mLastOnObstacleTime >= 1000)
                         {
                             CarA.AddWallPunish();
                             Debug.WriteLine("A车撞到了横着的墙，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
@@ -541,7 +554,10 @@ namespace EDCHOST22
                             && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x + 5
                             && CarB.mPos.y <= mLabyrinth.mpWallList[i].w2.y
                             && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y
-                            && mGameTime - mLastOnObstacleTime >= 1000)
+                            && (mLabyrinth.mpWallList[i].w1.x <= CarB.mLastPos.x - 5
+                            || mLabyrinth.mpWallList[i].w1.x >= CarB.mLastPos.x + 5
+                            || CarB.mLastPos.y >= mLabyrinth.mpWallList[i].w2.y
+                            || mLabyrinth.mpWallList[i].w1.y >= CarB.mLastPos.y)&& mGameTime - mLastOnObstacleTime >= 1000)
                         {
                             CarB.AddWallPunish();
                             Debug.WriteLine("B车撞到了竖着的墙，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
@@ -555,7 +571,10 @@ namespace EDCHOST22
                             && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x + 5
                             && CarB.mPos.y <= mLabyrinth.mpWallList[i].w1.y
                             && mLabyrinth.mpWallList[i].w2.y <= CarB.mPos.y
-                            && mGameTime - mLastOnObstacleTime >= 1000)
+                            && (mLabyrinth.mpWallList[i].w1.x <= CarB.mLastPos.x - 5
+                            || mLabyrinth.mpWallList[i].w1.x >= CarB.mLastPos.x + 5
+                            || CarB.mLastPos.y >= mLabyrinth.mpWallList[i].w1.y
+                            || mLabyrinth.mpWallList[i].w2.y >= CarB.mLastPos.y)&& mGameTime - mLastOnObstacleTime >= 1000)
                         {
                             CarB.AddWallPunish();
                             Debug.WriteLine("B车撞到了竖着的墙，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
@@ -572,7 +591,10 @@ namespace EDCHOST22
                             && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y + 5
                             && CarB.mPos.x <= mLabyrinth.mpWallList[i].w2.x
                             && mLabyrinth.mpWallList[i].w1.x <= CarB.mPos.x
-                            && mGameTime - mLastOnObstacleTime >= 1000)
+                            && (mLabyrinth.mpWallList[i].w1.y <= CarB.mLastPos.y - 5
+                            || mLabyrinth.mpWallList[i].w1.y >= CarB.mLastPos.y + 5
+                            || CarB.mLastPos.x >= mLabyrinth.mpWallList[i].w2.x
+                            || mLabyrinth.mpWallList[i].w1.x >= CarB.mLastPos.x)&& mGameTime - mLastOnObstacleTime >= 1000)
                         {
                             CarB.AddWallPunish();
                             Debug.WriteLine("B车撞到了横着的墙，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
@@ -586,7 +608,10 @@ namespace EDCHOST22
                             && mLabyrinth.mpWallList[i].w1.y <= CarB.mPos.y + 5
                             && CarB.mPos.x <= mLabyrinth.mpWallList[i].w1.x
                             && mLabyrinth.mpWallList[i].w2.x <= CarB.mPos.x
-                            && mGameTime - mLastOnObstacleTime >= 1000)
+                            && (mLabyrinth.mpWallList[i].w1.y <= CarB.mLastPos.y - 5
+                            || mLabyrinth.mpWallList[i].w1.y >= CarB.mLastPos.y + 5
+                            || CarB.mLastPos.x >= mLabyrinth.mpWallList[i].w1.x
+                            || mLabyrinth.mpWallList[i].w2.x >= CarB.mLastPos.x)&& mGameTime - mLastOnObstacleTime >= 1000)
                         {
                             CarB.AddWallPunish();
                             Debug.WriteLine("B车撞到了横着的墙，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
@@ -606,7 +631,7 @@ namespace EDCHOST22
                 }
                 else if (mFlood.num == 1)
                 {
-                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime>1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime-mLastOnFloodTime>=1000)
                     {
 
                         CarA.AddFloodPunish();
@@ -617,13 +642,13 @@ namespace EDCHOST22
                 else if (mFlood.num == 2)
                 {
 
-                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot2) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
@@ -633,19 +658,19 @@ namespace EDCHOST22
                 else if (mFlood.num == 3)
                 {
 
-                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot2) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot3) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
@@ -655,25 +680,25 @@ namespace EDCHOST22
                 else if (mFlood.num == 4)
                 {
 
-                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot2) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot3) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot4) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot4) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot4) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
@@ -683,31 +708,31 @@ namespace EDCHOST22
                 else if (mFlood.num == 5)
                 {
 
-                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot2) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot3) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot4) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot4) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot4) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarA.mPos, mFlood.dot5) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarA.mPos, mFlood.dot5) <= COINCIDE_ERR_DIST_CM && GetDistance(CarA.mLastPos, mFlood.dot5) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarA.AddFloodPunish();
                         Debug.WriteLine("A车撞到了泄洪口，位置 x {0}, y {1}", CarA.mPos.x, CarA.mPos.y);
@@ -726,7 +751,7 @@ namespace EDCHOST22
                 }
                 else if (mFlood.num == 1)
                 {
-                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
 
                         CarB.AddFloodPunish();
@@ -737,12 +762,12 @@ namespace EDCHOST22
                 else if (mFlood.num == 2)
                 {
 
-                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                     }
-                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot2) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
@@ -752,18 +777,18 @@ namespace EDCHOST22
                 else if (mFlood.num == 3)
                 {
 
-                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                     }
-                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot2) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarB.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot3) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
@@ -773,24 +798,24 @@ namespace EDCHOST22
                 else if (mFlood.num == 4)
                 {
 
-                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                     }
-                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
-                    {
-                        CarB.AddFloodPunish();
-                        Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
-                        mLastOnFloodTime = mGameTime;
-                    }
-                    if (GetDistance(CarB.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot2) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarB.mPos, mFlood.dot4) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot3) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
+                    {
+                        CarB.AddFloodPunish();
+                        Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
+                        mLastOnFloodTime = mGameTime;
+                    }
+                    if (GetDistance(CarB.mPos, mFlood.dot4) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot4) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
@@ -800,30 +825,30 @@ namespace EDCHOST22
                 else if (mFlood.num == 5)
                 {
 
-                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot1) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot1) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                     }
-                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
-                    {
-                        CarB.AddFloodPunish();
-                        Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
-                        mLastOnFloodTime = mGameTime;
-                    }
-                    if (GetDistance(CarB.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot2) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot2) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarB.mPos, mFlood.dot4) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot3) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot3) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
                         mLastOnFloodTime = mGameTime;
                     }
-                    if (GetDistance(CarB.mPos, mFlood.dot5) <= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime > 1000)
+                    if (GetDistance(CarB.mPos, mFlood.dot4) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot4) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
+                    {
+                        CarB.AddFloodPunish();
+                        Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
+                        mLastOnFloodTime = mGameTime;
+                    }
+                    if (GetDistance(CarB.mPos, mFlood.dot5) <= COINCIDE_ERR_DIST_CM && GetDistance(CarB.mLastPos, mFlood.dot5) >= COINCIDE_ERR_DIST_CM && mGameTime - mLastOnFloodTime >= 1000)
                     {
                         CarB.AddFloodPunish();
                         Debug.WriteLine("B车撞到了泄洪口，位置 x {0}, y {1}", CarB.mPos.x, CarB.mPos.y);
