@@ -33,14 +33,27 @@ namespace EDCHOST22
             nudValueL.Value = flags.configs.valueLower;
             nudAreaL.Value = flags.configs.areaLower;
             checkBox_DebugMode.Checked = game.DebugMode;
+
             cbPorts1.Items.Clear();
             cbPorts1.Items.Add("(None)");
             foreach (string port in _tracker.validPorts)
+            {
                 cbPorts1.Items.Add(port);
+            }
+                
             cbPorts2.Items.Clear();
             cbPorts2.Items.Add("(None)");
             foreach (string port in _tracker.validPorts)
+            {
                 cbPorts2.Items.Add(port);
+            }
+
+            cbLaby.Items.Clear();
+            foreach (string fName in _game.mLabyrinth.LabyName)
+            {
+                cbLaby.Items.Add(fName);
+            }
+                
             if (_tracker.serial1 != null && _tracker.serial1.IsOpen)
             {
                 cbPorts1.Text = _tracker.serial1.PortName;
@@ -278,5 +291,38 @@ namespace EDCHOST22
             }
         }
 
+        private void SetWindow_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbPorts2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbPorts1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblPort1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblPort2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbLaby_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // 读取当前下拉框选的障碍物文件
+            string FileName = cbLaby.Text;
+
+            // 从已选文件中读取数据
+            _game.mLabyrinth.ReadFromFile(FileName);
+        }
     }
 }

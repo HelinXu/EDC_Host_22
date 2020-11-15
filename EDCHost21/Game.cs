@@ -71,8 +71,8 @@ namespace EDCHOST22
             mLastWrongDirTime = -10;
             mLastOnObstacleTime = -10;
             mLastOnFloodTime = -10;
-            //下面的迷宫构造的文件路径需要修改
-            mLabyrinth = new Labyrinth(File.OpenText("laby.txt"));
+
+            mLabyrinth = new Labyrinth();
             Debug.WriteLine("Game构造函数FIRST_1执行完毕");
         }
         #region

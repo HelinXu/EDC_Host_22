@@ -165,14 +165,16 @@ namespace EDCHOST22
                 capture.FrameHeight = flags.cameraSize.Height;
                 capture.ConvertRgb = true;
 
-
                 // 设置定时器的触发间隔为 100ms
                 timerMsg100ms.Interval = 100;
-                // 启动计时器，执行给迷宫外的小车定时发信息的任务
-                timerMsg100ms.Start();
 
-                
+                // 启动计时器，执行给迷宫外的小车定时发信息的任务
+                timerMsg100ms.Start();                
             }
+
+            // 从 labyrinth 目录下读取所有障碍物文件
+            game.mLabyrinth.GetLabyName();
+
             Debug.WriteLine("Tracker Initialize Finished\n");
         }
 
@@ -408,20 +410,6 @@ namespace EDCHOST22
                 //Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
             }
             
-            /*
-            // 在人员起始位置上绘制矩形
-            // 如果人员存在
-            if (logicPsgStart != InvalidPos)
-            {
-                int x10 = logicPsgStart.X - 8;
-                int y10 = logicPsgStart.Y - 8;
-                Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
-            }*/
-            //绘制小车
-            //car1 深蓝色 圆  半径10
-            //car2 纯红色 圆  半径10
-            //Cv2.Circle(videoFrame, camCarA, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
-            //Cv2.Circle(videoFrame, camCarB, 10, new Scalar(0xff, 0x00, 0x00), -1);
 
             //绘制人员起始或终点位置， 并在当前位置和目标位置连线
             //目标点 绿色 正方形  边长16
@@ -553,11 +541,8 @@ namespace EDCHOST22
                         //Cv2.Circle(mat, x, y, 10, new Scalar(0x00, 0xff, 0xff),-1);
                     }
                 }
-                
-
-
-
             }
+
             //绘制泄洪口
             Dot Dot1 = game.mFlood.dot1;
             Dot Dot2 = game.mFlood.dot2;
@@ -569,7 +554,6 @@ namespace EDCHOST22
            
             for (int i = 0; i < game.mFlood.num; i++)
             {
-
                 if(flags.calibrated)
                 {
                     Point2f[] showDots2 = coordCvt.LogicToCamera(logicDots2);
@@ -584,29 +568,32 @@ namespace EDCHOST22
                     Icon_Zone.CopyTo(Pos);
                     //Cv2.Circle(mat, x, y, 5, new Scalar(0xff, 0xff, 0x00), -1);
                 }
-                
             }
 
-            //绘制迷宫障碍物
-            for(int i = 0; i < game.mLabyrinth.mWallNum; i++)
+            // 如果障碍物已被成功设置
+            if (game.mLabyrinth.IsLabySet == true)
             {
-                //Debug.WriteLine("1");
-                Dot StartDot = game.mLabyrinth.mpWallList[i].w1;
-                Dot EndDot = game.mLabyrinth.mpWallList[i].w2;
-
-                Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
-                
-                if (flags.calibrated)
+                //绘制迷宫障碍物
+                for (int i = 0; i < game.mLabyrinth.mWallNum; i++)
                 {
-                    Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
-                    Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
-                        (int)showDots[1].X, (int)showDots[1].Y,
-                        new Scalar(0x00, 0x00, 0x00), 5);
+                    Dot StartDot = game.mLabyrinth.mpWallList[i].w1;
+                    Dot EndDot = game.mLabyrinth.mpWallList[i].w2;
+
+                    Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+
+                    if (flags.calibrated)
+                    {
+                        Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
+                        Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
+                            (int)showDots[1].X, (int)showDots[1].Y,
+                            new Scalar(0x00, 0x00, 0x00), 5);
+                    }
                 }
+                //Debug.WriteLine("Has created Laby.");
+                //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
+                //Cv2.ImShow("binary", merged);
             }
-            //Debug.WriteLine("Has created Laby.");
-            //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
-            //Cv2.ImShow("binary", merged);
+
         }
 
         // 更新UI界面上的显示图像
@@ -771,11 +758,11 @@ namespace EDCHOST22
                 if (flags.videomode == false)
                 {
                     string time = DateTime.Now.ToString("MMdd_HH_mm_ss");
-                    vw = new VideoWriter("../../video/" + time + ".avi",
+                    vw = new VideoWriter("video/" + time + ".avi",
                         FourCC.XVID, 10.0, flags.showSize);
                     flags.videomode = true;
                     ((Button)sender).Text = "停止录像";
-                    game.FoulTimeFS = new FileStream("../../video/" + time + ".txt", FileMode.CreateNew);
+                    game.FoulTimeFS = new FileStream("video/" + time + ".txt", FileMode.CreateNew);
                 }
                 else
                 {
@@ -857,13 +844,6 @@ namespace EDCHOST22
         {
             game.SetFloodArea();
         }
-
-        private void label_BlueBG_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
 
 
         //计时器事件，每1s触发一次，向在迷宫内的小车发送信息
