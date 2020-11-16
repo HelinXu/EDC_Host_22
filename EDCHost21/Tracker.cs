@@ -845,6 +845,13 @@ namespace EDCHOST22
             game.SetFloodArea();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            game.mGameTime = 200000;
+            game.CheckNextStage();
+            game.mGameTime = 0;
+        }
+
 
         //计时器事件，每1s触发一次，向在迷宫内的小车发送信息
         private void timerMsg1s_Tick(object sender, EventArgs e)
