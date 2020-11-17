@@ -172,16 +172,15 @@ namespace EDCHOST22
                 timerMsg100ms.Start();                
             }
 
+            // 从 labyrinth 目录下读取所有障碍物文件
+            game.mLabyrinth.GetLabyName();
+
             Debug.WriteLine("Tracker Initialize Finished\n");
         }
 
         // 进行界面刷新、读取摄像头图像、与游戏逻辑交互的周期性函数
         private void Flush()
         {
-
-            // 从 labyrinth 目录下读取所有障碍物文件
-            game.mLabyrinth.GetLabyName();
-
             // 如果还未进行参数设置，则创建并打开SetWindow窗口，进行参数设置
             if (!alreadySet)
             {
