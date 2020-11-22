@@ -69,9 +69,9 @@
             // pbCamera
             // 
             this.pbCamera.Location = new System.Drawing.Point(276, 167);
-            this.pbCamera.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pbCamera.Margin = new System.Windows.Forms.Padding(2);
             this.pbCamera.Name = "pbCamera";
-            this.pbCamera.Size = new System.Drawing.Size(960, 720);
+            this.pbCamera.Size = new System.Drawing.Size(1008, 720);
             this.pbCamera.TabIndex = 2;
             this.pbCamera.TabStop = false;
             this.pbCamera.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pbCamera_MouseClick);
@@ -81,7 +81,7 @@
             this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReset.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnReset.Location = new System.Drawing.Point(44, 556);
-            this.btnReset.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnReset.Margin = new System.Windows.Forms.Padding(2);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(115, 43);
             this.btnReset.TabIndex = 7;
@@ -94,8 +94,8 @@
             this.buttonStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonStart.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.buttonStart.ForeColor = System.Drawing.Color.Green;
-            this.buttonStart.Location = new System.Drawing.Point(1310, 567);
-            this.buttonStart.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonStart.Location = new System.Drawing.Point(1524, 578);
+            this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(133, 49);
             this.buttonStart.TabIndex = 27;
@@ -108,8 +108,8 @@
             this.buttonPause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonPause.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.buttonPause.ForeColor = System.Drawing.Color.Green;
-            this.buttonPause.Location = new System.Drawing.Point(1310, 698);
-            this.buttonPause.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonPause.Location = new System.Drawing.Point(1524, 721);
+            this.buttonPause.Margin = new System.Windows.Forms.Padding(2);
             this.buttonPause.Name = "buttonPause";
             this.buttonPause.Size = new System.Drawing.Size(133, 49);
             this.buttonPause.TabIndex = 28;
@@ -147,8 +147,8 @@
             this.button_restart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_restart.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.button_restart.ForeColor = System.Drawing.Color.Green;
-            this.button_restart.Location = new System.Drawing.Point(1310, 503);
-            this.button_restart.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_restart.Location = new System.Drawing.Point(1524, 497);
+            this.button_restart.Margin = new System.Windows.Forms.Padding(2);
             this.button_restart.Name = "button_restart";
             this.button_restart.Size = new System.Drawing.Size(133, 49);
             this.button_restart.TabIndex = 56;
@@ -162,7 +162,7 @@
             this.button_video.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F);
             this.button_video.ForeColor = System.Drawing.SystemColors.ControlText;
             this.button_video.Location = new System.Drawing.Point(44, 497);
-            this.button_video.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_video.Margin = new System.Windows.Forms.Padding(2);
             this.button_video.Name = "button_video";
             this.button_video.Size = new System.Drawing.Size(115, 45);
             this.button_video.TabIndex = 74;
@@ -175,7 +175,7 @@
             this.button_set.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_set.Font = new System.Drawing.Font("微软雅黑 Light", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.button_set.Location = new System.Drawing.Point(44, 613);
-            this.button_set.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_set.Margin = new System.Windows.Forms.Padding(2);
             this.button_set.Name = "button_set";
             this.button_set.Size = new System.Drawing.Size(115, 42);
             this.button_set.TabIndex = 77;
@@ -228,8 +228,8 @@
             this.button_BFoul.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_BFoul.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.button_BFoul.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.button_BFoul.Location = new System.Drawing.Point(1338, 392);
-            this.button_BFoul.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_BFoul.Location = new System.Drawing.Point(1524, 391);
+            this.button_BFoul.Margin = new System.Windows.Forms.Padding(2);
             this.button_BFoul.Name = "button_BFoul";
             this.button_BFoul.Size = new System.Drawing.Size(128, 58);
             this.button_BFoul.TabIndex = 65;
@@ -246,7 +246,7 @@
             this.button_AFoul.Font = new System.Drawing.Font("微软雅黑 Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.button_AFoul.ForeColor = System.Drawing.Color.Red;
             this.button_AFoul.Location = new System.Drawing.Point(41, 380);
-            this.button_AFoul.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_AFoul.Margin = new System.Windows.Forms.Padding(2);
             this.button_AFoul.Name = "button_AFoul";
             this.button_AFoul.Size = new System.Drawing.Size(128, 58);
             this.button_AFoul.TabIndex = 86;
@@ -279,8 +279,8 @@
             this.button_Continue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_Continue.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.button_Continue.ForeColor = System.Drawing.Color.Green;
-            this.button_Continue.Location = new System.Drawing.Point(1310, 632);
-            this.button_Continue.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_Continue.Location = new System.Drawing.Point(1524, 647);
+            this.button_Continue.Margin = new System.Windows.Forms.Padding(2);
             this.button_Continue.Name = "button_Continue";
             this.button_Continue.Size = new System.Drawing.Size(133, 49);
             this.button_Continue.TabIndex = 91;
@@ -304,10 +304,10 @@
             // 
             this.label_BFoulNum.Font = new System.Drawing.Font("微软雅黑", 24F);
             this.label_BFoulNum.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.label_BFoulNum.Location = new System.Drawing.Point(1256, 401);
+            this.label_BFoulNum.Location = new System.Drawing.Point(1397, 391);
             this.label_BFoulNum.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label_BFoulNum.Name = "label_BFoulNum";
-            this.label_BFoulNum.Size = new System.Drawing.Size(78, 37);
+            this.label_BFoulNum.Size = new System.Drawing.Size(78, 58);
             this.label_BFoulNum.TabIndex = 98;
             this.label_BFoulNum.Text = "0";
             this.label_BFoulNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -424,8 +424,8 @@
             this.SetFlood.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SetFlood.Font = new System.Drawing.Font("微软雅黑 Light", 16F);
             this.SetFlood.ForeColor = System.Drawing.Color.Green;
-            this.SetFlood.Location = new System.Drawing.Point(1310, 756);
-            this.SetFlood.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SetFlood.Location = new System.Drawing.Point(1524, 803);
+            this.SetFlood.Margin = new System.Windows.Forms.Padding(2);
             this.SetFlood.Name = "SetFlood";
             this.SetFlood.Size = new System.Drawing.Size(133, 49);
             this.SetFlood.TabIndex = 117;
@@ -451,7 +451,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1600, 874);
+            this.ClientSize = new System.Drawing.Size(1760, 948);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.SetFlood);
             this.Controls.Add(this.BFlood);
@@ -483,7 +483,7 @@
             this.Controls.Add(this.buttonStart);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.pbCamera);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Tracker";
             this.Text = "EDC22HOST";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
