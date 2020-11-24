@@ -350,7 +350,13 @@ namespace EDCHOST22
                 }
             }
         }
+        public void SetWindowSize()
+        {
 
+            System.Drawing.Rectangle rect = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+            Debug.WriteLine(rect.Width);
+
+        }
         // 在图像上绘制图案便于观察
         public void PaintPattern(Mat mat, Localiser loc)
         {
@@ -838,6 +844,8 @@ namespace EDCHOST22
             SendCarAMessage();
             // 如果B车在场地内且在迷宫外
             SendCarBMessage();
+            //更新界面
+            SetWindowSize();
         }
 
         private void SetFlood_Click(object sender, EventArgs e)
