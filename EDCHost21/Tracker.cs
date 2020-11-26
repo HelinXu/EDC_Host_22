@@ -470,7 +470,7 @@ namespace EDCHOST22
                         //Cv2.Rectangle(mat, new Rect(x10-8, y10-8, 16, 16), new Scalar(0x00, 0x00, 0xff), -1);
                         if (camCarB.X>0&&camCarB.Y>0)
                         {
-                            Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                            Cv2.Line(mat, camCarB.X, camCarB.Y, x10, y10, new Scalar(0x40, 0x40, 0xff), 3);
                         }
                         
                     }
@@ -514,7 +514,7 @@ namespace EDCHOST22
                         //Cv2.Rectangle(mat, new Rect(x10-10, y10-10, 20, 20), new Scalar(0x00, 0x00, 0xff), -1);
                         if (camCarA.X>0&&camCarA.Y>0)
                         {                        
-                            Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x00, 0xff, 0x98), 3);
+                            Cv2.Line(mat, camCarA.X, camCarA.Y, x10, y10, new Scalar(0x40, 0x40, 0xff), 3);
                         }
 
                     }
@@ -592,7 +592,7 @@ namespace EDCHOST22
                         Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
                         Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
                             (int)showDots[1].X, (int)showDots[1].Y,
-                            new Scalar(0x00, 0x00, 0x00), 5);
+                            new Scalar(35, 35, 139), 5);
                     }
                 }
                 //Debug.WriteLine("Has created Laby.");
