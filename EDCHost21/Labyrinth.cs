@@ -14,6 +14,7 @@ namespace EDCHOST22
         public List<string> LabyName;
         public int mWallNum;
         public Wall[] mpWallList;
+        public string FileNameNow;
 
         // 障碍物是否已经被设置
         public bool IsLabySet;
@@ -67,7 +68,7 @@ namespace EDCHOST22
             {
                 MessageBox.Show("文件路径格式无效");
             }
-
+            FileNameNow = FileName;
         }
 
         public void GetLabyName()

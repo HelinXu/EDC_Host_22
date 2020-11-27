@@ -16,7 +16,7 @@ namespace EDCHOST22
     // 人员状况：被困、在小车上且还未到指定点、到达目标点
     public enum PassengerState { TRAPPED, INCAR, RESCUED };
 
-    public enum GameStage { FIRST_1 = 0, FIRST_2, LATTER_1, LATTER_2 };
+    public enum GameStage { FIRST_1 = 0, FIRST_2, LATTER_1, LATTER_2 ,END};
     public class Game
     {
         public bool DebugMode;                       //调试模式，最大回合数 = 1,000,000
@@ -48,6 +48,7 @@ namespace EDCHOST22
         public int mLastOnObstacleTime;
         public FileStream FoulTimeFS;
         public int mLastOnFloodTime;
+        public Flood mLastFlood;
 
         public Game()//构造一个新的Game类 默认为CampA是先上半场上一阶段进行
         {
@@ -67,6 +68,7 @@ namespace EDCHOST22
             }
             curPsg = new Passenger(new Dot(-1, -1), new Dot(-1, -1)); //?
             mFlood = new Flood(0);
+            mLastFlood = new Flood(0);
             mPackageGroupCount = 0;
             mLastWrongDirTime = -10;
             mLastOnObstacleTime = -10;
@@ -334,8 +336,7 @@ namespace EDCHOST22
                         mPackageGroupCount = 0;
                         mLastOnFloodTime = -10;
                         mLastOnObstacleTime = -10;
-                        mFlood.num = 0;
-                        if (FoulTimeFS != null)                                            //这里没有搞懂是干什么的
+                        if (FoulTimeFS != null)                                           
                         {
                             byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
                             FoulTimeFS.Write(data, 0, data.Length);
@@ -347,6 +348,11 @@ namespace EDCHOST22
                         CarB.mTaskState = 0;
                         gameStage++;
                         Debug.WriteLine("上下半场转换成功");
+                        if(mLastFlood.num==1)
+                        {
+                            mLastFlood.dot1 = mFlood.dot1;
+                        }
+
                     }
                 }
             }

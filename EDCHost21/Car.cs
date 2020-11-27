@@ -39,6 +39,8 @@ namespace EDCHOST22
         public int mFoulCount;            //犯规摁键次数
         public int mRightPos;             //小车现在的位置信息是否是正确的，0为不正确的，1为正确的
         public int mRightPosCount;        //用于记录小车位置是否该正确了
+        public int WhetherCarIn;          //记录小车是否进入了迷宫
+        public int WhetherCarOut;          //记录小车是否会到入口
 
 
         public Car(Camp c, int task)
@@ -60,6 +62,8 @@ namespace EDCHOST22
             mFoulCount = 0; //xhl 0824 添加
             mRightPos = 1;
             mRightPosCount = 0;
+            WhetherCarIn = 0;
+            WhetherCarOut = 0;
         }
         public void UpdateLastPos()
         {
@@ -113,7 +117,16 @@ namespace EDCHOST22
                 mIsWithPassenger = 0;
             }
         }
-
+        public void CarGetIn()
+        {
+            WhetherCarIn = 1;
+            UpdateScore();
+        }
+        public void CarGetOut()
+        {
+            WhetherCarOut = 1;
+            UpdateScore();
+        }
         //8-14 yd将Score后的代码折成多行，便于阅读
         public void UpdateScore()
         {
@@ -122,7 +135,8 @@ namespace EDCHOST22
                 - mCrossFloodCount * FLOOD_PENALTY
                 - OBST_PENALTY * mCrossWallCount
                 - mWrongDirCount * WRONG_DIR_PENALTY
-                - mFoulCount * FOUL_PENALTY;
+                - mFoulCount * FOUL_PENALTY
+                + WhetherCarIn * 25 + WhetherCarOut * 25;
         }
     }
 }

@@ -729,11 +729,16 @@ namespace EDCHOST22
             }
         }
 
+
         // 比赛开始
         private void buttonStart_Click(object sender, EventArgs e)
         {
             game.Start();
             buttonPause.Enabled = true;
+            if(game.gameStage==GameStage.LATTER_1||game.gameStage==GameStage.FIRST_1)
+            {
+                game.mFlood.num = 0;
+            }
         }
 
         // 比赛暂停（待完善）
@@ -748,7 +753,9 @@ namespace EDCHOST22
         // 比赛重新开始
         private void button_restart_Click(object sender, EventArgs e)
         {
+            string record = game.mLabyrinth.FileNameNow;
             lock (game) { game = new Game(); }
+            game.mLabyrinth.ReadFromFile(record);
             buttonStart.Enabled = true;
             button_Continue.Enabled = false;
             buttonPause.Enabled = false;
@@ -853,11 +860,42 @@ namespace EDCHOST22
             game.SetFloodArea();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void NextStage_Click(object sender, EventArgs e)
         {
             game.mGameTime = 200000;
             game.CheckNextStage();
             game.mGameTime = 0;
+        }
+
+        private void LastStage_Click(object sender, EventArgs e)
+        {
+            game.mGameTime = 0;
+            game.gameStage--;
+        }
+
+        private void CarGetIn_Click(object sender, EventArgs e)
+        {
+            if(game.gameStage==GameStage.FIRST_1)
+            {
+                game.CarA.CarGetIn();
+            }
+            if(game.gameStage==GameStage.LATTER_1)
+            {
+                game.CarB.CarGetIn();
+            }
+
+        }
+
+        private void GetOut_Click(object sender, EventArgs e)
+        {
+            if (game.gameStage == GameStage.FIRST_1)
+            {
+                game.CarA.CarGetOut();
+            }
+            if (game.gameStage == GameStage.LATTER_1)
+            {
+                game.CarB.CarGetOut();
+            }
         }
 
 

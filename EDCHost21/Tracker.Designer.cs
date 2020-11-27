@@ -61,8 +61,11 @@
             this.AFlood = new System.Windows.Forms.Label();
             this.BFlood = new System.Windows.Forms.Label();
             this.SetFlood = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.NextStage = new System.Windows.Forms.Button();
             this.label_BlueBG = new System.Windows.Forms.Label();
+            this.LastStage = new System.Windows.Forms.Button();
+            this.CarGetIn = new System.Windows.Forms.Button();
+            this.GetOut = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
@@ -80,7 +83,7 @@
             // 
             this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReset.Font = new System.Drawing.Font("微软雅黑 Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnReset.Location = new System.Drawing.Point(41, 556);
+            this.btnReset.Location = new System.Drawing.Point(41, 509);
             this.btnReset.Margin = new System.Windows.Forms.Padding(2);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(250, 60);
@@ -161,7 +164,7 @@
             this.button_video.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_video.Font = new System.Drawing.Font("微软雅黑 Light", 28F);
             this.button_video.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.button_video.Location = new System.Drawing.Point(41, 458);
+            this.button_video.Location = new System.Drawing.Point(41, 418);
             this.button_video.Margin = new System.Windows.Forms.Padding(2);
             this.button_video.Name = "button_video";
             this.button_video.Size = new System.Drawing.Size(250, 60);
@@ -174,7 +177,7 @@
             // 
             this.button_set.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_set.Font = new System.Drawing.Font("微软雅黑 Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_set.Location = new System.Drawing.Point(41, 650);
+            this.button_set.Location = new System.Drawing.Point(41, 598);
             this.button_set.Margin = new System.Windows.Forms.Padding(2);
             this.button_set.Name = "button_set";
             this.button_set.Size = new System.Drawing.Size(250, 60);
@@ -424,18 +427,18 @@
             this.SetFlood.UseVisualStyleBackColor = true;
             this.SetFlood.Click += new System.EventHandler(this.SetFlood_Click);
             // 
-            // button1
+            // NextStage
             // 
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("微软雅黑 Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button1.Location = new System.Drawing.Point(41, 746);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(250, 60);
-            this.button1.TabIndex = 118;
-            this.button1.Text = "下一个阶段";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.NextStage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.NextStage.Font = new System.Drawing.Font("微软雅黑 Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.NextStage.Location = new System.Drawing.Point(41, 685);
+            this.NextStage.Margin = new System.Windows.Forms.Padding(2);
+            this.NextStage.Name = "NextStage";
+            this.NextStage.Size = new System.Drawing.Size(250, 60);
+            this.NextStage.TabIndex = 118;
+            this.NextStage.Text = "下一个阶段";
+            this.NextStage.UseVisualStyleBackColor = true;
+            this.NextStage.Click += new System.EventHandler(this.NextStage_Click);
             // 
             // label_BlueBG
             // 
@@ -447,13 +450,58 @@
             this.label_BlueBG.Size = new System.Drawing.Size(900, 100);
             this.label_BlueBG.TabIndex = 89;
             // 
+            // LastStage
+            // 
+            this.LastStage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.LastStage.Font = new System.Drawing.Font("微软雅黑 Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.LastStage.Location = new System.Drawing.Point(41, 776);
+            this.LastStage.Margin = new System.Windows.Forms.Padding(2);
+            this.LastStage.Name = "LastStage";
+            this.LastStage.Size = new System.Drawing.Size(250, 60);
+            this.LastStage.TabIndex = 119;
+            this.LastStage.Text = "上一个阶段";
+            this.LastStage.UseVisualStyleBackColor = true;
+            this.LastStage.Click += new System.EventHandler(this.LastStage_Click);
+            // 
+            // CarGetIn
+            // 
+            this.CarGetIn.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.CarGetIn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CarGetIn.Font = new System.Drawing.Font("微软雅黑 Light", 28F);
+            this.CarGetIn.ForeColor = System.Drawing.Color.Green;
+            this.CarGetIn.Location = new System.Drawing.Point(450, 119);
+            this.CarGetIn.Margin = new System.Windows.Forms.Padding(2);
+            this.CarGetIn.Name = "CarGetIn";
+            this.CarGetIn.Size = new System.Drawing.Size(250, 60);
+            this.CarGetIn.TabIndex = 120;
+            this.CarGetIn.Text = "进迷宫加分";
+            this.CarGetIn.UseVisualStyleBackColor = false;
+            this.CarGetIn.Click += new System.EventHandler(this.CarGetIn_Click);
+            // 
+            // GetOut
+            // 
+            this.GetOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.GetOut.Font = new System.Drawing.Font("微软雅黑 Light", 28F);
+            this.GetOut.ForeColor = System.Drawing.Color.Green;
+            this.GetOut.Location = new System.Drawing.Point(1220, 115);
+            this.GetOut.Margin = new System.Windows.Forms.Padding(2);
+            this.GetOut.Name = "GetOut";
+            this.GetOut.Size = new System.Drawing.Size(250, 60);
+            this.GetOut.TabIndex = 121;
+            this.GetOut.Text = "回起点加分";
+            this.GetOut.UseVisualStyleBackColor = true;
+            this.GetOut.Click += new System.EventHandler(this.GetOut_Click);
+            // 
             // Tracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.GetOut);
+            this.Controls.Add(this.CarGetIn);
+            this.Controls.Add(this.LastStage);
+            this.Controls.Add(this.NextStage);
             this.Controls.Add(this.SetFlood);
             this.Controls.Add(this.BFlood);
             this.Controls.Add(this.AFlood);
@@ -527,8 +575,11 @@
         private System.Windows.Forms.Label AFlood;
         private System.Windows.Forms.Label BFlood;
         private System.Windows.Forms.Button SetFlood;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button NextStage;
         private System.Windows.Forms.Label label_BlueBG;
+        private System.Windows.Forms.Button LastStage;
+        private System.Windows.Forms.Button CarGetIn;
+        private System.Windows.Forms.Button GetOut;
     }
 }
 
