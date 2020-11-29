@@ -15,7 +15,7 @@ namespace EDCHOST22
     {
         public const int PKG_CREDIT = 10;        //获取物资可以得到10分;
         public const int RESCUE_CREDIT = 30;     //营救人员可以得到30分;
-        public const int FLOOD_PENALTY = 15;     //经过泄洪口惩罚15分;
+        public const int FLOOD_PENALTY = 5;     //经过泄洪口惩罚15分;
         public const int OBST_PENALTY = 50;      //经过虚拟障碍物惩罚50分;
         public const int WRONG_DIR_PENALTY = 10; //逆行惩罚10分;
         public const int FOUL_PENALTY = 50;      //犯规扣分50分;
