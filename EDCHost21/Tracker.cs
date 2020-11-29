@@ -384,10 +384,10 @@ namespace EDCHOST22
 
             Cv2.Resize(Icon_CarA, Icon_CarA, new OpenCvSharp.Size(20,20), 0, 0, InterpolationFlags.Cubic);
             Cv2.Resize(Icon_CarB, Icon_CarB, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_Package, Icon_Package, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_Person, Icon_Person, new OpenCvSharp.Size(16, 16), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_RedCross, Icon_RedCross, new OpenCvSharp.Size(16, 16), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_Zone, Icon_Zone, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Package, Icon_Package, new OpenCvSharp.Size(22, 22), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Person, Icon_Person, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_RedCross, Icon_RedCross, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Zone, Icon_Zone, new OpenCvSharp.Size(22, 22), 0, 0, InterpolationFlags.Cubic);
 
             // 在小车1的位置上绘制红色实心圆
 
@@ -439,7 +439,7 @@ namespace EDCHOST22
                         int y10 = (int)showDots1[0].Y;
 
 
-                        int Tx = x10 - 8, Ty = y10 - 8, Tcol = Icon_Person.Cols, Trow = Icon_Person.Rows;
+                        int Tx = x10 - 10, Ty = y10 - 10, Tcol = Icon_Person.Cols, Trow = Icon_Person.Rows;
                         if (Tx < 0) Tx = 0;
                         if (Ty < 0) Ty = 0;
                         if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
@@ -459,7 +459,7 @@ namespace EDCHOST22
                         int x10 = (int)showDots1[1].X;
                         int y10 = (int)showDots1[1].Y;
 
-                        int Tx = x10 - 8, Ty = y10 - 8, Tcol = Icon_RedCross.Cols, Trow = Icon_RedCross.Rows;
+                        int Tx = x10 - 10, Ty = y10 - 10, Tcol = Icon_RedCross.Cols, Trow = Icon_RedCross.Rows;
                         if (Tx < 0) Tx = 0;
                         if (Ty < 0) Ty = 0;
                         if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
@@ -486,7 +486,7 @@ namespace EDCHOST22
                     {
                         int x10 = (int)showDots1[0].X;
                         int y10 = (int)showDots1[0].Y;
-                        int Tx = x10 - 8, Ty = y10 - 8, Tcol = Icon_Person.Cols, Trow = Icon_Person.Rows;
+                        int Tx = x10 - 10, Ty = y10 - 10, Tcol = Icon_Person.Cols, Trow = Icon_Person.Rows;
                         if (Tx < 0) Tx = 0;
                         if (Ty < 0) Ty = 0;
                         if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
@@ -504,7 +504,7 @@ namespace EDCHOST22
                     {
                         int x10 = (int)showDots1[1].X;
                         int y10 = (int)showDots1[1].Y;
-                        int Tx = x10 - 8, Ty = y10 - 8, Tcol = Icon_RedCross.Cols, Trow = Icon_RedCross.Rows;
+                        int Tx = x10 - 10, Ty = y10 - 10, Tcol = Icon_RedCross.Cols, Trow = Icon_RedCross.Rows;
                         if (Tx < 0) Tx = 0;
                         if (Ty < 0) Ty = 0;
                         if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
@@ -537,7 +537,7 @@ namespace EDCHOST22
                     {
                         int x = (int)showDots[i].X;
                         int y = (int)showDots[i].Y;
-                        int Tx = x - 10, Ty = y - 10, Tcol = Icon_Package.Cols, Trow = Icon_Package.Rows;
+                        int Tx = x - 11, Ty = y - 11, Tcol = Icon_Package.Cols, Trow = Icon_Package.Rows;
                         if (Tx < 0) Tx = 0;
                         if (Ty < 0) Ty = 0;
                         if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
@@ -565,7 +565,7 @@ namespace EDCHOST22
                     Point2f[] showDots2 = coordCvt.LogicToCamera(logicDots2);
                     int x = (int)showDots2[i].X;
                     int y = (int)showDots2[i].Y;
-                    int Tx = x - 10, Ty = y - 10, Tcol = Icon_Zone.Cols, Trow = Icon_Zone.Rows;
+                    int Tx = x - 11, Ty = y - 11, Tcol = Icon_Zone.Cols, Trow = Icon_Zone.Rows;
                     if (Tx < 0) Tx = 0;
                     if (Ty < 0) Ty = 0;
                     if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
